@@ -1,5 +1,5 @@
 # perturb
-_Mutation testing for JavaScript_
+_Functional mutation testing for JavaScript_
 
 
 

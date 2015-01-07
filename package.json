@@ -7,11 +7,12 @@
     "example": "example"
   },
   "dependencies": {
+    "fs-extra": "^0.14.0",
     "glob": "^4.3.2",
     "intercept-require": "^0.2.0",
+    "lodash.bindall": "^2.4.1",
     "lodash.find": "^2.4.1",
-    "object-assign": "^2.0.0",
-    "fs-extra": "^0.14.0"
+    "object-assign": "^2.0.0"
   },
   "devDependencies": {},
   "scripts": {
