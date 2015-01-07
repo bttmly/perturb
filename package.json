@@ -14,7 +14,11 @@
     "lodash.find": "^2.4.1",
     "object-assign": "^2.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "growl": "^1.8.1",
+    "sync-exec": "^0.4.0",
+    "watch": "^0.13.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

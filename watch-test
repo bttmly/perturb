@@ -1,0 +1,12 @@
+// #!/usr/bin/env node
+
+// var exec = require("sync-exec");
+// var watch = require("watch");
+// var growl = require("growl");
+
+// watch.watchTree("./lib", function (file, stat, prevStat) {
+//   var out = exec("npm test");
+//   if (out.status !== 0) {
+//     growl(out.stderr);
+//   }
+// });
