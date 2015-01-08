@@ -7,8 +7,10 @@
     "example": "example"
   },
   "dependencies": {
+    "async": "^0.9.0",
     "fs-extra": "^0.14.0",
     "glob": "^4.3.2",
+    "immutable": "^3.5.0",
     "intercept-require": "^0.2.0",
     "lodash.bindall": "^2.4.1",
     "lodash.find": "^2.4.1",
