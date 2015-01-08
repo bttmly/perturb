@@ -5,10 +5,12 @@
 verb
 
 1.  make (someone) anxious or unsettled.
+    
     _"I'm perturbed about the quality of our unit tests."_
 
 
 2.  subject (a system, moving object, or process) to an influence tending to alter its normal or regular state or path.
+    
     _"This module perturbs our tests to check their strength."_
 
 

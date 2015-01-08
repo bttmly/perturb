@@ -30,4 +30,5 @@ node_modules
 .lock-wscript
 
 
-example/.perturb*
+example/.DS_Store
+example/.perturb
