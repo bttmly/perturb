@@ -1,1 +1,0 @@
-// list item view test

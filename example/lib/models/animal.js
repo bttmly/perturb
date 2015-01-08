@@ -1,6 +1,11 @@
 // animal model source
 
-function Animal (numLegs, color) {
-  this.numLegs = numLegs;
-  this.color = color;
+function Animal (a, b) {
+  this.numLegs = a;
+  this.color = b;
+  if (this.color === "black") {
+    this.isBlack = true;
+  }
 }
+
+module.exports = Animal;
