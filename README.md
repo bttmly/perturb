@@ -1,6 +1,18 @@
 # perturb
 _Functional mutation testing for JavaScript_
 
+### per·turb
+#### pərˈtərb
+
+verb
+
+1 make (someone) anxious or unsettled.
+  "I'm perturbed about the quality of our unit tests."
+
+2 subject (a system, moving object, or process) to an influence tending to alter its normal or regular state or path.
+  "This module perturbs our tests to check their strenght."
+
+
 
 
 ```js
