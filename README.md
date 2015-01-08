@@ -1,5 +1,4 @@
 # perturb
----
 
 #### pərˈtərb
 
@@ -13,8 +12,11 @@ verb
     _"This module perturbs our tests to check their strength."_
 
 
+## About
+`perturb` provides mutation testing for JavaScript projects.
 
 
+## API
 ```js
 // default config
 {
