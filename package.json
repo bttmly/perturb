@@ -16,6 +16,7 @@
     "intercept-require": "^0.2.0",
     "lodash.bindall": "^2.4.1",
     "lodash.find": "^2.4.1",
+    "lodash.last": "^2.4.1",
     "lodash.partial": "^2.4.1",
     "lodash.pick": "^2.4.1",
     "mocha": "^2.1.0",
