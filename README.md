@@ -68,58 +68,73 @@ You can pass in any of the configuration parameters that are strings through the
 `perturb --testGlob '/**/*-test.js' --testDir 'test-unit'"`
 
 ## Interfaces
-Various configuration parameters allow you to pass in functions which will interact with internal data representations. The schema for each is as follows:
+Various configuration parameters allow you to pass in functions which will interact with internal data representations. They are documented here in [Web IDL](https://heycam.github.io/webidl/)
 
 ### `PerturbReport`
-- **metadata**: `Meta`
-- **config**: `Config`
-- **matches**: `[]Match`
+```idl
+interface PerturbReport {
+  attribute Metadata metadata;
+  attribute Config config;
+  attribute matches []Match;
+}
+```
 
 ### `Meta`
-- **startedAt**: `Date`
-- **endedAt**: `Date`
-- **duration**: `Number`
-- **matchCount**: `Number`
-- **errored**: `Boolean`
-- **mutantCount**: `Number`
-- **mutantKillCount**: `Number`
-- **killRate**: `Number`
+```idl
+interface Metadata {
+  attribute date startedAt;
+  attribute date endedAt;
+  attribute number duration;
+  attribute number matchCount;
+  attribute boolean errored;
+  attribute number mutantCount;
+  attribute number mutantKillCount;
+  attribute number killRate;
+}
+```
 
 ### `Config`
-- **sharedParent**: `String`
-- **sourceDir**: `String`
-- **sourceGlob**: `String`
-- **sourceTemp**: `String`
-- **testDir**: `String`
-- **testGlob**: `String`
-- **testTemp**: `String`
-- **reporter**: `Function<[]MutationReport reports>`
-- **matcher**: `Function<String sourcePath, String testPath>`
+```idl
+interface Config {
+  attribute string sharedParent;
+  attribute string sourceDir;
+  attribute string sourceGlob;
+  attribute string sourceTemp;
+  attribute string testDir;
+  attribute string testGlob;
+  attribute string testTemp;
+  void reporter([]MutationReport reports);
+  void matcher(string sourcePath, string testPath);
+}
+```
 
 ### `Match`
-- **sourceFile**: `String`
-- **testFile**: `String`
-- **mutants**: `[]MutantReport`
+```idl
+interface Match {
+  attribute string sourceFile
+  attribute string testFile
+  attribute []MutantReport mutants
+}
+```
 
 ### `MutantReport`
-- **loc**: `String`: "{line},{col}"
-- **name**: `MutantName`
-- **passed**: `[]String`
-- **failed**: `[]String`
-- **diff**: `Diff`
-- **source**: 
+```idl
+interface MutantReport {
+  attribute string loc
+  attribute MutantName name
+  attribute Diff diff
+  attribute String source
+  attribute []String passed
+  attribute []String failed
+}
+```
 
 ### `MutantName`
-Enum of
-- `invertConditionalTest`
-- `tweakLiteralValue`
-- `removeReturn`
-- `dropArrayElement`
-- `dropObjectProperty`
-- `reverseFunctionParameters`
-- `reverseFunctionParameters`
-- `swapLogicalOperators`
-- `swapBinaryOperators`
+```idl
+enum MutantName {
+  "invertConditionalTest", "tweakLiteralValue", "removeReturn", "dropArrayElement", "dropObjectProperty", "reverseFunctionParameters", "swapLogicalOperators", "swapBinaryOperators"
+}
+```
 
 ## Todo
 - [ ] Preemtive mutant logging to provide insight when perturb hangs or otherwise misbehaves.
