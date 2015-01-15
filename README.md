@@ -59,9 +59,20 @@ You can pass in any of the configuration parameters that are strings through the
 ## Interfaces
 Various configuration parameters allow you to pass in functions which will interact with internal data representations. The schema for each is as follows:
 
-### `Result`
-- **config** Config
-- **matches** []Match
+### `PerturbReport`
+- **metadata**: `Meta`
+- **config**: `Config`
+- **matches**: `[]Match`
+
+### `Meta`
+- **startedAt**: `Date`
+- **endedAt**: `Date`
+- **duration**: `Number`
+- **matchCount**: `Number`
+- **errored**: `Boolean`
+- **mutantCount**: `Number`
+- **mutantKillCount**: `Number`
+- **killRate**: `Number`
 
 ### `Config`
 - **sharedParent**: `String`
@@ -77,17 +88,17 @@ Various configuration parameters allow you to pass in functions which will inter
 ### `Match`
 - **sourceFile**: `String`
 - **testFile**: `String`
-- **mutations**: `[]MutationReport`
+- **mutants**: `[]MutantReport`
 
-### `MutationReport`
+### `MutantReport`
 - **loc**: `String`: "{line},{col}"
-- **name**: `MutationName`
+- **name**: `MutantName`
 - **passed**: `[]String`
 - **failed**: `[]String`
 - **diff**: `Diff`
 - **source**: 
 
-### MutationName
+### `MutantName`
 Enum of
 - `invertConditionalTest`
 - `tweakLiteralValue`
