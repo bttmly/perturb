@@ -123,3 +123,5 @@ Enum of
 
 ## Todo
 - [ ] Preemtive mutant logging to provide insight when perturb hangs or otherwise misbehaves.
+- [ ] Skip mutation API via comments (or something else?) a la `jshint`
+- [ ] Ability to progressively report status/output (rather than as a block on complete)
