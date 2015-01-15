@@ -25,6 +25,7 @@
     "lodash.pick": "^2.4.1",
     "make-module": "^2.0.0",
     "mocha": "^2.1.0",
+    "node-emoji": "^0.1.0",
     "object-assign": "^2.0.0"
   },
   "devDependencies": {
