@@ -13,6 +13,15 @@ verb
     
     _"This module perturbs our tests to check their strength."_
 
+
+## Installation
+
+_For global command line use_
+`npm i -g perturb`
+
+_Within a project for programmatic use or for `package.json` scripts_
+`npm i -S perturb`
+
 ## About
 `perturb` is a mutation testing framework for JavaScript projects, helping you ensure the quality of your tests.
 
