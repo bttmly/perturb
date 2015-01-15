@@ -132,7 +132,14 @@ interface MutantReport {
 ### `MutantName`
 ```idl
 enum MutantName {
-  "invertConditionalTest", "tweakLiteralValue", "removeReturn", "dropArrayElement", "dropObjectProperty", "reverseFunctionParameters", "swapLogicalOperators", "swapBinaryOperators"
+  "invertConditionalTest",
+  "tweakLiteralValue",
+  "removeReturn",
+  "dropArrayElement",
+  "dropObjectProperty",
+  "reverseFunctionParameters",
+  "swapLogicalOperators",
+  "swapBinaryOperators"
 }
 ```
 
