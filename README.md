@@ -13,14 +13,24 @@ verb
     
     _"This module perturbs our tests to check their strength."_
 
-
 ## About
-`perturb` provides mutation testing for JavaScript projects.
+`perturb` is a mutation testing framework for JavaScript projects, helping you ensure the quality of your tests.
+
+"Mutation testing is used to design new software tests and evaluate the quality of existing software tests. Mutation testing involves modifying a program in small ways." 
+
+- [Wikipedia](http://en.wikipedia.org/wiki/Mutation_testing)
+
+Perturb takes your source code, parses the [AST](http://en.wikipedia.org/wiki/Abstract_syntax_tree), generates mutations, and runs your test suite against them. If all your tests pass when run against a mutant, you probably missed a test. It is currently optimized for projects in which there is a 1:1 correlation between source and test files.
+
+Mutation testing is different from and generally more comprehensive than code coverage metrics.Unit tests are one way way of specifying the behavior of software. If a mutation is not covered by a unit test, then that aspect of the program is unspecified. 
+
+## Stability Disclaimer
+This project is in very early development. It "works", but there is a ton of work still to do. The configuration API (the only public interface to `perturb`) is subject to breaking changes. Any and all ideas, suggestions, contributions welcome. Just open an [issue]() or a [pull request]().
 
 ## Known Issues
-Perturb is in very early development, and there are known issues.
+1.) **Mocha only** -- Perturb only supports Mocha as a test runner at this point. PRs welcome for adding other test runners, however I have no current plans to do so myself.
 
-1.) **Infinite loops** -- mutating loop constructs like `while` and `for` is tricky, given the many ways in which these loops might terminate. First and foremost, the mutation to swap `++` and `--` is currently disabled, because it will break most `for`-loops. However, infinite loops may still occur in some cases. If running `perturb` seems to hang, this is the likely culprit. Short of running tests in child processes, I don't see a way to break out of these loops. However, logging the mutation data to file before running a test would help in tracking down where these loops originate. If you hit a loop and are able to figure it out, please [open an issue]().
+2.) **Infinite loops** -- mutating loop constructs like `while` and `for` is tricky, given the many ways in which these loops might terminate. First and foremost, the mutation to swap `++` and `--` is currently disabled, because it will break most `for`-loops. However, infinite loops may still occur in some cases. If running `perturb` seems to hang, this is the likely culprit. Short of running tests in child processes, I don't see a way to break out of these loops. However, logging the mutation data to file before running a test would help in tracking down where these loops originate. If you hit a loop and are able to figure it out, please [open an issue]().
 
 ## API
 ```js
@@ -78,11 +88,12 @@ Various configuration parameters allow you to pass in functions which will inter
 
 ### MutationName
 Enum of
--`invertConditionalTest`
--`tweakLiteralValue`
--`removeReturn`
--`dropArrayElement`
--`dropObjectProperty`
--`reverseFunctionParameters`
--`reverseFunctionParameters`
--`swapBinaryOperators`
+- `invertConditionalTest`
+- `tweakLiteralValue`
+- `removeReturn`
+- `dropArrayElement`
+- `dropObjectProperty`
+- `reverseFunctionParameters`
+- `reverseFunctionParameters`
+- `swapLogicalOperators`
+- `swapBinaryOperators`
