@@ -26,7 +26,7 @@ verb
   sourceDir: "lib",
   testDir: "test",
   sourceGlob: "/**/*.js",
-  testGlob: "/**/*.j",
+  testGlob: "/**/*.js",
   tempTest: ".perturb-test",
   tempSource: ".perturb-source",
   reporter: defaultReporter,
@@ -38,6 +38,10 @@ verb
 
 ## Interfaces
 
+### `Result`
+- **config** Config
+- **matches** []Match
+
 ### `Config`
 - **sharedParent**: `String`
 - **sourceDir**: `String`
@@ -46,10 +50,30 @@ verb
 - **testDir**: `String`
 - **testGlob**: `String`
 - **testTemp**: `String`
-- **reporter**: `Function<Array[Report report]>`
+- **reporter**: `Function<Array[MutationReport report]>`
 - **matcher**: `Function<String sourcePath, String testPath>`
-- **matches**: `Array[Match match]`
 
 ### `Match`
+- **sourceFile**: `String`
+- **testFile**: `String`
+- **mutations**: `[]MutationReport`
 
-### `Report`
+### `MutationReport`
+- **loc**: `String`
+- **name**: `MutationName`
+- **passed**: `[]String`
+- **failed**: `[]String`
+- **diff**: `Diff`
+- **source**: 
+
+### MutationName
+Enum of
+
+-`invertConditionalTest`
+-`tweakLiteralValue`
+-`removeReturn`
+-`dropArrayElement`
+-`dropObjectProperty`
+-`reverseFunctionParameters`
+-`reverseFunctionParameters`
+-`swapBinaryOperators`
