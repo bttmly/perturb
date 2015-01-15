@@ -1,29 +1,29 @@
 function Vehicle () {
   this.position = 0;
-  this.passengers = [];
+  this.occupants = [];
 }
 
 Vehicle.prototype.speed = 5;
 
-Vehicle.prototype.maxPassengers = 2;
+Vehicle.prototype.maxOccupants = 2;
 
 Vehicle.prototype.move = function () {
   this.position += this.speed;
 };
 
-Vehicle.prototype.board = function (passenger) {
-  if (this.passengers.length < this.maxPassengers) {
-    this.passengers.push(passenger);
+Vehicle.prototype.board = function (occupant) {
+  if (this.occupants.length < this.maxOccupants) {
+    this.occupants.push(occupant);
     return true;
   }
   return false;
 };
 
-Vehicle.prototype.disembark = function (passenger) {
-  var idx = this.passengers.indexOf(passenger);
+Vehicle.prototype.disembark = function (occupant) {
+  var idx = this.occupants.indexOf(occupant);
   if (idx !== -1) {
-    this.passengers.splice(idx, 1);
-    return passenger;
+    this.occupants.splice(idx, 1);
+    return occupant;
   }
   return false;
 };

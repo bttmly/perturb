@@ -1,0 +1,45 @@
+#!/usr/bin/env node 
+
+var program = require("commander");
+
+var path = require("path");
+
+var perturb = require("../");
+var util = require("../lib/util");
+var package = require("../package.json");
+
+program
+  .version(package.version)
+  .option("-r, --rootDir <rootDir>", "root directory of the project")
+  .option("-t, --testDir <testDir>", "test directory relative to root directory")
+  .option("-s, --sourceDir <sourceDir>", "source directory relative to root directory")
+  .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
+  .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
+  .parse(process.argv);
+
+if (program.rootDir && program.rootDir[0] !== "/")
+  program.rootDir = path.join(process.cwd(), program.rootDir);
+
+var config = {};
+
+if (program.rootDir) config.rootDir = program.rootDir;
+if (program.testDir) config.testDir = program.testDir;
+if (program.sourceDir) config.sourceDir = program.sourceDir;
+if (program.testGlob) config.testGlob = program.testGlob;
+if (program.sourceGlob) config.sourceGlob = program.sourceGlob;
+
+// this will become the default reporter
+function cb (err, data) {
+  if (err) throw err;
+  data.matches.forEach(function (match) {
+    match.mutations
+      .filter(util.mutantIsAlive)
+      .map(util.prettyDiff)
+      .forEach(function (str) {
+        console.log(str);
+      });
+  });
+  console.log(data.meta);
+}
+
+perturb(config, cb);
