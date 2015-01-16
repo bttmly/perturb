@@ -29,6 +29,6 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
-
+.perturb
 example/.DS_Store
 example/.perturb
