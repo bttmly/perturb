@@ -42,16 +42,7 @@ var config = assignNoUndefined({}, {
 // this will become the default reporter
 function reporter (err, data) {
   if (err) throw err;
-  // data.matches.forEach(function (match) {
-  //   match.mutations
-  //     .filter(util.mutantIsAlive)
-  //     .map(util.prettyDiff)
-  //     .forEach(function (str) {
-  //       console.log(str);
-  //     });
-  // });
   console.log(data.meta);
-  // if (data.meta.mutationCount !== data.meta.killedMutants) process.exit(1);
 }
 
 perturb(config, reporter);
