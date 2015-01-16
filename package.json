@@ -23,6 +23,8 @@
     "lodash.last": "^2.4.1",
     "lodash.partial": "^2.4.1",
     "lodash.pick": "^2.4.1",
+    "long-stack-traces": "^0.1.2",
+    "longjohn": "^0.2.4",
     "make-module": "^2.0.0",
     "mocha": "^2.1.0",
     "node-emoji": "^0.1.0",
