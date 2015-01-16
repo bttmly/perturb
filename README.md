@@ -22,7 +22,7 @@ _For global command line use_
 
 _Within a project for programmatic use or for `package.json` scripts_
 
-`npm i -S perturb`
+`npm i perturb`
 
 ## About
 `perturb` is a mutation testing framework for JavaScript projects, helping you ensure the quality of your tests.
@@ -41,8 +41,31 @@ This project is in very early development, and should be considered _experimenta
 ## Known Issues
 1.) **Mocha only** -- Perturb only supports Mocha as a test runner at this point. PRs welcome for adding other test runners. I plan to add support for [tap](http://testanything.org/)-[compliant](https://github.com/isaacs/node-tap) [harnesses](git@github.com:substack/tape.git) eventually. If you want another test runner, open an issue, or better, yet a PR.
 
-2.) **Infinite loops** -- mutating loop constructs like `while` and `for` is tricky, given the many ways in which these loops might terminate. First and foremost, the mutation to swap `++` and `--` is currently disabled, because it will break most `for`-loops. However, infinite loops may still occur in some cases. If running `perturb` seems to hang, this is the likely culprit. Short of running tests in child processes, I don't see a reasonable way to break out of these loops. However, logging the mutation data to file before running a test would help in tracking down where these loops originate. If you hit a loop and are able to figure it out, please [open an issue]().
+2.) **Infinite loops** -- mutating loop constructs like `while` and `for` is tricky, given the many ways in which these loops might terminate. First and foremost, the mutation to swap `++` and `--` is currently disabled, because it will break most `for`-loops. However, infinite loops may still occur in some cases. If running `perturb` seems to hang, this is the likely culprit. Luckily, hard synchronous loops are somewhat rare; blowing the call stack with bad recursion seems more likely, and that'll just throw. If you hit a loop and are able to figure it out, please [open an issue]().
 
+3.) **Equivalent mutations** -- there may be mutations that are functionally identical. For instance, given this source code:
+
+```js
+if (nextValue === value) {
+  // ...
+}
+```
+
+We will generate two functionally identical mutants:
+
+```js
+// invert conditional test
+if (!(nextValue === value)) {
+  // ...
+}
+
+// swap binary operators
+if (nextValue !== value) {
+  // ...
+}
+```
+
+This could skew metrics on kill rate since a single fix will kill both mutants. That said, I probably won't address this unless there is a more compelling reason.
 
 ## API
 ```js
@@ -68,7 +91,7 @@ You can pass in any of the configuration parameters that are strings through the
 `perturb --testGlob '/**/*-test.js' --testDir 'test-unit'"`
 
 ## Interfaces
-Various configuration parameters allow you to pass in functions which will interact with internal data representations. They are documented here in [Web IDL](https://heycam.github.io/webidl/)
+Various configuration parameters allow you to pass in functions which will interact with internal data representations. They are documented here in [IDL](https://heycam.github.io/webidl/)
 
 ### `PerturbReport`
 ```idl
@@ -82,11 +105,9 @@ interface PerturbReport {
 ### `Meta`
 ```idl
 interface Metadata {
-  attribute date startedAt;
-  attribute date endedAt;
+  attribute boolean errored;
   attribute number duration;
   attribute number matchCount;
-  attribute boolean errored;
   attribute number mutantCount;
   attribute number mutantKillCount;
   attribute number killRate;
@@ -94,6 +115,8 @@ interface Metadata {
 ```
 
 ### `Config`
+
+
 ```idl
 interface Config {
   attribute string sharedParent;
@@ -103,8 +126,9 @@ interface Config {
   attribute string testDir;
   attribute string testGlob;
   attribute string testTemp;
-  void reporter([]MutationReport reports);
-  void matcher(string sourcePath, string testPath);
+  void matchReporter(Match match);
+  void mutantReporter(Mutant mutant);
+  void summaryReporter(Meta meta);
 }
 ```
 
