@@ -25,6 +25,7 @@ program
   .option("-s, --sourceDir <sourceDir>", "source directory relative to root directory")
   .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
   .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
+  .option("-i, --interception", "use interception strategy (no disk I/O)")
   .parse(process.argv);
 
 if (program.rootDir && program.rootDir[0] !== "/") {
@@ -36,7 +37,8 @@ var config = assignNoUndefined({}, {
   testDir: program.testDir,
   sourceDir: program.sourceDir,
   testGlob: program.testGlob,
-  sourceGlob: program.sourceGlob
+  sourceGlob: program.sourceGlob,
+  interception: program.interception
 });
 
 // this will become the default reporter
