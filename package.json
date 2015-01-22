@@ -37,7 +37,7 @@
   },
   "scripts": {
     "example": "./bin/perturb -r ./example",
-    "dogfood": "./bin/perturb -r ./",
+    "dogfood": "./bin/perturb -r ./ --interception",
     "test": "mocha ./test/**/*.js"
   },
   "author": "Nick Bottomley (github.com/nickb1080)",
