@@ -36,8 +36,8 @@
     "watch": "^0.13.0"
   },
   "scripts": {
-    "example": "./bin/perturb -r ./example",
-    "dogfood": "./bin/perturb -r ./ --interception",
+    "example": "NODE_ENV='testing' ./bin/perturb -r ./example",
+    "dogfood": "NODE_ENV='testing' ./bin/perturb -r ./",
     "test": "mocha ./test/**/*.js"
   },
   "author": "Nick Bottomley (github.com/nickb1080)",
