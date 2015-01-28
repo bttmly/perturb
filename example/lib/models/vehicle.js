@@ -1,3 +1,5 @@
+"use strict";
+
 function Vehicle () {
   this.position = 0;
   this.occupants = [];
@@ -27,5 +29,12 @@ Vehicle.prototype.disembark = function (occupant) {
   }
   return false;
 };
+
+// this should force a mutation that fails on require/compile
+
+["a", "b", "c"].reduce(function (acc, ch) {
+  acc[ch] = ch.charCodeAt(0);
+  return acc;
+}, {});
 
 module.exports = Vehicle;
