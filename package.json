@@ -23,14 +23,17 @@
     "lodash.last": "^2.4.1",
     "lodash.partial": "^2.4.1",
     "lodash.pick": "^2.4.1",
+    "lodash.some": "^3.0.0",
     "long-stack-traces": "^0.1.2",
     "longjohn": "^0.2.4",
     "make-module": "^3.0.0",
     "mocha": "^2.1.0",
     "node-emoji": "^0.1.0",
+    "npm": "^2.3.0",
     "object-assign": "^2.0.0"
   },
   "devDependencies": {
+    "chai": "^1.10.0",
     "growl": "^1.8.1",
     "sync-exec": "^0.4.0",
     "watch": "^0.13.0"
