@@ -20,18 +20,22 @@ function chooseNodeTypeExcept (except) {
   var i = keys.length;
 }
 
+function contains (arr, value) {
+  return arr.indexOf(value) !== -1;
+}
+
 var mutatorToAllowedNodeTypeMap = {
-  invertConditionalTest: constants.NODES_WITH_TEST,
-  reverseFunctionParameters: constants.FUNC_NODES,
-  dropReturn: NODE_TYPES.ReturnStatement,
-  dropArrayElement: NODE_TYPES.ArrayExpression,
-  dropObjectProperty: NODE_TYPES.ObjectExpression,
-  tweakLiteralValue: NODE_TYPES.Literal,
-  invertIncDecOperators: NODE_TYPES.UpdateExpression,
-  swapBinaryOperators: NODE_TYPES.BinaryExpression,
-  swapLogicalOperators: NODE_TYPES.LogicalExpression,
-  dropUnaryOperator: NODE_TYPES.UnaryExpression,
-  dropMemberAssignment: NODE_TYPES.AssignmentExpression
+  invertConditionalTest: Object.keys(constants.NODES_WITH_TEST),
+  reverseFunctionParameters: Object.keys(constants.FUNC_NODES),
+  dropReturn: [NODE_TYPES.ReturnStatement],
+  dropArrayElement: [NODE_TYPES.ArrayExpression],
+  dropObjectProperty: [NODE_TYPES.ObjectExpression],
+  tweakLiteralValue: [NODE_TYPES.Literal],
+  invertIncDecOperators: [NODE_TYPES.UpdateExpression],
+  swapBinaryOperators: [NODE_TYPES.BinaryExpression],
+  swapLogicalOperators: [NODE_TYPES.LogicalExpression],
+  dropUnaryOperator: [NODE_TYPES.UnaryExpression],
+  dropMemberAssignment: [NODE_TYPES.AssignmentExpression]
 };
 
 describe("getMutatorForNode()", function () {
@@ -60,7 +64,7 @@ describe("mutators", function () {
     Object.keys(m).forEach(function (key) {
       expect(function () {
         m[key]({})
-      }).to.throw("Node must be an Immutable.js keyed iterable");
+      }).to.throw(/^Node must be an Immutable\.js keyed iterable/);
     });
   });
 
@@ -69,13 +73,20 @@ describe("mutators", function () {
       Object.keys(mutatorToAllowedNodeTypeMap).sort());
   });
 
-  xit("each mutator accepts only specified node types", function () {
+  it("each mutator accepts only specified node types", function () {
+    var map = mutatorToAllowedNodeTypeMap;
     Object.keys(m).forEach(function (key) {
       Object.keys(constants.NODE_TYPES).forEach(function (type) {
-        if (typeof mutatorToAllowedNodeTypeMap[key] === "object") {
+        var node = makeNodeOfType(type);
 
+        if (contains(map[key], type))
+          return expect(function () {
+            m[key](node);
+          }).to.not.throw(/^Node is of wrong type\./);
 
-        }
+        expect(function () {
+          m[key](node)
+        }).to.throw(/^Node is of wrong type\./);
       });
     });
   });
