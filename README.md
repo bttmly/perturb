@@ -25,7 +25,7 @@ _Within a project for programmatic use or for `package.json` scripts_
 `npm i perturb`
 
 ## About
-`perturb` is a mutation testing framework for JavaScript projects, helping you ensure the quality of your tests.
+`perturb` is a mutation testing framework for JavaScript projects. It helps determine the quality of unit tests.
 
 "Mutation testing is used to design new software tests and evaluate the quality of existing software tests. Mutation testing involves modifying a program in small ways." 
 
@@ -33,15 +33,15 @@ _Within a project for programmatic use or for `package.json` scripts_
 
 Perturb takes your source code, parses the [AST](http://en.wikipedia.org/wiki/Abstract_syntax_tree), generates mutations, and runs your test suite against them. If all your tests pass when run against a mutant, you probably missed a test. It is currently optimized for projects in which there is a 1:1 correlation between source and test files.
 
-Mutation testing is different from and generally more comprehensive than code coverage metrics.Unit tests are one way way of specifying the behavior of software. If a mutation is not covered by a unit test, then that aspect of the program is unspecified. 
+Mutation testing is different from and generally more comprehensive than code coverage metrics. Unit tests are one way way of specifying the behavior of software. If a mutation is not covered by a unit test, then that aspect of the program is unspecified. 
 
 ## Stability Disclaimer
-This project is in very early development, and should be considered _experimental_. It "works", but there are a ton of issues to address and core features to add. The configuration API (the only public interface to `perturb`) is subject to breaking changes. Any and all ideas, suggestions, contributions welcome. Just open an [issue]() or a [pull request]().
+This project is in very early development, and should be considered _experimental_. It "works", but there are a ton of issues to address and core features to add. The configuration API (the only public interface to `perturb`) is subject to breaking changes. Any and all ideas, suggestions, contributions welcome. Just open an [issue](https://github.com/nickb1080/perturb/issues) or a [pull request](https://github.com/nickb1080/perturb/pulls).
 
 ## Known Issues
 1.) **Mocha only** -- Perturb only supports Mocha as a test runner at this point. PRs welcome for adding other test runners. I plan to add support for [tap](http://testanything.org/)-[compliant](https://github.com/isaacs/node-tap) [harnesses](git@github.com:substack/tape.git) eventually. If you want another test runner, open an issue, or better, yet a PR.
 
-2.) **Infinite loops** -- mutating loop constructs like `while` and `for` is tricky, given the many ways in which these loops might terminate. First and foremost, the mutation to swap `++` and `--` is currently disabled, because it will break most `for`-loops. However, infinite loops may still occur in some cases. If running `perturb` seems to hang, this is the likely culprit. Luckily, hard synchronous loops are somewhat rare; blowing the call stack with bad recursion seems more likely, and that'll just throw. If you hit a loop and are able to figure it out, please [open an issue]().
+2.) **Infinite loops** -- mutating loop constructs like `while` and `for` is tricky, given the many ways in which these loops might terminate. First and foremost, the mutation to swap `++` and `--` is currently disabled, because it will break most `for`-loops. However, infinite loops may still occur in some cases. If running `perturb` seems to hang, this is the likely culprit. Luckily, hard synchronous loops are somewhat rare; blowing the call stack with bad recursion is probably a more likely mutation result, and that'll should just throw. If you hit a loop and are able to figure it out, please [open an issue](https://github.com/nickb1080/perturb/issues).
 
 3.) **Equivalent mutations** -- there may be mutations that are functionally identical. For instance, given this source code:
 
@@ -65,7 +65,7 @@ if (nextValue !== value) {
 }
 ```
 
-This could skew metrics on kill rate since a single fix will kill both mutants. That said, I probably won't address this unless there is a more compelling reason.
+This could skew metrics on kill rate since a single fix will kill both mutants. That said, it doesn't seem like a real problem so far.
 
 ## API
 ```js
