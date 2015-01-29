@@ -27,9 +27,8 @@ _Within a project for programmatic use or for `package.json` scripts_
 ## About
 `perturb` is a mutation testing framework for JavaScript projects. It helps determine the quality of unit tests.
 
-"Mutation testing is used to design new software tests and evaluate the quality of existing software tests. Mutation testing involves modifying a program in small ways." 
-
-- [Wikipedia](http://en.wikipedia.org/wiki/Mutation_testing)
+> "Mutation testing is used to design new software tests and evaluate the quality of existing software tests. Mutation testing involves modifying a program in small ways." 
+- [Source](http://en.wikipedia.org/wiki/Mutation_testing)
 
 Perturb takes your source code, parses the [AST](http://en.wikipedia.org/wiki/Abstract_syntax_tree), generates mutations, and runs your test suite against them. If all your tests pass when run against a mutant, you probably missed a test. It is currently optimized for projects in which there is a 1:1 correlation between source and test files.
 
