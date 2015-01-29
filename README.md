@@ -37,6 +37,9 @@ Mutation testing is different from and generally more comprehensive than code co
 ## Stability Disclaimer
 This project is in very early development, and should be considered _experimental_. It "works", but there are a ton of issues to address and core features to add. The configuration API (the only public interface to `perturb`) is subject to breaking changes. Any and all ideas, suggestions, contributions welcome. Just open an [issue](https://github.com/nickb1080/perturb/issues) or a [pull request](https://github.com/nickb1080/perturb/pulls).
 
+## Compile-to-JS Languages
+I interested in eventually providing an entry point for extensions which mutate compile-to-JS languages like CoffeeScript. You can of course already compile your code to JavaScript and then mutate it, but it will be difficult to track down exactly what mutations aren't satisfied. Any contributions in this area are very welcome.
+
 ## Known Issues
 1.) **Mocha only** -- Perturb only supports Mocha as a test runner at this point. PRs welcome for adding other test runners. I plan to add support for [tap](http://testanything.org/)-[compliant](https://github.com/isaacs/node-tap)  [harnesses](https://github.com/substack/tape) eventually. If you want another test runner, open an issue, or better, yet a PR.
 
