@@ -3,6 +3,7 @@
 var expect = require("chai").expect;
 var assign = require("object-assign");
 var I = require("immutable");
+var esprima = require("esprima");
 var partial = require("lodash.partial");
 
 var constants = require("../lib/constants");
@@ -10,7 +11,22 @@ var getMutatorForNode = require("../lib/mutators");
 
 var NODE_TYPES = constants.NODE_TYPES;
 
+var originalImmutableMapGet = I.Map.prototype.get;
+
+I.Map.prototype.get = function () {
+  var result = originalImmutableMapGet.apply(this, arguments);
+  if (result == null) throw new Error("exit Attempted to access undefined property");
+  return result;
+};
+
+function nodeFromCode (code) {
+  var ast = esprima.parse(code);
+  if (ast.body.length !== 1) throw new Error("More than one node created");
+  return I.fromJS(ast.body[0]);
+}
+
 function makeNodeOfType (type, props) {
+  if (!(type in NODE_TYPES)) throw new Error("Invalid node type.");
   props = props || {};
   return I.Map(assign({
     type: type
@@ -90,8 +106,32 @@ describe("mutators", function () {
     });
   });
 
-  xdescribe("invertConditionalTest()", function () {
+  describe("invertConditionalTest()", function () {
+    it("inverts the test property of the node", function () {
+      var arg = "someIdentifier";
+      var node = makeNodeOfType("IfStatement", {
+        test: arg
+      });
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("invertConditionalTest");
+      var test = mutator(node).get("test");
+      expect(test.get("type")).to.equal("UnaryExpression");
+      expect(test.get("operator")).to.equal("!");
+      expect(test.get("argument")).to.equal(arg);
+    });
+  });
 
+  describe("reverseFunctionParameters()", function () {
+    it("reverses the order of a function's arguments", function () {
+      var node = nodeFromCode("function func (a, b, c, d) {}");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("reverseFunctionParameters");
+      var mutated = mutator(node);
+      expect(mutated.getIn(["params", "0", "name"])).to.equal("d");
+      expect(mutated.getIn(["params", "1", "name"])).to.equal("c");
+      expect(mutated.getIn(["params", "2", "name"])).to.equal("b");
+      expect(mutated.getIn(["params", "3", "name"])).to.equal("a");
+    });
   });
 
 });
