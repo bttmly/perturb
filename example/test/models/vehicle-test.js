@@ -5,7 +5,7 @@ var assert = require("assert");
 var Vehicle = require("../../lib/models/vehicle");
 
 describe("Vehicle", function () {
-  
+
   var v;
 
   beforeEach(function () {

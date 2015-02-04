@@ -40,7 +40,9 @@
   },
   "scripts": {
     "example": "NODE_ENV='testing' ./bin/perturb -r ./example",
+    "example-i": "NODE_ENV='testing' ./bin/perturb -r ./example -i",
     "dogfood": "NODE_ENV='testing' ./bin/perturb -r ./",
+    "dogfood-i": "NODE_ENV='testing' ./bin/perturb -r ./ -i",
     "test": "mocha ./test/**/*.js"
   },
   "author": "Nick Bottomley (github.com/nickb1080)",
