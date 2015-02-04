@@ -1,3 +1,5 @@
+"use strict";
+
 var expect = require("chai").expect;
 var assign = require("object-assign");
 var I = require("immutable");
@@ -13,11 +15,6 @@ function makeNodeOfType (type, props) {
   return I.Map(assign({
     type: type
   }, props));
-}
-
-function chooseNodeTypeExcept (except) {
-  var keys = Object.keys(NODE_TYPES);
-  var i = keys.length;
 }
 
 function contains (arr, value) {
@@ -63,7 +60,7 @@ describe("mutators", function () {
   it("each mutator throws if not passed an Immutable keyed iterable", function () {
     Object.keys(m).forEach(function (key) {
       expect(function () {
-        m[key]({})
+        m[key]({});
       }).to.throw(/^Node must be an Immutable\.js keyed iterable/);
     });
   });
@@ -75,6 +72,8 @@ describe("mutators", function () {
 
   it("each mutator accepts only specified node types", function () {
     var map = mutatorToAllowedNodeTypeMap;
+    var wrongTypeRe = /^Node is of wrong type\./;
+
     Object.keys(m).forEach(function (key) {
       Object.keys(constants.NODE_TYPES).forEach(function (type) {
         var node = makeNodeOfType(type);
@@ -82,16 +81,16 @@ describe("mutators", function () {
         if (contains(map[key], type))
           return expect(function () {
             m[key](node);
-          }).to.not.throw(/^Node is of wrong type\./);
+          }).to.not.throw(wrongTypeRe);
 
         expect(function () {
-          m[key](node)
-        }).to.throw(/^Node is of wrong type\./);
+          m[key](node);
+        }).to.throw(wrongTypeRe);
       });
     });
   });
 
-  describe("invertConditionalTest()", function () {
+  xdescribe("invertConditionalTest()", function () {
 
   });
 
