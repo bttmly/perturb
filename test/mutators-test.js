@@ -127,6 +127,8 @@ describe("mutators", function () {
       var mutator = getMutatorForNode(node);
       expect(mutator.name).to.equal("reverseFunctionParameters");
       var mutated = mutator(node);
+      expect(mutated.get("type")).to.equal("FunctionDeclaration");
+      expect(mutated.getIn(["id", "name"])).to.equal("func");
       expect(mutated.getIn(["params", "0", "name"])).to.equal("d");
       expect(mutated.getIn(["params", "1", "name"])).to.equal("c");
       expect(mutated.getIn(["params", "2", "name"])).to.equal("b");
