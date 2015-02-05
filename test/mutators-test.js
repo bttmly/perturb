@@ -184,7 +184,6 @@ describe("mutators", function () {
     it("removes the first property of an object literal", function () {
       var node = nodeFromCode("x = {a: 1, b: 2, c: 3}").getIn(["expression", "right"]);
       expect(node.get("type")).to.equal("ObjectExpression");
-
       var mutator = getMutatorForNode(node);
       expect(mutator.name).to.equal("dropObjectProperty");
       var mutated = mutator(node);
@@ -266,6 +265,64 @@ describe("mutators", function () {
       var mutated = mutator(node);
       expect(mutated.get("type")).to.equal("MemberExpression");
     });
+  });
+
+  describe("tweakLiteralValue()", function () {
+    it("alters NON-EMPTY string literals by lopping off the last character", function () {
+      var node = nodeFromCode("'hello';").get("expression");
+      expect(node.get("value")).to.equal("hello");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("tweakLiteralValue");
+      var mutated = mutator(node);
+      expect(mutated.get("value")).to.equal("ello");
+    });
+
+    it("alters EMPTY string literals by replacing them with 'a'", function () {
+      var node = nodeFromCode("'hello';").get("expression");
+      expect(node.get("value")).to.equal("hello");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("tweakLiteralValue");
+      var mutated = mutator(node);
+      expect(mutated.get("value")).to.equal("ello");
+    });
+
+    it("alters number literals by adding 1", function () {
+      var node = nodeFromCode("123;").get("expression");
+      expect(node.get("value")).to.equal(123);
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("tweakLiteralValue");
+      var mutated = mutator(node);
+      expect(mutated.get("value")).to.equal(124);
+    });
+
+    it("alters `true` literals by replacing with `false`", function () {
+      var node = nodeFromCode("true;").get("expression");
+      expect(node.get("value")).to.equal(true);
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("tweakLiteralValue");
+      var mutated = mutator(node);
+      expect(mutated.get("value")).to.equal(false);
+    });
+
+    it("alters `false` literals by replacing with `true`", function () {
+      var node = nodeFromCode("false;").get("expression");
+      expect(node.get("value")).to.equal(false);
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("tweakLiteralValue");
+      var mutated = mutator(node);
+      expect(mutated.get("value")).to.equal(true);
+    });
+
+    it("does not alter regular expression literals", function () {
+      var node = nodeFromCode("/hello/;");
+      // expect(node.get("value")).to.equal("");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("tweakLiteralValue");
+      var mutated = mutator(node);
+      expect(mutated.get("value")).to.equal(true);
+
+    });
+
   });
 
 });
