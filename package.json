@@ -24,11 +24,8 @@
     "lodash.partial": "^2.4.1",
     "lodash.pick": "^2.4.1",
     "lodash.some": "^3.0.0",
-    "long-stack-traces": "^0.1.2",
-    "longjohn": "^0.2.4",
     "make-module": "^3.0.0",
     "mocha": "^2.1.0",
-    "node-emoji": "^0.1.0",
     "npm": "^2.3.0",
     "object-assign": "^2.0.0"
   },

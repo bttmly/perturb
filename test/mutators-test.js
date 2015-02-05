@@ -13,12 +13,6 @@ var NODE_TYPES = constants.NODE_TYPES;
 
 var originalImmutableMapGet = I.Map.prototype.get;
 
-I.Map.prototype.get = function () {
-  var result = originalImmutableMapGet.apply(this, arguments);
-  if (result == null) throw new Error("exit Attempted to access undefined property");
-  return result;
-};
-
 function nodeFromCode (code) {
   var ast = esprima.parse(code);
   if (ast.body.length !== 1) throw new Error("More than one node created");
@@ -50,6 +44,19 @@ var mutatorToAllowedNodeTypeMap = {
   dropUnaryOperator: [NODE_TYPES.UnaryExpression],
   dropMemberAssignment: [NODE_TYPES.AssignmentExpression]
 };
+
+// before(function () {
+//   I.Map.prototype.get = function () {
+//     var result = originalImmutableMapGet.apply(this, arguments);
+//     console.log(result);
+//     if (result === undefined) throw new Error("exit Attempted to access undefined property");
+//     return result;
+//   };
+// });
+
+// after(function () {
+//   I.Map.prototype.get = originalImmutableMapGet;
+// });
 
 describe("getMutatorForNode()", function () {
   it("is a function", function () {
@@ -136,6 +143,33 @@ describe("mutators", function () {
     });
   });
 
+  describe("dropReturn()", function () {
+    it("removes a return statement, leaving the argument", function () {
+      var node = nodeFromCode("function id (x) { return x; }").getIn(["body", "body", 0]);
+      expect(node.get("type")).to.equal("ReturnStatement");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("dropReturn");
+      expect(node.get("argument")).to.be.ok();
+      var mutated = mutator(node);
+      expect(mutated.getIn(["expression", "type"])).to.equal("Identifier");
+      expect(mutated.getIn(["expression", "name"])).to.equal("x");
+    });
+
+    it("removes a return statement without an argument, replacing it with `void 0;`", function () {
+      var node = nodeFromCode("function id (x) { return; }").getIn(["body", "body", 0]);
+      expect(node.get("type")).to.equal("ReturnStatement");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("dropReturn");
+      expect(node.get("argument")).to.not.be.ok();
+      var mutated = mutator(node);
+      expect(mutated.get("type")).to.equal("UnaryExpression");
+      expect(mutated.get("operator")).to.equal("void");
+      expect(mutated.getIn(["argument", "value"])).to.equal(0);
+    });
+  });
+
 });
+
+
 
 
