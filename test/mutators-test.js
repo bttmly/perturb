@@ -168,6 +168,32 @@ describe("mutators", function () {
     });
   });
 
+  describe("dropArrayElement()", function () {
+    it("removes the first element of an array literal", function () {
+      var node = nodeFromCode("[1, 2, 3]").get("expression");
+      expect(node.get("type")).to.equal("ArrayExpression");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("dropArrayElement");
+      var mutated = mutator(node);
+      expect(mutated.get("elements").size).to.equal(2);
+      expect(mutated.get("elements").last().get("value")).to.equal(3);
+    });
+  });
+
+  describe("dropObjectProperty()", function () {
+    it("removes the first property of an object literal", function () {
+      var node = nodeFromCode("x = {a: 1, b: 2, c: 3}").getIn(["expression", "right"]);
+      expect(node.get("type")).to.equal("ObjectExpression");
+
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("dropObjectProperty");
+      var mutated = mutator(node);
+      expect(mutated.get("properties").size).to.equal(2);
+      expect(mutated.get("properties").last().getIn(["key", "name"])).to.equal("c");
+      expect(mutated.get("properties").last().getIn(["value", "value"])).to.equal(3);
+    });
+  });
+
 });
 
 
