@@ -38,7 +38,7 @@ var mutatorToAllowedNodeTypeMap = {
   dropArrayElement: [NODE_TYPES.ArrayExpression],
   dropObjectProperty: [NODE_TYPES.ObjectExpression],
   tweakLiteralValue: [NODE_TYPES.Literal],
-  invertIncDecOperators: [NODE_TYPES.UpdateExpression],
+  // invertIncDecOperators: [NODE_TYPES.UpdateExpression],
   swapBinaryOperators: [NODE_TYPES.BinaryExpression],
   swapLogicalOperators: [NODE_TYPES.LogicalExpression],
   dropUnaryOperator: [NODE_TYPES.UnaryExpression],
@@ -225,6 +225,40 @@ describe("mutators", function () {
         expect(mutated.get("type")).to.equal("Identifier");
         expect(mutated.get("name")).to.equal("x");
       });
+    });
+  });
+
+  describe("swapBinaryOperators()", function () {
+    var swaps = [
+      ["+", "-"],
+      ["*", "/"],
+      [">", "<="],
+      ["<", ">="],
+      ["==", "!="],
+      ["===", "!=="]
+    ];
+    swaps.forEach(function (operatorPair) {
+      var originalOp = operatorPair[0];
+      var newOp = operatorPair[1];
+      it(["changes", originalOp, "to", newOp].join(" "), function () {
+        var node = nodeFromCode([1, originalOp, 2].join(" ")).get("expression");
+        var mutator = getMutatorForNode(node);
+        expect(mutator.name).to.equal("swapBinaryOperators");
+        var mutated = mutator(node);
+        expect(mutated.get("operator")).to.equal(newOp);
+      })
+    });
+
+  });
+
+  describe("dropMemberAssignment()", function () {
+    it("drops a member assignment", function () {
+      var node = nodeFromCode("global.count = 100;").get("expression");
+      expect(node.get("type")).to.equal("AssignmentExpression");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("dropMemberAssignment");
+      var mutated = mutator(node);
+      expect(mutated.get("type")).to.equal("MemberExpression");
     });
   });
 
