@@ -143,6 +143,18 @@ describe("mutators", function () {
       expect(mutated.getIn(["params", "2", "name"])).to.equal("b");
       expect(mutated.getIn(["params", "3", "name"])).to.equal("a");
     });
+
+    it("reverses the order of a function's arguments", function () {
+      var node = nodeFromCode("function func (a, b, c) {}");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("reverseFunctionParameters");
+      var mutated = mutator(node);
+      expect(mutated.get("type")).to.equal("FunctionDeclaration");
+      expect(mutated.getIn(["id", "name"])).to.equal("func");
+      expect(mutated.getIn(["params", "0", "name"])).to.equal("c");
+      expect(mutated.getIn(["params", "1", "name"])).to.equal("b");
+      expect(mutated.getIn(["params", "2", "name"])).to.equal("a");
+    });
   });
 
   describe("dropReturn()", function () {
@@ -328,6 +340,11 @@ describe("mutators", function () {
 
   describe("getMutatorForNode() in exceptional cases", function () {
 
+    it("returns null for a node with undefined type (although this shouldn't be happening)", function () {
+      var node = I.fromJS({ type: undefined });
+      expect(getMutatorForNode(node)).to.equal(null);
+    })
+
     it("returns null for an empty array literal", function () {
       var node = nodeFromCode("[];").get("expression");
       expect(node.get("type")).to.equal("ArrayExpression");
@@ -398,12 +415,18 @@ describe("mutators", function () {
       global.__perturbConfig__ = {};
     });
 
+    afterEach(function () {
+      delete global.__perturbConfig__;
+    });
+
     Object.keys(FLAG_TO_TYPE_MAP).forEach(function (flag) {
       var types = FLAG_TO_TYPE_MAP[flag];
       types.forEach(function (type) {
         it("the `" + flag + "` flag skips " + type, function () {
-          var node = makeNodeOfType(type);
           global.__perturbConfig__[flag] = true;
+          var node = makeNodeOfType(type)
+            .set("operator", "+")
+            .set("test", true);
           expect(getMutatorForNode(node)).to.equal(null);
         });
       });

@@ -2,7 +2,7 @@ function likeEs5Map (arr, cb) {
   var len = arr.length;
   var result = Array(len);
   for (var i = 0; i < len; i++) {
-    if (arr.hasOwnProperty(i)) {
+    if (i in arr) {
       result[i] = cb(arr[i], i, arr);
     }
   }
