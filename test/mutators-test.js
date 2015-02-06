@@ -47,6 +47,13 @@ var mutatorToAllowedNodeTypeMap = {
   dropMemberAssignment: [NODE_TYPES.AssignmentExpression]
 };
 
+var nodesThatGetMutators = Object.keys(mutatorToAllowedNodeTypeMap).reduce(function (map, key) {
+  mutatorToAllowedNodeTypeMap[key].forEach(function (name) {
+    map[name] = true;
+  });
+  return map;
+}, {});
+
 // before(function () {
 //   I.Map.prototype.get = function () {
 //     var result = originalImmutableMapGet.apply(this, arguments);
@@ -343,7 +350,15 @@ describe("mutators", function () {
     it("returns null for a node with undefined type (although this shouldn't be happening)", function () {
       var node = I.fromJS({ type: undefined });
       expect(getMutatorForNode(node)).to.equal(null);
-    })
+    });
+
+    Object.keys(NODE_TYPES).forEach(function (type) {
+      if (nodesThatGetMutators[type]) return;
+      it("returns null for nodes of type " + type, function () {
+        var node = makeNodeOfType(type);
+        expect(getMutatorForNode(node)).to.equal(null);
+      });
+    });
 
     it("returns null for an empty array literal", function () {
       var node = nodeFromCode("[];").get("expression");
