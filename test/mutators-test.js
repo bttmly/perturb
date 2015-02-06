@@ -15,7 +15,9 @@ var originalImmutableMapGet = I.Map.prototype.get;
 
 function nodeFromCode (code) {
   var ast = esprima.parse(code);
-  if (ast.body.length !== 1) throw new Error("More than one node created");
+  if (ast.body.length !== 1) {
+    throw new Error("More than one node created", JSON.stringify(ast.body));
+  }
   return I.fromJS(ast.body[0]);
 }
 
@@ -165,6 +167,9 @@ describe("mutators", function () {
       expect(mutated.get("type")).to.equal("UnaryExpression");
       expect(mutated.get("operator")).to.equal("void");
       expect(mutated.getIn(["argument", "value"])).to.equal(0);
+      expect(mutated.getIn(["argument", "raw"])).to.equal("0");
+      expect(mutated.get("prefix")).to.equal(true);
+
     });
   });
 
@@ -275,15 +280,17 @@ describe("mutators", function () {
       expect(mutator.name).to.equal("tweakLiteralValue");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal("ello");
+      expect(mutated.get("raw")).to.equal('"ello"');
     });
 
     it("alters EMPTY string literals by replacing them with 'a'", function () {
-      var node = nodeFromCode("'hello';").get("expression");
-      expect(node.get("value")).to.equal("hello");
+      var node = nodeFromCode("'';").get("expression");
+      expect(node.get("value")).to.equal("");
       var mutator = getMutatorForNode(node);
       expect(mutator.name).to.equal("tweakLiteralValue");
       var mutated = mutator(node);
-      expect(mutated.get("value")).to.equal("ello");
+      expect(mutated.get("value")).to.equal("a");
+      expect(mutated.get("raw")).to.equal('"a"');
     });
 
     it("alters number literals by adding 1", function () {
@@ -293,6 +300,7 @@ describe("mutators", function () {
       expect(mutator.name).to.equal("tweakLiteralValue");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal(124);
+      expect(mutated.get("raw")).to.equal("124");
     });
 
     it("alters `true` literals by replacing with `false`", function () {
@@ -302,6 +310,7 @@ describe("mutators", function () {
       expect(mutator.name).to.equal("tweakLiteralValue");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal(false);
+      expect(mutated.get("raw")).to.equal("false");
     });
 
     it("alters `false` literals by replacing with `true`", function () {
@@ -311,19 +320,41 @@ describe("mutators", function () {
       expect(mutator.name).to.equal("tweakLiteralValue");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal(true);
+      expect(mutated.get("raw")).to.equal("true");
     });
 
   });
 
   describe("getMutatorForNode()", function () {
 
+    it("returns null for an empty array literal", function () {
+      var node = nodeFromCode("[];").get("expression");
+      expect(node.get("type")).to.equal("ArrayExpression");
+      expect(getMutatorForNode(node)).to.equal(null);
+    });
+
+    it("returns null for an empty object literal", function () {
+      var node = nodeFromCode("({});").get("expression");
+      expect(node.get("type")).to.equal("ObjectExpression");
+      expect(getMutatorForNode(node)).to.equal(null);
+    });
+
     it("returns null for a regular expression literal", function () {
-      it("returns null not alter regular expression literals", function () {
-        var node = nodeFromCode("/hello/;").get("expression");
-        expect(node.get("type")).to.equal("Literal");
+      var node = nodeFromCode("/hello/;").get("expression");
+      expect(node.get("type")).to.equal("Literal");
+      expect(getMutatorForNode(node)).to.equal(null);
+    });
+
+    
+    var NO_SWAP_OPS = ["<<", ">>", ">>>","%", "|", "^", "&", "in", "instanceof", /* ".." */];
+    NO_SWAP_OPS.forEach(function (op) {
+      it("returns null for binary operation with " + op, function () {
+        var node = nodeFromCode([5, op, 10, ";"].join(" ")).get("expression");
+        expect(node.get("type")).to.equal("BinaryExpression");
         expect(getMutatorForNode(node)).to.equal(null);
       });
-    })
+
+    });
 
 
   });
