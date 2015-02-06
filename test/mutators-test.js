@@ -313,15 +313,18 @@ describe("mutators", function () {
       expect(mutated.get("value")).to.equal(true);
     });
 
-    it("does not alter regular expression literals", function () {
-      var node = nodeFromCode("/hello/;");
-      // expect(node.get("value")).to.equal("");
-      var mutator = getMutatorForNode(node);
-      expect(mutator.name).to.equal("tweakLiteralValue");
-      var mutated = mutator(node);
-      expect(mutated.get("value")).to.equal(true);
+  });
 
-    });
+  describe("getMutatorForNode()", function () {
+
+    it("returns null for a regular expression literal", function () {
+      it("returns null not alter regular expression literals", function () {
+        var node = nodeFromCode("/hello/;").get("expression");
+        expect(node.get("type")).to.equal("Literal");
+        expect(getMutatorForNode(node)).to.equal(null);
+      });
+    })
+
 
   });
 
