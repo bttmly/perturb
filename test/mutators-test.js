@@ -194,6 +194,40 @@ describe("mutators", function () {
     });
   });
 
+  describe("swapLogicalOperators()", function () {
+    it("changes `&&` to `||`", function () {
+      var node = nodeFromCode("x && y;").get("expression");
+      expect(node.get("type")).to.equal("LogicalExpression");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("swapLogicalOperators");
+      var mutated = mutator(node);
+      expect(mutated.get("operator")).to.equal("||");
+    });
+
+    it("changes `||` to `&&`", function () {
+      var node = nodeFromCode("x || y;").get("expression");
+      expect(node.get("type")).to.equal("LogicalExpression");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("swapLogicalOperators");
+      var mutated = mutator(node);
+      expect(mutated.get("operator")).to.equal("&&");
+    });
+  });
+
+  describe("dropUnaryOperator()", function () {
+    ["-", "+", "!", "~", "typeof ", "void ", "delete "].forEach(function (operator) {
+      it("removes the " + operator + "operator", function () {
+        var node = nodeFromCode(operator + "x;").get("expression");
+        expect(node.get("type")).to.equal("UnaryExpression");
+        var mutator = getMutatorForNode(node);
+        expect(mutator.name).to.equal("dropUnaryOperator");
+        var mutated = mutator(node);
+        expect(mutated.get("type")).to.equal("Identifier");
+        expect(mutated.get("name")).to.equal("x");
+      });
+    });
+  });
+
 });
 
 
