@@ -160,12 +160,14 @@ interface MutantReport {
 enum MutantName {
   "invertConditionalTest",
   "tweakLiteralValue",
-  "removeReturn",
+  "dropReturn",
   "dropArrayElement",
   "dropObjectProperty",
+  "dropUnaryOperator",
   "reverseFunctionParameters",
   "swapLogicalOperators",
-  "swapBinaryOperators"
+  "swapBinaryOperators",
+  "dropMemberAssignment"
 }
 ```
 
