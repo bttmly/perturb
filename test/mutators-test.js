@@ -231,11 +231,17 @@ describe("mutators", function () {
   describe("swapBinaryOperators()", function () {
     var swaps = [
       ["+", "-"],
+      ["-", "+"],
       ["*", "/"],
+      ["/", "*"],
       [">", "<="],
+      ["<=", ">"],
       ["<", ">="],
+      [">=", "<"],
       ["==", "!="],
-      ["===", "!=="]
+      ["!=", "=="],
+      ["===", "!=="],
+      ["!==", "==="]
     ];
     swaps.forEach(function (operatorPair) {
       var originalOp = operatorPair[0];
