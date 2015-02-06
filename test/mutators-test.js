@@ -166,6 +166,7 @@ describe("mutators", function () {
       var mutated = mutator(node);
       expect(mutated.get("type")).to.equal("UnaryExpression");
       expect(mutated.get("operator")).to.equal("void");
+      expect(mutated.getIn(["argument", "type"])).to.equal("Literal");
       expect(mutated.getIn(["argument", "value"])).to.equal(0);
       expect(mutated.getIn(["argument", "raw"])).to.equal("0");
       expect(mutated.get("prefix")).to.equal(true);
@@ -325,7 +326,7 @@ describe("mutators", function () {
 
   });
 
-  describe("getMutatorForNode()", function () {
+  describe("getMutatorForNode() in exceptional cases", function () {
 
     it("returns null for an empty array literal", function () {
       var node = nodeFromCode("[];").get("expression");
@@ -345,7 +346,6 @@ describe("mutators", function () {
       expect(getMutatorForNode(node)).to.equal(null);
     });
 
-    
     var NO_SWAP_OPS = ["<<", ">>", ">>>","%", "|", "^", "&", "in", "instanceof", /* ".." */];
     NO_SWAP_OPS.forEach(function (op) {
       it("returns null for binary operation with " + op, function () {
@@ -353,9 +353,62 @@ describe("mutators", function () {
         expect(node.get("type")).to.equal("BinaryExpression");
         expect(getMutatorForNode(node)).to.equal(null);
       });
-
     });
 
+    it("returns null for a function with no arguments", function () {
+      var node = nodeFromCode("function fn () {}");
+      expect(node.get("type")).to.equal("FunctionDeclaration");
+      expect(getMutatorForNode(node)).to.equal(null);
+    });
+
+    it("returns null for a function with one argument", function () {
+      var node = nodeFromCode("function fn (x) {}");
+      expect(node.get("type")).to.equal("FunctionDeclaration");
+      expect(getMutatorForNode(node)).to.equal(null);
+    });
+
+    it("returns null for a function with one argument", function () {
+      var node = nodeFromCode("function fn (x) {}");
+      expect(node.get("type")).to.equal("FunctionDeclaration");
+      expect(getMutatorForNode(node)).to.equal(null);
+    });
+
+    it("returns null for nodes where test is null", function () {
+      var node = nodeFromCode("switch (x) { default: }").getIn(["cases", "0"]);
+      expect(node.get("type")).to.equal("SwitchCase");
+      expect(getMutatorForNode(node)).to.equal(null);
+    });
+  });
+
+  describe("config flags", function () {
+    var FLAG_TO_TYPE_MAP = {
+      ddae: [NODE_TYPES.ArrayExpression],
+      ddop: [NODE_TYPES.ObjectExpression],
+      dtlv: [NODE_TYPES.Literal],
+      dsbo: [NODE_TYPES.BinaryExpression],
+      dduo: [NODE_TYPES.UnaryExpression],
+      dslo: [NODE_TYPES.LogicalExpression],
+      ddr: [NODE_TYPES.ReturnStatement],
+      ddma: [NODE_TYPES.AssignmentExpression],
+      dict: Object.keys(constants.NODES_WITH_TEST),
+      drfp: Object.keys(constants.FUNC_NODES)
+    };
+
+    beforeEach(function () {
+      global.__perturbConfig__ = {};
+    });
+
+    Object.keys(FLAG_TO_TYPE_MAP).forEach(function (flag) {
+      var types = FLAG_TO_TYPE_MAP[flag];
+      types.forEach(function (type) {
+        it("the `" + flag + "` flag skips " + type, function () {
+          var node = makeNodeOfType(type);
+          global.__perturbConfig__[flag] = true;
+          expect(getMutatorForNode(node)).to.equal(null);
+        });
+      });
+
+    });
 
   });
 
