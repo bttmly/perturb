@@ -37,14 +37,15 @@ var mutatorToAllowedNodeTypeMap = {
   invertConditionalTest: Object.keys(constants.NODES_WITH_TEST),
   reverseFunctionParameters: Object.keys(constants.FUNC_NODES),
   dropReturn: [NODE_TYPES.ReturnStatement],
+  dropThrow: [NODE_TYPES.ThrowStatement],
   dropArrayElement: [NODE_TYPES.ArrayExpression],
   dropObjectProperty: [NODE_TYPES.ObjectExpression],
   tweakLiteralValue: [NODE_TYPES.Literal],
-  // invertIncDecOperators: [NODE_TYPES.UpdateExpression],
   swapBinaryOperators: [NODE_TYPES.BinaryExpression],
   swapLogicalOperators: [NODE_TYPES.LogicalExpression],
   dropUnaryOperator: [NODE_TYPES.UnaryExpression],
   dropMemberAssignment: [NODE_TYPES.AssignmentExpression]
+  // invertIncDecOperators: [NODE_TYPES.UpdateExpression],
 };
 
 var nodesThatGetMutators = Object.keys(mutatorToAllowedNodeTypeMap).reduce(function (map, key) {
@@ -53,19 +54,6 @@ var nodesThatGetMutators = Object.keys(mutatorToAllowedNodeTypeMap).reduce(funct
   });
   return map;
 }, {});
-
-// before(function () {
-//   I.Map.prototype.get = function () {
-//     var result = originalImmutableMapGet.apply(this, arguments);
-//     console.log(result);
-//     if (result === undefined) throw new Error("exit Attempted to access undefined property");
-//     return result;
-//   };
-// });
-
-// after(function () {
-//   I.Map.prototype.get = originalImmutableMapGet;
-// });
 
 describe("getMutatorForNode()", function () {
   it("is a function", function () {
@@ -421,6 +409,7 @@ describe("mutators", function () {
       dduo: [NODE_TYPES.UnaryExpression],
       dslo: [NODE_TYPES.LogicalExpression],
       ddr: [NODE_TYPES.ReturnStatement],
+      ddt: [NODE_TYPES.ThrowStatement],
       ddma: [NODE_TYPES.AssignmentExpression],
       dict: Object.keys(constants.NODES_WITH_TEST),
       drfp: Object.keys(constants.FUNC_NODES)
@@ -445,7 +434,6 @@ describe("mutators", function () {
           expect(getMutatorForNode(node)).to.equal(null);
         });
       });
-
     });
 
   });
