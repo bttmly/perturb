@@ -4,14 +4,11 @@ var expect = require("chai").expect;
 var assign = require("object-assign");
 var I = require("immutable");
 var esprima = require("esprima");
-var partial = require("lodash.partial");
 
 var constants = require("../lib/constants");
 var getMutatorForNode = require("../lib/mutators");
 
 var NODE_TYPES = constants.NODE_TYPES;
-
-var originalImmutableMapGet = I.Map.prototype.get;
 
 function nodeFromCode (code) {
   var ast = esprima.parse(code);
