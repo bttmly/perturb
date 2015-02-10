@@ -264,7 +264,7 @@ describe("mutators", function () {
         expect(mutator.name).to.equal("swapBinaryOperators");
         var mutated = mutator(node);
         expect(mutated.get("operator")).to.equal(newOp);
-      })
+      });
     });
 
   });
@@ -277,6 +277,17 @@ describe("mutators", function () {
       expect(mutator.name).to.equal("dropMemberAssignment");
       var mutated = mutator(node);
       expect(mutated.get("type")).to.equal("MemberExpression");
+    });
+  });
+
+  describe("dropThrow()", function () {
+    it("drops a throw statement", function () {
+      var node = nodeFromCode("throw new Error();");
+      expect(node.get("type")).to.equal("ThrowStatement");
+      var mutator = getMutatorForNode(node);
+      expect(mutator.name).to.equal("dropThrow");
+      var mutated = mutator(node);
+      expect(mutated.get("type")).to.equal("NewExpression");
     });
   });
 
