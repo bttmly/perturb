@@ -395,12 +395,6 @@ describe("mutators", function () {
       expect(getMutatorForNode(node)).to.equal(null);
     });
 
-    it("returns null for a function with one argument", function () {
-      var node = nodeFromCode("function fn (x) {}");
-      expect(node.get("type")).to.equal("FunctionDeclaration");
-      expect(getMutatorForNode(node)).to.equal(null);
-    });
-
     it("returns null for nodes where test is null", function () {
       var node = nodeFromCode("switch (x) { default: }").getIn(["cases", "0"]);
       expect(node.get("type")).to.equal("SwitchCase");
