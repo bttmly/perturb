@@ -17,7 +17,6 @@
     "glob": "^4.3.2",
     "immutable": "^3.5.0",
     "intercept-require": "^1.0.0",
-    "lodash.bindall": "^3.0.0",
     "lodash.find": "^3.0.0",
     "lodash.last": "^3.0.0",
     "lodash.partial": "^3.0.0",
@@ -38,9 +37,9 @@
     "example": "NODE_ENV='testing' ./bin/perturb -r ./example",
     "example-i": "NODE_ENV='testing' ./bin/perturb -r ./example -i",
     "test-example": "mocha ./example/test/**/*-test.js",
-    "dogfood": "NODE_ENV='testing' ./bin/perturb -r ./",
-    "dogfood-i": "NODE_ENV='testing' ./bin/perturb -r ./ -i",
-    "test": "mocha ./test/**/*.js"
+    "dogfood": "make dogfood",
+    "dogfood-i": "make dogfood-i",
+    "test": "make test"
   },
   "author": "Nick Bottomley (github.com/nickb1080)",
   "license": "MIT"
