@@ -11,7 +11,7 @@ verb
 
 2.  subject (a system, moving object, or process) to an influence tending to alter its normal or regular state or path.
     
-    _"This module perturbs our tests to check their strength."_
+    _"This module perturbs our source code to check unit test strength."_
 
 
 ## Installation
