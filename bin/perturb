@@ -1,50 +1,61 @@
-#!/usr/bin/env node 
+#!/usr/bin/env node
+
+// shamelessly appropriated from mocha
 
 "use strict";
 
-var program = require("commander");
-
 var path = require("path");
 
-var perturb = require("../");
-var util = require("../lib/util");
-var pkg = require("../package.json");
+var spawn = require("child_process").spawn;
+var perturb = path.join(__dirname, "_perturb");
+var args = [perturb];
 
-function assignNoUndefined (target, source) {
-  Object.keys(source).forEach(function (key) {
-    if (source[key] === undefined) return;
-    target[key] = source[key];
-  });
-  return target;
-}
+var bin = process.argv[0];
 
-program
-  .version(pkg.version)
-  .option("-r, --rootDir <rootDir>", "root directory of the project")
-  .option("-t, --testDir <testDir>", "test directory relative to root directory")
-  .option("-s, --sourceDir <sourceDir>", "source directory relative to root directory")
-  .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
-  .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
-  .option("-i, --interception", "use interception strategy (no disk I/O)")
-  .parse(process.argv);
+process.argv.slice(2).forEach(function (arg) {
+  var flag = arg.split("=")[0];
 
-if (program.rootDir && program.rootDir[0] !== "/") {
-  program.rootDir = path.join(process.cwd(), program.rootDir);
-}
+  switch (flag) {
 
-var config = assignNoUndefined({}, {
-  rootDir: program.rootDir,
-  testDir: program.testDir,
-  sourceDir: program.sourceDir,
-  testGlob: program.testGlob,
-  sourceGlob: program.sourceGlob,
-  interception: program.interception
+  case "--iojs":
+    return bin = "iojs";
+
+  case "--harmony":
+  case "--harmony-proxies":
+  case "--harmony-collections":
+  case "--harmony-generators":
+  case "--harmony_shipping":
+  case "--harmony_arrow_functions":
+  case "--harmony_proxies":
+    return args.unshift(arg);
+
+  default:
+    return args.push(arg);
+
+  }
+
 });
 
-// this will become the default reporter
-function reporter (err, data) {
-  if (err) throw err;
-  console.log(data.meta);
-}
+console.log([bin].concat(args).join(" "));
 
-perturb(config, reporter);
+var proc = spawn(bin, args, {stdio: 'inherit'});
+
+
+proc.on('exit', function (code, signal) {
+  process.on('exit', function(){
+    if (signal) {
+      process.kill(process.pid, signal);
+    } else {
+      process.exit(code);
+    }
+  });
+});
+
+proc.on('error', console.log);
+
+// terminate children.
+process.on('SIGINT', function () {
+  proc.kill('SIGINT'); // calls runner.abort()
+  proc.kill('SIGTERM'); // if that didn't work, we're probably in an infinite loop, so make it die.
+  process.kill(process.pid, 'SIGINT');
+});
