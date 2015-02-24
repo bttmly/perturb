@@ -33,6 +33,7 @@
   "devDependencies": {
     "chai": "^1.10.0",
     "growl": "^1.8.1",
+    "jshint": "^2.6.0",
     "sync-exec": "^0.4.0",
     "watch": "^0.13.0"
   },

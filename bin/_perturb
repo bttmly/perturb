@@ -1,4 +1,4 @@
-#!/usr/bin/env node 
+#!/usr/bin/env node
 
 "use strict";
 
@@ -26,6 +26,7 @@ program
   .option("-s, --sourceDir <sourceDir>", "source directory relative to root directory")
   .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
   .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
+  .option("-c, --testCmd <testCmd>", "test command")
   .option("-i, --interception", "use interception strategy (no disk I/O)")
   .option("-v, --verbose", "lots of logging")
   .parse(process.argv);
@@ -40,7 +41,8 @@ var config = assignNoUndefined({}, {
   sourceDir: program.sourceDir,
   testGlob: program.testGlob,
   sourceGlob: program.sourceGlob,
-  interception: program.interception
+  testCmd: program.testCmd,
+  interception: program.interception,
 });
 
 // this will become the default reporter
