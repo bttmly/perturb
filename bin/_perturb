@@ -47,7 +47,10 @@ var config = assignNoUndefined({}, {
 
 // this will become the default reporter
 function reporter (err, data) {
-  if (err) throw err;
+  if (err) {
+    console.log(err.toString());
+    process.exit(1);
+  }
   var mutants = data.matches[0].mutations;
   console.log(data.meta);
 }
