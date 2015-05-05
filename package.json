@@ -38,9 +38,9 @@
     "watch": "^0.13.0"
   },
   "scripts": {
-    "example": "./bin/perturb -r ./example",
-    "example-i": "NODE_ENV='testing' ./bin/perturb -r ./example -i",
-    "test-example": "mocha ./example/test/**/*-test.js",
+    "example": "make example",
+    "example-i": "make example-i",
+    "test-example": "make test-example",
     "dogfood": "make dogfood",
     "dogfood-i": "make dogfood-i",
     "test": "make test"
