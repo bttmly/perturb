@@ -35,9 +35,9 @@ var mutatorToAllowedNodeTypeMap = {
   reverseFunctionParameters: Object.keys(constants.FUNC_NODES),
   dropReturn: [NODE_TYPES.ReturnStatement],
   dropThrow: [NODE_TYPES.ThrowStatement],
-  dropArrayElement: [NODE_TYPES.ArrayExpression],
-  dropObjectProperty: [NODE_TYPES.ObjectExpression],
-  tweakLiteralValue: [NODE_TYPES.Literal],
+  tweakArrayLiteral: [NODE_TYPES.ArrayExpression],
+  tweakObjectLiteral: [NODE_TYPES.ObjectExpression],
+  tweakPrimitiveLiteral: [NODE_TYPES.Literal],
   swapBinaryOperators: [NODE_TYPES.BinaryExpression],
   swapLogicalOperators: [NODE_TYPES.LogicalExpression],
   dropUnaryOperator: [NODE_TYPES.UnaryExpression],
@@ -178,24 +178,24 @@ describe("mutators", function () {
     });
   });
 
-  describe("dropArrayElement()", function () {
+  describe("tweakArrayLiteral()", function () {
     it("removes the first element of an array literal", function () {
       var node = nodeFromCode("[1, 2, 3]").get("expression");
       expect(node.get("type")).to.equal("ArrayExpression");
       var mutator = getMutatorForNode(node);
-      expect(mutator.name).to.equal("dropArrayElement");
+      expect(mutator.name).to.equal("tweakArrayLiteral");
       var mutated = mutator(node);
       expect(mutated.get("elements").size).to.equal(2);
       expect(mutated.get("elements").last().get("value")).to.equal(3);
     });
   });
 
-  describe("dropObjectProperty()", function () {
+  describe("tweakObjectLiteral()", function () {
     it("removes the first property of an object literal", function () {
       var node = nodeFromCode("x = {a: 1, b: 2, c: 3}").getIn(["expression", "right"]);
       expect(node.get("type")).to.equal("ObjectExpression");
       var mutator = getMutatorForNode(node);
-      expect(mutator.name).to.equal("dropObjectProperty");
+      expect(mutator.name).to.equal("tweakObjectLiteral");
       var mutated = mutator(node);
       expect(mutated.get("properties").size).to.equal(2);
       expect(mutated.get("properties").last().getIn(["key", "name"])).to.equal("c");
@@ -288,12 +288,12 @@ describe("mutators", function () {
     });
   });
 
-  describe("tweakLiteralValue()", function () {
+  describe("tweakPrimitiveLiteral()", function () {
     it("alters NON-EMPTY string literals by lopping off the last character", function () {
       var node = nodeFromCode("'hello';").get("expression");
       expect(node.get("value")).to.equal("hello");
       var mutator = getMutatorForNode(node);
-      expect(mutator.name).to.equal("tweakLiteralValue");
+      expect(mutator.name).to.equal("tweakPrimitiveLiteral");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal("ello");
       expect(mutated.get("raw")).to.equal('"ello"');
@@ -303,7 +303,7 @@ describe("mutators", function () {
       var node = nodeFromCode("'';").get("expression");
       expect(node.get("value")).to.equal("");
       var mutator = getMutatorForNode(node);
-      expect(mutator.name).to.equal("tweakLiteralValue");
+      expect(mutator.name).to.equal("tweakPrimitiveLiteral");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal("a");
       expect(mutated.get("raw")).to.equal('"a"');
@@ -313,7 +313,7 @@ describe("mutators", function () {
       var node = nodeFromCode("123;").get("expression");
       expect(node.get("value")).to.equal(123);
       var mutator = getMutatorForNode(node);
-      expect(mutator.name).to.equal("tweakLiteralValue");
+      expect(mutator.name).to.equal("tweakPrimitiveLiteral");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal(124);
       expect(mutated.get("raw")).to.equal("124");
@@ -323,7 +323,7 @@ describe("mutators", function () {
       var node = nodeFromCode("true;").get("expression");
       expect(node.get("value")).to.equal(true);
       var mutator = getMutatorForNode(node);
-      expect(mutator.name).to.equal("tweakLiteralValue");
+      expect(mutator.name).to.equal("tweakPrimitiveLiteral");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal(false);
       expect(mutated.get("raw")).to.equal("false");
@@ -333,7 +333,7 @@ describe("mutators", function () {
       var node = nodeFromCode("false;").get("expression");
       expect(node.get("value")).to.equal(false);
       var mutator = getMutatorForNode(node);
-      expect(mutator.name).to.equal("tweakLiteralValue");
+      expect(mutator.name).to.equal("tweakPrimitiveLiteral");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal(true);
       expect(mutated.get("raw")).to.equal("true");
@@ -404,15 +404,15 @@ describe("mutators", function () {
 
   describe("config flags", function () {
     var FLAG_TO_TYPE_MAP = {
-      ddae: [NODE_TYPES.ArrayExpression],
-      ddop: [NODE_TYPES.ObjectExpression],
-      dtlv: [NODE_TYPES.Literal],
-      dsbo: [NODE_TYPES.BinaryExpression],
-      dduo: [NODE_TYPES.UnaryExpression],
-      dslo: [NODE_TYPES.LogicalExpression],
-      ddr: [NODE_TYPES.ReturnStatement],
-      ddt: [NODE_TYPES.ThrowStatement],
-      ddma: [NODE_TYPES.AssignmentExpression],
+      ddae: NODE_TYPES.ArrayExpression,
+      ddop: NODE_TYPES.ObjectExpression,
+      dtlv: NODE_TYPES.Literal,
+      dsbo: NODE_TYPES.BinaryExpression,
+      dduo: NODE_TYPES.UnaryExpression,
+      dslo: NODE_TYPES.LogicalExpression,
+      ddr: NODE_TYPES.ReturnStatement,
+      ddt: NODE_TYPES.ThrowStatement,
+      ddma: NODE_TYPES.AssignmentExpression,
       dict: Object.keys(constants.NODES_WITH_TEST),
       drfp: Object.keys(constants.FUNC_NODES)
     };
@@ -427,6 +427,9 @@ describe("mutators", function () {
 
     Object.keys(FLAG_TO_TYPE_MAP).forEach(function (flag) {
       var types = FLAG_TO_TYPE_MAP[flag];
+
+      if (!Array.isArray(types)) types = [types];
+
       types.forEach(function (type) {
         it("the `" + flag + "` flag skips " + type, function () {
           global.__perturbConfig__[flag] = true;
