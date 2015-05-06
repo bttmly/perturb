@@ -40,7 +40,6 @@ console.log([bin].concat(args).join(" "));
 
 var proc = spawn(bin, args, {stdio: 'inherit'});
 
-
 proc.on('exit', function (code, signal) {
   process.on('exit', function(){
     if (signal) {

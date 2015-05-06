@@ -29,6 +29,7 @@ program
   .option("-c, --testCmd <testCmd>", "test command")
   .option("-i, --interception", "use interception strategy (no disk I/O)")
   .option("-v, --verbose", "lots of logging")
+  .option("-k, --killRate", "minimum kill rate to exit with code 0")
   .parse(process.argv);
 
 if (program.rootDir && program.rootDir[0] !== "/") {
@@ -53,6 +54,8 @@ function reporter (err, data) {
   }
   var mutants = data.matches[0].mutations;
   console.log(data.meta);
+
+  console.log(data.meta.killRate);
 }
 
 perturb(config, reporter);
