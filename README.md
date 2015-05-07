@@ -178,3 +178,4 @@ enum MutantName {
 - [ ] Preemtive mutant logging to provide insight when perturb hangs or otherwise misbehaves.
 - [ ] Skip mutation API via comments (or something else?) a la `jshint`
 - [ ] Skip classes of mutations via settings / cmd line args
+- [ ] Targeted mutations of code fitting common patterns (particularly "classes")
