@@ -296,7 +296,7 @@ describe("mutators", function () {
       expect(mutator.name).to.equal("tweakPrimitiveLiteral");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal("ello");
-      expect(mutated.get("raw")).to.equal('"ello"');
+      expect(mutated.get("raw")).to.equal("\"ello\"");
     });
 
     it("alters EMPTY string literals by replacing them with 'a'", function () {
@@ -306,7 +306,7 @@ describe("mutators", function () {
       expect(mutator.name).to.equal("tweakPrimitiveLiteral");
       var mutated = mutator(node);
       expect(mutated.get("value")).to.equal("a");
-      expect(mutated.get("raw")).to.equal('"a"');
+      expect(mutated.get("raw")).to.equal("\"a\"");
     });
 
     it("alters number literals by adding 1", function () {
@@ -374,7 +374,7 @@ describe("mutators", function () {
       expect(getMutatorForNode(node)).to.equal(null);
     });
 
-    var NO_SWAP_OPS = ["<<", ">>", ">>>","%", "|", "^", "&", "in", "instanceof", /* ".." */];
+    var NO_SWAP_OPS = ["<<", ">>", ">>>", "%", "|", "^", "&", "in", "instanceof" /* ".." */];
     NO_SWAP_OPS.forEach(function (op) {
       it("returns null for binary operation with " + op, function () {
         var node = nodeFromCode([5, op, 10, ";"].join(" ")).get("expression");

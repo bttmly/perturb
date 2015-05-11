@@ -1,8 +1,17 @@
 {
   "env": {
-      "node": 1
+    "node": 1,
+    "mocha": 1
   },
   "rules": {
-    "curly": 0
+    "curly": 0,
+    "new-cap": 0,
+    "newCap": 0
+  },
+  "globals": {
+    "it": 1,
+    "xit": 1,
+    "describe": 1,
+    "xdescribe": 1
   }
 }
