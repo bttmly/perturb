@@ -175,7 +175,8 @@ enum MutantName {
 ### FAQ
 
 ## Todo
-- [ ] Preemtive mutant logging to provide insight when perturb hangs or otherwise misbehaves.
+- [x] Skip classes of mutations via settings / cmd line args
 - [ ] Skip mutation API via comments (or something else?) a la `jshint`
-- [ ] Skip classes of mutations via settings / cmd line args
 - [ ] Targeted mutations of code fitting common patterns (particularly "classes")
+- [ ] .perturbrc
+- [ ] TAP runner
