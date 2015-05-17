@@ -52,10 +52,8 @@ function reporter (err, data) {
     console.log(err.toString());
     process.exit(1);
   }
-  var mutants = data.matches[0].mutations;
-  console.log(data.meta);
 
-  console.log(data.meta.killRate);
+  console.log(data.meta);
 }
 
 perturb(config, reporter);

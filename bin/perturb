@@ -38,10 +38,11 @@ process.argv.slice(2).forEach(function (arg) {
 
 console.log([bin].concat(args).join(" "));
 
-var proc = spawn(bin, args, {stdio: 'inherit'});
+var child = spawn(bin, args, {stdio: "inherit"});
 
-proc.on('exit', function (code, signal) {
-  process.on('exit', function(){
+child.on("exit", function (code, signal) {
+  console.log("child exiting...", code);
+  process.on("exit", function(){
     if (signal) {
       process.kill(process.pid, signal);
     } else {
@@ -50,11 +51,13 @@ proc.on('exit', function (code, signal) {
   });
 });
 
-proc.on('error', console.log);
+child.on("error", function (err) {
+  console.log("child errored...", err);
+});
 
 // terminate children.
-process.on('SIGINT', function () {
-  proc.kill('SIGINT'); // calls runner.abort()
-  proc.kill('SIGTERM'); // if that didn't work, we're probably in an infinite loop, so make it die.
-  process.kill(process.pid, 'SIGINT');
+process.on("SIGINT", function () {
+  child.kill("SIGINT"); // calls runner.abort()
+  child.kill("SIGTERM"); // if that didn"t work, we"re probably in an infinite loop, so make it die.
+  process.kill(process.pid, "SIGINT");
 });

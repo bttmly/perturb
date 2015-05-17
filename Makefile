@@ -14,9 +14,9 @@ example-i:
 	./bin/perturb -r ./example -i
 
 dogfood:
-	./bin/_perturb -r ./ -c 'make lint && make test'
+	./bin/perturb -r ./ -c 'make test'
 
 dogfood-i:
-	./bin/_perturb -r ./ -i
+	./bin/perturb -r ./ -i
 
 .PHONY: test example
