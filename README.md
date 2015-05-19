@@ -175,8 +175,9 @@ enum MutantName {
 ### FAQ
 
 ## Todo
-- [x] Skip classes of mutations via settings / cmd line args
+- [ ] Skip classes of mutations via settings / cmd line args
 - [ ] Skip mutation API via comments (or something else?) a la `jshint`
 - [ ] Targeted mutations of code fitting common patterns (particularly "classes")
 - [ ] .perturbrc
 - [ ] TAP runner
+- [ ] Catch infinite loops
