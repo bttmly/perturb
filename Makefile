@@ -1,5 +1,5 @@
 test:
-	./node_modules/.bin/_mocha ./test/**/*.js
+	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/**/*.js
 
 lint:
 	./node_modules/.bin/jshint ./**/*.js
@@ -14,9 +14,9 @@ example-i:
 	./bin/perturb -r ./example -i
 
 dogfood:
-	./bin/perturb -r ./ -c 'make test'
+	NODE_ENV=testing ./bin/perturb -r ./ -c 'make test'
 
 dogfood-i:
-	./bin/perturb -r ./ -i
+	NODE_ENV=testing ./bin/perturb -r ./ -i
 
 .PHONY: test example
