@@ -4,6 +4,7 @@ var expect = require("chai").expect;
 var I = require("immutable");
 var assign = require("object-assign");
 var _ = require("lodash");
+var esprima = require("esprima");
 
 var _m = require("../lib/mutators");
 var mutators = _m.mutators;
@@ -13,6 +14,7 @@ var mutatorsExistForNodeType = _m.mutatorsExistForNodeType;
 var constants = require("../lib/constants");
 
 var NODE_TYPES = constants.NODE_TYPES;
+var BINARY_OPERATOR_SWAPS = constants.BINARY_OPERATOR_SWAPS;
 
 var arrayOfStrings = isArrayOf("string");
 
@@ -167,24 +169,77 @@ describe("mutators (as a group)", function () {
 describe("mutators (individually)", function () {
 
   var mutatorByName = (function () {
-    var m = _.indexBy(mutators.mutators, "name");
+    var m = _.indexBy(mutators, "name");
     return function (n) {
       var mutator = m[n];
-      if (mutator == null) throw new Error("No mutator found by name " + name);
+      if (mutator == null) throw new Error("No mutator found by name " + n);
       return mutator;
     };
   })();
 
-  describe("invertConditionalTest", function () {™¡
-
+  describe("invertConditionalTest()", function () {
+    it("inverts the test property of the node", function () {
+      var arg = "someIdentifier";
+      var node = makeNodeOfType("IfStatement", {
+        test: arg
+      });
+      var m = mutatorByName("invertConditionalTest");
+      var test = m.mutator(node).get("test");
+      expect(test.get("type")).to.equal("UnaryExpression");
+      expect(test.get("operator")).to.equal("!");
+      expect(test.get("argument")).to.equal(arg);
+    });
   });
 
   describe("reverseFunctionParameters", function () {
+    it("reverses the order of a function's declaration's arguments", function () {
+      var node = nodeFromCode("function func (a, b, c, d) {}");
+      var m = mutatorByName("reverseFunctionParameters");
+      var mutated = m.mutator(node);
+      expect(mutated.get("type")).to.equal("FunctionDeclaration");
+      expect(mutated.getIn(["id", "name"])).to.equal("func");
+      expect(mutated.getIn(["params", "0", "name"])).to.equal("d");
+      expect(mutated.getIn(["params", "1", "name"])).to.equal("c");
+      expect(mutated.getIn(["params", "2", "name"])).to.equal("b");
+      expect(mutated.getIn(["params", "3", "name"])).to.equal("a");
+    });
 
+    it("reverses the order of a function's expression's arguments", function () {
+      var node = nodeFromCode("(function (a, b, c) {})").get("expression");
+      var m = mutatorByName("reverseFunctionParameters");
+      var mutated = m.mutator(node);
+      expect(mutated.get("type")).to.equal("FunctionExpression");
+      expect(mutated.getIn(["params", "0", "name"])).to.equal("c");
+      expect(mutated.getIn(["params", "1", "name"])).to.equal("b");
+      expect(mutated.getIn(["params", "2", "name"])).to.equal("a");
+    });
   });
 
   describe("dropReturn", function () {
+    it("removes a return statement, leaving the argument", function () {
+      var node = nodeFromCode("function id (x) { return x; }").getIn(["body", "body", 0]);
+      expect(node.get("type")).to.equal("ReturnStatement");
+      var m = mutatorByName("dropReturn");
+      expect(node.get("argument")).to.be.ok();
+      var mutated = m.mutator(node);
+      expect(mutated.getIn(["expression", "type"])).to.equal("Identifier");
+      expect(mutated.getIn(["expression", "name"])).to.equal("x");
+    });
 
+    it("removes a return statement without an argument, replacing it with `void 0;`", function () {
+      var node = nodeFromCode("function id (x) { return; }").getIn(["body", "body", 0]);
+      expect(node.get("type")).to.equal("ReturnStatement");
+      var m = mutatorByName("dropReturn");
+      expect(node.get("argument")).to.not.be.ok();
+      var mutated = m.mutator(node);
+      expect(mutated.get("type")).to.equal("UnaryExpression");
+      expect(mutated.get("operator")).to.equal("void");
+      expect(mutated.getIn(["argument", "type"])).to.equal("Literal");
+      expect(mutated.getIn(["argument", "value"])).to.equal(0);
+      expect(mutated.getIn(["argument", "raw"])).to.equal("0");
+      expect(mutated.get("prefix")).to.equal(true);
+
+    });
   });
 
   describe("dropOperator", function () {
@@ -213,10 +268,35 @@ describe("mutators (individually)", function () {
 
   describe("swapBinaryOperators", function () {
 
+    var m = mutatorByName("swapBinaryOperators");
+
+    Object.keys(BINARY_OPERATOR_SWAPS).forEach(function (originalOp) {
+      var newOp = BINARY_OPERATOR_SWAPS[originalOp];
+      it(["swaps", originalOp, "out for", newOp].join(" "), function () {
+        var node = nodeFromCode([1, originalOp, 2].join(" ")).get("expression");
+        var mutated = m.mutator(node);
+        expect(mutated.get("operator")).to.equal(newOp);
+      });
+    });
+
   });
 
   describe("swapLogicalOperators", function () {
+    it("changes `&&` to `||`", function () {
+      var node = nodeFromCode("x && y;").get("expression");
+      expect(node.get("type")).to.equal("LogicalExpression");
+      var m = mutatorByName("swapLogicalOperators");
+      var mutated = m.mutator(node);
+      expect(mutated.get("operator")).to.equal("||");
+    });
 
+    it("changes `||` to `&&`", function () {
+      var node = nodeFromCode("x || y;").get("expression");
+      expect(node.get("type")).to.equal("LogicalExpression");
+      var m = mutatorByName("swapLogicalOperators");
+      var mutated = m.mutator(node);
+      expect(mutated.get("operator")).to.equal("&&");
+    });
   });
 
   describe("dropMemberAssignment", function () {

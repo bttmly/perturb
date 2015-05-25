@@ -2,7 +2,7 @@
 
 var expect = require("chai").expect;
 
-var util = require("../lib/util");
+var util = require("../lib/pkg-util");
 
 
 describe("#mapMirror", function () {
