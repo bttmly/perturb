@@ -37,7 +37,7 @@ function isString (s) {
 
 function has (p) {
   return function (o) {
-    return Object.prototype.hasOwnProperty(o, p);
+    return Object.prototype.hasOwnProperty.call(o, p);
   }
 }
 
@@ -69,6 +69,20 @@ function makeNodeOfType (type, props) {
   return I.Map(assign({
     type: type
   }, props));
+}
+
+function expectAcceptsOnlyNodesOfType (mutator, types) {
+  it("mutator " + mutator.name + " accepts only nodes of types: " + types.join[", "], function () {
+    Object.keys(NODE_TYPES).forEach(function (t) {
+
+      if (types.indexOf(t) === -1) {
+
+      } else {
+
+      }
+
+    });
+  });
 }
 
 
@@ -196,22 +210,16 @@ describe("mutators (individually)", function () {
       var node = nodeFromCode("function func (a, b, c, d) {}");
       var m = mutatorByName("reverseFunctionParameters");
       var mutated = m.mutator(node);
-      expect(mutated.get("type")).to.equal("FunctionDeclaration");
-      expect(mutated.getIn(["id", "name"])).to.equal("func");
-      expect(mutated.getIn(["params", "0", "name"])).to.equal("d");
-      expect(mutated.getIn(["params", "1", "name"])).to.equal("c");
-      expect(mutated.getIn(["params", "2", "name"])).to.equal("b");
-      expect(mutated.getIn(["params", "3", "name"])).to.equal("a");
+      var paramNames = mutated.get("params").toJS().map(get("name"));
+      expect(paramNames).to.deep.equal(["d", "c", "b", "a"]);
     });
 
     it("reverses the order of a function's expression's arguments", function () {
       var node = nodeFromCode("(function (a, b, c) {})").get("expression");
       var m = mutatorByName("reverseFunctionParameters");
       var mutated = m.mutator(node);
-      expect(mutated.get("type")).to.equal("FunctionExpression");
-      expect(mutated.getIn(["params", "0", "name"])).to.equal("c");
-      expect(mutated.getIn(["params", "1", "name"])).to.equal("b");
-      expect(mutated.getIn(["params", "2", "name"])).to.equal("a");
+      var paramNames = mutated.get("params").toJS().map(get("name"));
+      expect(paramNames).to.deep.equal(["c", "b", "a"]);
     });
   });
 
@@ -259,11 +267,29 @@ describe("mutators (individually)", function () {
   });
 
   describe("tweakObjectLiteral", function () {
-
+    it("removes the first property of an object literal", function () {
+      var node = nodeFromCode("x = {a: 1, b: 2, c: 3}").getIn(["expression", "right"]);
+      expect(node.get("type")).to.equal("ObjectExpression");
+      var m = mutatorByName("tweakObjectLiteral");
+      var mutated = m.mutator(node);
+      expect(mutated.get("properties").size).to.equal(2);
+      expect(mutated.getIn(["properties", "0", "key", "name"])).to.equal("b");
+      expect(mutated.getIn(["properties", "1", "key", "name"])).to.equal("c");
+      expect(mutated.getIn(["properties", "0", "value", "value"])).to.equal(2);
+      expect(mutated.getIn(["properties", "1", "value", "value"])).to.equal(3);
+    });
   });
 
   describe("tweakArrayLiteral", function () {
-
+    it("removes the first element of an array literal", function () {
+      var node = nodeFromCode("[1, 2, 3]").get("expression");
+      expect(node.get("type")).to.equal("ArrayExpression");
+      var m= mutatorByName("tweakArrayLiteral");
+      var mutated = m.mutator(node);
+      expect(mutated.get("elements").size).to.equal(2);
+      expect(mutated.getIn(["elements", "0", "value"])).to.equal(2);
+      expect(mutated.getIn(["elements", "1", "value"])).to.equal(3);
+    });
   });
 
   describe("swapBinaryOperators", function () {
@@ -281,6 +307,8 @@ describe("mutators (individually)", function () {
 
   });
 
+  // (before) x && y;
+  // (after) x || y;
   describe("swapLogicalOperators", function () {
     it("changes `&&` to `||`", function () {
       var node = nodeFromCode("x && y;").get("expression");
@@ -300,7 +328,13 @@ describe("mutators (individually)", function () {
   });
 
   describe("dropMemberAssignment", function () {
-
+    it("drops a member assignment", function () {
+      var node = nodeFromCode("x.y = 100;").get("expression");
+      expect(node.get("type")).to.equal("AssignmentExpression");
+      var m = mutatorByName("dropMemberAssignment");
+      var mutated = m.mutator(node);
+      expect(mutated.get("type")).to.equal("MemberExpression");
+    });
   });
 
   describe("dropVoidCall", function () {
