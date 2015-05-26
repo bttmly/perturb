@@ -56,7 +56,7 @@ function contains (v) {
 function nodeFromCode (code) {
   var ast = esprima.parse(code);
   if (ast.body.length !== 1) {
-    throw new Error("Rendered AST did not have exactly one root node");
+    throw new Error("Rendered AST did not have exactly one node");
   }
   return I.fromJS(ast.body[0]);
 }
@@ -71,15 +71,18 @@ function makeNodeOfType (type, props) {
   }, props));
 }
 
-function expectAcceptsOnlyNodesOfType (mutator, types) {
-  it("mutator " + mutator.name + " accepts only nodes of types: " + types.join[", "], function () {
+function expectAcceptsOnlyNodesOfType (m, types) {
+  it("mutator " + m.name + " accepts only nodes of types: " + types.join[", "], function () {
     Object.keys(NODE_TYPES).forEach(function (t) {
+      var node = makeNodeOfType(t);
 
-      if (types.indexOf(t) === -1) {
-
-      } else {
-
+      if (types.indexOf(t) !== -1) {
+        return m.mutator(node);
       }
+
+      expect(function () {
+        m.mutator(node);
+      }).to.throw();
 
     });
   });
