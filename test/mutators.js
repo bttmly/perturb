@@ -145,7 +145,7 @@ describe("getMutatorsForNode", function () {
 
 describe("mutators (as a group)", function () {
 
-  it("throws an error if attempt to read the property outside of NODE_ENV === testing", function () {
+  xit("throws an error if attempt to read the property outside of NODE_ENV === testing", function () {
     process.env.NODE_ENV = "not_testing";
     expect(function () {
       _m.mutators;
