@@ -1,3 +1,0 @@
-exports.matcher = function (sourceFile, testFile) {
-  return true;
-};
