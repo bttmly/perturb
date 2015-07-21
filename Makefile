@@ -8,10 +8,13 @@ test-example:
 	./node_modules/.bin/_mocha ./example/test/**/*-test.js
 
 example:
-	./bin/perturb -r ./example
+	./bin/perturb -r ./examples/toy-lib
 
 example-i:
-	./bin/perturb -r ./example -i
+	./bin/perturb -r ./examples/toy-lib -i
+
+events:
+	./bin/perturb -r ./examples/event-emitter
 
 dogfood:
 	NODE_ENV=testing ./bin/perturb -r ./ -c 'make test'

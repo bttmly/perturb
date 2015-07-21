@@ -13,4 +13,4 @@
 - Example plugging in additional runner
 - Example plugging in alternate AST parser
 
-
+- Dogfooding is great for development, but should implement an example on a node core library (events?)

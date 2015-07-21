@@ -1,0 +1,16 @@
+require("./test/test-event-emitter-add-listeners.js");
+require("./test/test-event-emitter-check-listener-leaks.js");
+require("./test/test-event-emitter-errors.js");
+require("./test/test-event-emitter-get-max-listeners.js");
+require("./test/test-event-emitter-listeners-side-effects.js");
+require("./test/test-event-emitter-listeners.js");
+require("./test/test-event-emitter-max-listeners.js");
+require("./test/test-event-emitter-method-names.js");
+require("./test/test-event-emitter-modify-in-emit.js");
+require("./test/test-event-emitter-no-error-provided-to-error-event.js");
+require("./test/test-event-emitter-num-args.js");
+require("./test/test-event-emitter-once.js");
+require("./test/test-event-emitter-remove-all-listeners.js");
+require("./test/test-event-emitter-remove-listeners.js");
+require("./test/test-event-emitter-set-max-listeners-side-effects.js");
+require("./test/test-event-emitter-subclass.js");
