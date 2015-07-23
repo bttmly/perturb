@@ -1,358 +1,358 @@
-// "use strict";
+"use strict";
 
-// var expect = require("chai").expect;
-// var I = require("immutable");
-// var assign = require("object-assign");
-// var _ = require("lodash");
-// var esprima = require("esprima");
+var expect = require("chai").expect;
+var I = require("immutable");
+var assign = require("object-assign");
+var _ = require("lodash");
+var esprima = require("esprima");
 
-// var _m = require("../lib/mutators");
-// var mutators = _m.mutators;
-// var getMutatorForNode = _m.getMutatorForNode;
-// var mutatorsExistForNodeType = _m.mutatorsExistForNodeType;
+var _m = require("../lib/mutators");
+var mutators = _m.mutators;
+var getMutatorForNode = _m.getMutatorForNode;
+var mutatorsExistForNodeType = _m.mutatorsExistForNodeType;
 
-// var constants = require("../lib/constants");
+var constants = require("../lib/constants");
 
-// var NODE_TYPES = constants.NODE_TYPES;
-// var BINARY_OPERATOR_SWAPS = constants.BINARY_OPERATOR_SWAPS;
+var NODE_TYPES = constants.NODE_TYPES;
+var BINARY_OPERATOR_SWAPS = constants.BINARY_OPERATOR_SWAPS;
 
-// var arrayOfStrings = isArrayOf("string");
+var arrayOfStrings = isArrayOf("string");
 
-// function isArrayOf (type) {
-//   return function (a) {
-//     if (!Array.isArray(a)) return false;
-//     return a.every(function (e) {
-//       return typeof e === type;
-//     });
-//   };
+function isArrayOf (type) {
+  return function (a) {
+    if (!Array.isArray(a)) return false;
+    return a.every(function (e) {
+      return typeof e === type;
+    });
+  };
+}
+
+function isFunction (f) {
+  return typeof f === "function";
+}
+
+function isString (s) {
+  return typeof s === "string";
+}
+
+function has (p) {
+  return function (o) {
+    return Object.prototype.hasOwnProperty.call(o, p);
+  };
+}
+
+function get (p) {
+  return function (o) {
+    return o[p];
+  };
+}
+
+function contains (v) {
+  return function (a) {
+    return a && a.indexOf(v) !== -1;
+  }
+}
+
+function nodeFromCode (code) {
+  var ast = esprima.parse(code);
+  if (ast.body.length !== 1) {
+    throw new Error("Rendered AST did not have exactly one node");
+  }
+  return I.fromJS(ast.body[0]);
+}
+
+function makeNodeOfType (type, props) {
+  if (!(type in NODE_TYPES)) throw new Error("Invalid node type " + type);
+
+  props = props || {};
+
+  return I.Map(assign({
+    type: type
+  }, props));
+}
+
+function expectAcceptsOnlyNodesOfType (m, types) {
+  it("mutator " + m.name + " accepts only nodes of types: " + types.join[", "], function () {
+    Object.keys(NODE_TYPES).forEach(function (t) {
+      var node = makeNodeOfType(t);
+
+      if (types.indexOf(t) !== -1) {
+        return m.mutator(node);
+      }
+
+      expect(function () {
+        m.mutator(node);
+      }).to.throw();
+
+    });
+  });
+}
+
+
+// validates mutators against the following structure:
+// Mutator {
+//   name: string
+//   mutator: function
+//   type: string|[]string
+//   filter: function?
 // }
 
-// function isFunction (f) {
-//   return typeof f === "function";
-// }
+function isValidMutator (m) {
+  // mutator objects must have a string 'name' property
+  if (!isString(m.name)) return false;
 
-// function isString (s) {
-//   return typeof s === "string";
-// }
-
-// function has (p) {
-//   return function (o) {
-//     return Object.prototype.hasOwnProperty.call(o, p);
-//   };
-// }
-
-// function get (p) {
-//   return function (o) {
-//     return o[p];
-//   };
-// }
-
-// function contains (v) {
-//   return function (a) {
-//     return a && a.indexOf(v) !== -1;
-//   }
-// }
-
-// function nodeFromCode (code) {
-//   var ast = esprima.parse(code);
-//   if (ast.body.length !== 1) {
-//     throw new Error("Rendered AST did not have exactly one node");
-//   }
-//   return I.fromJS(ast.body[0]);
-// }
-
-// function makeNodeOfType (type, props) {
-//   if (!(type in NODE_TYPES)) throw new Error("Invalid node type " + type);
-
-//   props = props || {};
-
-//   return I.Map(assign({
-//     type: type
-//   }, props));
-// }
-
-// function expectAcceptsOnlyNodesOfType (m, types) {
-//   it("mutator " + m.name + " accepts only nodes of types: " + types.join[", "], function () {
-//     Object.keys(NODE_TYPES).forEach(function (t) {
-//       var node = makeNodeOfType(t);
-
-//       if (types.indexOf(t) !== -1) {
-//         return m.mutator(node);
-//       }
-
-//       expect(function () {
-//         m.mutator(node);
-//       }).to.throw();
-
-//     });
-//   });
-// }
-
-
-// // validates mutators against the following structure:
-// // Mutator {
-// //   name: string
-// //   mutator: function
-// //   type: string|[]string
-// //   filter: function?
-// // }
-
-// function isValidMutator (m) {
-//   // mutator objects must have a string 'name' property
-//   if (!isString(m.name)) return false;
-
-//   // mutator objects must have a function 'mutator' property
-//   if (!isFunction(m.mutator)) return false;
-
-//   // mutator's 'type' property must be string|[]string
-//   if (!(isString(m.type) || arrayOfStrings(m.type))) return false;
-
-//   // if mutator object has 'filter' property, it must be a function
-//   if (Object.prototype.hasOwnProperty.call(m, "filter")) {
-//     if (typeof m.filter !== "function") return false;
-//   }
-
-//   return true;
-// }
-
-// describe("mutatorsExistForNodeType", function () {
-//   xit("is a function", function () {
-
-//   });
-
-//   xit("requires a string as an argument", function () {
-
-//   });
-
-//   xit("returns a boolean", function () {
-
-//   });
-// });
-
-// describe("getMutatorsForNode", function () {
-//   xit("is a function", function () {
-
-//   });
-
-//   xit("requires an immutable keyed iterable as argument", function () {
-
-//   });
-
-//   xit("returns an array", function () {
-
-//   });
-// });
-
-// describe("mutators (as a group)", function () {
-
-//   xit("throws an error if attempt to read the property outside of NODE_ENV === testing", function () {
-//     process.env.NODE_ENV = "not_testing";
-//     expect(function () {
-//       _m.mutators;
-//     }).to.throw();
-//     process.env.NODE_ENV = "testing"
-//   });
-
-//   it("all mutators are well formed", function () {
-//     expect(mutators.every(isValidMutator)).to.equal(true);
-//   });
-
-//   it("the mutators are what we expect (will complain if one is added and not added to tests)", function () {
-
-//     expect(mutators.map(get("name")).sort()).to.deep.equal([
-//       "dropMemberAssignment",
-//       "dropNode",
-//       "dropOperator",
-//       "dropReturn",
-//       "dropVoidCall",
-//       "invertConditionalTest",
-//       "reverseFunctionParameters",
-//       "swapBinaryOperators",
-//       "swapLogicalOperators",
-//       "tweakArrayLiteral",
-//       "tweakBooleanLiteral",
-//       "tweakNumberLiteral",
-//       "tweakObjectLiteral",
-//       "tweakStringLiteral"
-//     ]);
-
-//   });
-
-// });
-
-// // these tests act on mutators directly
-// // correctly fetching mutators for node types should be tested
-// // above under getMutatorsForNode/mutatorsExistForNodeType
-// describe("mutators (individually)", function () {
-
-//   var mutatorByName = (function () {
-//     var m = _.indexBy(mutators, "name");
-//     return function (n) {
-//       var mutator = m[n];
-//       if (mutator == null) throw new Error("No mutator found by name " + n);
-//       return mutator;
-//     };
-//   })();
-
-//   describe("invertConditionalTest()", function () {
-//     it("inverts the test property of the node", function () {
-//       var arg = "someIdentifier";
-//       var node = makeNodeOfType("IfStatement", {
-//         test: arg
-//       });
-//       var m = mutatorByName("invertConditionalTest");
-//       var test = m.mutator(node).get("test");
-//       expect(test.get("type")).to.equal("UnaryExpression");
-//       expect(test.get("operator")).to.equal("!");
-//       expect(test.get("argument")).to.equal(arg);
-//     });
-//   });
-
-//   describe("reverseFunctionParameters", function () {
-//     it("reverses the order of a function's declaration's arguments", function () {
-//       var node = nodeFromCode("function func (a, b, c, d) {}");
-//       var m = mutatorByName("reverseFunctionParameters");
-//       var mutated = m.mutator(node);
-//       var paramNames = mutated.get("params").toJS().map(get("name"));
-//       expect(paramNames).to.deep.equal(["d", "c", "b", "a"]);
-//     });
-
-//     it("reverses the order of a function's expression's arguments", function () {
-//       var node = nodeFromCode("(function (a, b, c) {})").get("expression");
-//       var m = mutatorByName("reverseFunctionParameters");
-//       var mutated = m.mutator(node);
-//       var paramNames = mutated.get("params").toJS().map(get("name"));
-//       expect(paramNames).to.deep.equal(["c", "b", "a"]);
-//     });
-//   });
-
-//   describe("dropReturn", function () {
-//     it("removes a return statement, leaving the argument", function () {
-//       var node = nodeFromCode("function id (x) { return x; }").getIn(["body", "body", 0]);
-//       expect(node.get("type")).to.equal("ReturnStatement");
-//       var m = mutatorByName("dropReturn");
-//       expect(node.get("argument")).to.be.ok();
-//       var mutated = m.mutator(node);
-//       expect(mutated.getIn(["expression", "type"])).to.equal("Identifier");
-//       expect(mutated.getIn(["expression", "name"])).to.equal("x");
-//     });
-
-//     it("removes a return statement without an argument, replacing it with `void 0;`", function () {
-//       var node = nodeFromCode("function id (x) { return; }").getIn(["body", "body", 0]);
-//       expect(node.get("type")).to.equal("ReturnStatement");
-//       var m = mutatorByName("dropReturn");
-//       expect(node.get("argument")).to.not.be.ok();
-//       var mutated = m.mutator(node);
-//       expect(mutated.get("type")).to.equal("UnaryExpression");
-//       expect(mutated.get("operator")).to.equal("void");
-//       expect(mutated.getIn(["argument", "type"])).to.equal("Literal");
-//       expect(mutated.getIn(["argument", "value"])).to.equal(0);
-//       expect(mutated.getIn(["argument", "raw"])).to.equal("0");
-//       expect(mutated.get("prefix")).to.equal(true);
-
-//     });
-//   });
-
-//   describe("dropOperator", function () {
-
-//   });
-
-//   describe("tweakStringLiteral", function () {
-
-//   });
-
-//   describe("tweakNumberLiteral", function () {
-
-//   });
-
-//   describe("tweakBooleanLiteral", function () {
-
-//   });
-
-//   describe("tweakObjectLiteral", function () {
-//     it("removes the first property of an object literal", function () {
-//       var node = nodeFromCode("x = {a: 1, b: 2, c: 3}").getIn(["expression", "right"]);
-//       expect(node.get("type")).to.equal("ObjectExpression");
-//       var m = mutatorByName("tweakObjectLiteral");
-//       var mutated = m.mutator(node);
-//       expect(mutated.get("properties").size).to.equal(2);
-//       expect(mutated.getIn(["properties", "0", "key", "name"])).to.equal("b");
-//       expect(mutated.getIn(["properties", "1", "key", "name"])).to.equal("c");
-//       expect(mutated.getIn(["properties", "0", "value", "value"])).to.equal(2);
-//       expect(mutated.getIn(["properties", "1", "value", "value"])).to.equal(3);
-//     });
-//   });
-
-//   describe("tweakArrayLiteral", function () {
-//     it("removes the first element of an array literal", function () {
-//       var node = nodeFromCode("[1, 2, 3]").get("expression");
-//       expect(node.get("type")).to.equal("ArrayExpression");
-//       var m= mutatorByName("tweakArrayLiteral");
-//       var mutated = m.mutator(node);
-//       expect(mutated.get("elements").size).to.equal(2);
-//       expect(mutated.getIn(["elements", "0", "value"])).to.equal(2);
-//       expect(mutated.getIn(["elements", "1", "value"])).to.equal(3);
-//     });
-//   });
-
-//   describe("swapBinaryOperators", function () {
-
-//     var m = mutatorByName("swapBinaryOperators");
-
-//     Object.keys(BINARY_OPERATOR_SWAPS).forEach(function (originalOp) {
-//       var newOp = BINARY_OPERATOR_SWAPS[originalOp];
-//       it(["swaps", originalOp, "out for", newOp].join(" "), function () {
-//         var node = nodeFromCode([1, originalOp, 2].join(" ")).get("expression");
-//         var mutated = m.mutator(node);
-//         expect(mutated.get("operator")).to.equal(newOp);
-//       });
-//     });
-
-//   });
-
-//   // (before) x && y;
-//   // (after) x || y;
-//   describe("swapLogicalOperators", function () {
-//     it("changes `&&` to `||`", function () {
-//       var node = nodeFromCode("x && y;").get("expression");
-//       expect(node.get("type")).to.equal("LogicalExpression");
-//       var m = mutatorByName("swapLogicalOperators");
-//       var mutated = m.mutator(node);
-//       expect(mutated.get("operator")).to.equal("||");
-//     });
-
-//     it("changes `||` to `&&`", function () {
-//       var node = nodeFromCode("x || y;").get("expression");
-//       expect(node.get("type")).to.equal("LogicalExpression");
-//       var m = mutatorByName("swapLogicalOperators");
-//       var mutated = m.mutator(node);
-//       expect(mutated.get("operator")).to.equal("&&");
-//     });
-//   });
-
-//   describe("dropMemberAssignment", function () {
-//     it("drops a member assignment", function () {
-//       var node = nodeFromCode("x.y = 100;").get("expression");
-//       expect(node.get("type")).to.equal("AssignmentExpression");
-//       var m = mutatorByName("dropMemberAssignment");
-//       var mutated = m.mutator(node);
-//       expect(mutated.get("type")).to.equal("MemberExpression");
-//     });
-//   });
-
-//   describe("dropVoidCall", function () {
-
-//   });
-
-//   describe("dropNode", function () {
-
-//   });
-
-
-
-
-
-// });
+  // mutator objects must have a function 'mutator' property
+  if (!isFunction(m.mutator)) return false;
+
+  // mutator's 'type' property must be string|[]string
+  if (!(isString(m.type) || arrayOfStrings(m.type))) return false;
+
+  // if mutator object has 'filter' property, it must be a function
+  if (Object.prototype.hasOwnProperty.call(m, "filter")) {
+    if (typeof m.filter !== "function") return false;
+  }
+
+  return true;
+}
+
+describe("mutatorsExistForNodeType", function () {
+  xit("is a function", function () {
+
+  });
+
+  xit("requires a string as an argument", function () {
+
+  });
+
+  xit("returns a boolean", function () {
+
+  });
+});
+
+describe("getMutatorsForNode", function () {
+  xit("is a function", function () {
+
+  });
+
+  xit("requires an immutable keyed iterable as argument", function () {
+
+  });
+
+  xit("returns an array", function () {
+
+  });
+});
+
+describe("mutators (as a group)", function () {
+
+  xit("throws an error if attempt to read the property outside of NODE_ENV === testing", function () {
+    process.env.NODE_ENV = "not_testing";
+    expect(function () {
+      _m.mutators;
+    }).to.throw();
+    process.env.NODE_ENV = "testing"
+  });
+
+  it("all mutators are well formed", function () {
+    expect(mutators.every(isValidMutator)).to.equal(true);
+  });
+
+  it("the mutators are what we expect (will complain if one is added and not added to tests)", function () {
+
+    expect(mutators.map(get("name")).sort()).to.deep.equal([
+      "dropMemberAssignment",
+      "dropNode",
+      "dropOperator",
+      "dropReturn",
+      "dropVoidCall",
+      "invertConditionalTest",
+      "reverseFunctionParameters",
+      "swapBinaryOperators",
+      "swapLogicalOperators",
+      "tweakArrayLiteral",
+      "tweakBooleanLiteral",
+      "tweakNumberLiteral",
+      "tweakObjectLiteral",
+      "tweakStringLiteral"
+    ]);
+
+  });
+
+});
+
+// these tests act on mutators directly
+// correctly fetching mutators for node types should be tested
+// above under getMutatorsForNode/mutatorsExistForNodeType
+describe("mutators (individually)", function () {
+
+  var mutatorByName = (function () {
+    var m = _.indexBy(mutators, "name");
+    return function (n) {
+      var mutator = m[n];
+      if (mutator == null) throw new Error("No mutator found by name " + n);
+      return mutator;
+    };
+  })();
+
+  describe("invertConditionalTest()", function () {
+    it("inverts the test property of the node", function () {
+      var arg = "someIdentifier";
+      var node = makeNodeOfType("IfStatement", {
+        test: arg
+      });
+      var m = mutatorByName("invertConditionalTest");
+      var test = m.mutator(node).get("test");
+      expect(test.get("type")).to.equal("UnaryExpression");
+      expect(test.get("operator")).to.equal("!");
+      expect(test.get("argument")).to.equal(arg);
+    });
+  });
+
+  describe("reverseFunctionParameters", function () {
+    it("reverses the order of a function's declaration's arguments", function () {
+      var node = nodeFromCode("function func (a, b, c, d) {}");
+      var m = mutatorByName("reverseFunctionParameters");
+      var mutated = m.mutator(node);
+      var paramNames = mutated.get("params").toJS().map(get("name"));
+      expect(paramNames).to.deep.equal(["d", "c", "b", "a"]);
+    });
+
+    it("reverses the order of a function's expression's arguments", function () {
+      var node = nodeFromCode("(function (a, b, c) {})").get("expression");
+      var m = mutatorByName("reverseFunctionParameters");
+      var mutated = m.mutator(node);
+      var paramNames = mutated.get("params").toJS().map(get("name"));
+      expect(paramNames).to.deep.equal(["c", "b", "a"]);
+    });
+  });
+
+  describe("dropReturn", function () {
+    it("removes a return statement, leaving the argument", function () {
+      var node = nodeFromCode("function id (x) { return x; }").getIn(["body", "body", 0]);
+      expect(node.get("type")).to.equal("ReturnStatement");
+      var m = mutatorByName("dropReturn");
+      expect(node.get("argument")).to.be.ok();
+      var mutated = m.mutator(node);
+      expect(mutated.getIn(["expression", "type"])).to.equal("Identifier");
+      expect(mutated.getIn(["expression", "name"])).to.equal("x");
+    });
+
+    it("removes a return statement without an argument, replacing it with `void 0;`", function () {
+      var node = nodeFromCode("function id (x) { return; }").getIn(["body", "body", 0]);
+      expect(node.get("type")).to.equal("ReturnStatement");
+      var m = mutatorByName("dropReturn");
+      expect(node.get("argument")).to.not.be.ok();
+      var mutated = m.mutator(node);
+      expect(mutated.get("type")).to.equal("UnaryExpression");
+      expect(mutated.get("operator")).to.equal("void");
+      expect(mutated.getIn(["argument", "type"])).to.equal("Literal");
+      expect(mutated.getIn(["argument", "value"])).to.equal(0);
+      expect(mutated.getIn(["argument", "raw"])).to.equal("0");
+      expect(mutated.get("prefix")).to.equal(true);
+
+    });
+  });
+
+  describe("dropOperator", function () {
+
+  });
+
+  describe("tweakStringLiteral", function () {
+
+  });
+
+  describe("tweakNumberLiteral", function () {
+
+  });
+
+  describe("tweakBooleanLiteral", function () {
+
+  });
+
+  describe("tweakObjectLiteral", function () {
+    it("removes the first property of an object literal", function () {
+      var node = nodeFromCode("x = {a: 1, b: 2, c: 3}").getIn(["expression", "right"]);
+      expect(node.get("type")).to.equal("ObjectExpression");
+      var m = mutatorByName("tweakObjectLiteral");
+      var mutated = m.mutator(node);
+      expect(mutated.get("properties").size).to.equal(2);
+      expect(mutated.getIn(["properties", "0", "key", "name"])).to.equal("b");
+      expect(mutated.getIn(["properties", "1", "key", "name"])).to.equal("c");
+      expect(mutated.getIn(["properties", "0", "value", "value"])).to.equal(2);
+      expect(mutated.getIn(["properties", "1", "value", "value"])).to.equal(3);
+    });
+  });
+
+  describe("tweakArrayLiteral", function () {
+    it("removes the first element of an array literal", function () {
+      var node = nodeFromCode("[1, 2, 3]").get("expression");
+      expect(node.get("type")).to.equal("ArrayExpression");
+      var m= mutatorByName("tweakArrayLiteral");
+      var mutated = m.mutator(node);
+      expect(mutated.get("elements").size).to.equal(2);
+      expect(mutated.getIn(["elements", "0", "value"])).to.equal(2);
+      expect(mutated.getIn(["elements", "1", "value"])).to.equal(3);
+    });
+  });
+
+  describe("swapBinaryOperators", function () {
+
+    var m = mutatorByName("swapBinaryOperators");
+
+    Object.keys(BINARY_OPERATOR_SWAPS).forEach(function (originalOp) {
+      var newOp = BINARY_OPERATOR_SWAPS[originalOp];
+      it(["swaps", originalOp, "out for", newOp].join(" "), function () {
+        var node = nodeFromCode([1, originalOp, 2].join(" ")).get("expression");
+        var mutated = m.mutator(node);
+        expect(mutated.get("operator")).to.equal(newOp);
+      });
+    });
+
+  });
+
+  // (before) x && y;
+  // (after) x || y;
+  describe("swapLogicalOperators", function () {
+    it("changes `&&` to `||`", function () {
+      var node = nodeFromCode("x && y;").get("expression");
+      expect(node.get("type")).to.equal("LogicalExpression");
+      var m = mutatorByName("swapLogicalOperators");
+      var mutated = m.mutator(node);
+      expect(mutated.get("operator")).to.equal("||");
+    });
+
+    it("changes `||` to `&&`", function () {
+      var node = nodeFromCode("x || y;").get("expression");
+      expect(node.get("type")).to.equal("LogicalExpression");
+      var m = mutatorByName("swapLogicalOperators");
+      var mutated = m.mutator(node);
+      expect(mutated.get("operator")).to.equal("&&");
+    });
+  });
+
+  describe("dropMemberAssignment", function () {
+    it("drops a member assignment", function () {
+      var node = nodeFromCode("x.y = 100;").get("expression");
+      expect(node.get("type")).to.equal("AssignmentExpression");
+      var m = mutatorByName("dropMemberAssignment");
+      var mutated = m.mutator(node);
+      expect(mutated.get("type")).to.equal("MemberExpression");
+    });
+  });
+
+  describe("dropVoidCall", function () {
+
+  });
+
+  describe("dropNode", function () {
+
+  });
+
+
+
+
+
+});
 
 
 

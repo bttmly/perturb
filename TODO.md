@@ -14,3 +14,8 @@
 - Example plugging in alternate AST parser
 
 - Dogfooding is great for development, but should implement an example on a node core library (events?)
+
+- Reconsider if running a matched "pair" really makes sense. Since source files are under mutation, and 
+  a single source file may match multiple test files, it may make more sense to mutate the source, run
+  all matched test files, then ensure *at least one* fails. This makes the library much more flexible
+  as it handles configurations besides (1 source):(1 test)
