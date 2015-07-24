@@ -18,7 +18,8 @@ process.argv.slice(2).forEach(function (arg) {
   switch (flag) {
 
   case "--iojs":
-    return bin = "iojs";
+    bin = "iojs";
+    return;
 
   case "--harmony":
   case "--harmony-proxies":
@@ -27,11 +28,12 @@ process.argv.slice(2).forEach(function (arg) {
   case "--harmony_shipping":
   case "--harmony_arrow_functions":
   case "--harmony_proxies":
-    return args.unshift(arg);
+    args.unshift(arg);
+    return;
 
   default:
-    return args.push(arg);
-
+    args.push(arg);
+    return;
   }
 
 });
