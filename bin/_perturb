@@ -2,14 +2,14 @@
 
 "use strict";
 
-console.log(process.argv);
+var exec = require("child_process").exec;
+var path = require("path");
 
 var program = require("commander");
 
-var path = require("path");
-
 var perturb = require("../");
 var generateConfig = require("../lib/config").generate;
+var MESSAGES = require("../lib/constant/messages");
 
 var pkg = require("../package.json");
 
@@ -55,4 +55,19 @@ function reporter (err, data) {
   console.log(data.meta);
 }
 
-perturb(generateConfig(userConfig), reporter);
+function runTests (settings, cb) {
+  var cmd = settings.testCmd || MESSAGES.DefaultTest;
+  console.log(MESSAGES.ExecutingTests, cmd);
+  exec(cmd, function (err) {
+    if (err) return cb(err);
+    console.log(MESSAGES.TestsPassed);
+    cb(null, settings);
+  });
+}
+
+runTests(generateConfig(userConfig), function (err, config) {
+  if (err) throw err;
+  perturb(config, reporter);
+});
+
+
