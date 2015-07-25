@@ -10,17 +10,9 @@ var program = require("commander");
 var perturb = require("../");
 var generateConfig = require("../lib/config").generate;
 var MESSAGES = require("../lib/constant/messages");
+var omitUndefined = require("../lib/util/omit-undefined");
 
 var pkg = require("../package.json");
-
-function omitUndefined (target) {
-  var out = {};
-  Object.keys(target).forEach(function (key) {
-    if (target[key] === undefined) return;
-    out[key] = target[key];
-  });
-  return out;
-}
 
 program
   .version(pkg.version)
