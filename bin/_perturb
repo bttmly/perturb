@@ -44,6 +44,7 @@ var userConfig = omitUndefined({
 // this will become the default reporter
 function reporter (err, data) {
   if (err) throw err;
+  console.log("reporter...");
   console.log(data.meta);
 }
 
@@ -62,4 +63,9 @@ runTests(generateConfig(userConfig), function (err, config) {
   perturb(config, reporter);
 });
 
+// sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
+process.on("uncaughtException", function (err) {
+  console.log("uncaught error in perturb process", err);
+  throw err;
+});
 

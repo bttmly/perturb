@@ -1,5 +1,5 @@
 "use strict";
 
-exports.matcher = function yup (sourceFile, testFile) {
+exports.matcher = function () {
   return true;
 };

@@ -12,10 +12,18 @@ var args = [perturb];
 
 var bin = process.argv[0];
 
+var timeout, ONE_MINUTE = 60 * 1000;
+
 process.argv.slice(2).forEach(function (arg) {
   var flag = arg.split("=")[0];
+  var val = arg.split("=")[1];
 
   switch (flag) {
+
+  case "timeout":
+    timeout = Number(val);
+    if (isNaN(timeout)) throw new Error("Invalid timeout");
+    return;
 
   case "--iojs":
     bin = "iojs";
@@ -37,6 +45,9 @@ process.argv.slice(2).forEach(function (arg) {
   }
 
 });
+
+
+timeout = timeout || ONE_MINUTE;
 
 console.log([bin].concat(args).join(" "));
 
@@ -63,3 +74,8 @@ process.on("SIGINT", function () {
   child.kill("SIGTERM"); // if that didn"t work, we"re probably in an infinite loop, so make it die.
   process.kill(process.pid, "SIGINT");
 });
+
+setTimeout(function () {
+  console.log("Timeout exceeded.");
+  child.kill("SIGINT");
+}, timeout).unref();
