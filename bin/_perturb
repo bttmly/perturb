@@ -8,7 +8,7 @@ var path = require("path");
 var program = require("commander");
 
 var perturb = require("../");
-var generateConfig = require("../lib/config").generate;
+var generateConfig = require("../lib/config");
 var omitUndefined = require("../lib/util/omit-undefined");
 var MESSAGES = require("../lib/constant/messages");
 
