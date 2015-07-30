@@ -8,3 +8,7 @@ Step 1: Generate a list of source file paths and a list of test file paths.
 Step 2: Combine the source and test file paths into a single list of source:test pairs (matchFiles)
 Step 3: For each pair, traverse the source AST to generate a list of mutation descriptors (handleMatch)
 Step 4: Filter mutation descriptors into "alive" mutations by executing them with a test runner (runMutation)
+
+Each step here is an iterative operation over a heterogenous list of objects that adhere to a specific interface.
+
+`lib/types` contains assertions of these interfaces to ensure they are followed throughout.
