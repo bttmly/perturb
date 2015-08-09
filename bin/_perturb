@@ -48,6 +48,7 @@ function reporter (err, data) {
   console.log(data.meta);
 }
 
+// figure out how exec handles command line args
 function runTests (settings, cb) {
   var cmd = settings.testCmd || MESSAGES.DefaultTest;
   console.log(MESSAGES.ExecutingTests, cmd);

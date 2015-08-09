@@ -51,28 +51,30 @@ timeout = timeout || ONE_MINUTE;
 
 console.log([bin].concat(args).join(" "));
 
-var child = spawn(bin, args, {stdio: "inherit"});
+var child = spawn(bin, args, {
+  stdio: "inherit",
+});
 
 child.on("exit", function (code, signal) {
   console.log("child exiting...", code);
-  process.on("exit", function(){
-    if (signal) {
-      process.kill(process.pid, signal);
-    } else {
-      process.exit(code);
-    }
-  });
+  if (signal) {
+    throw new Error("Child received signal " + signal);
+  }
+
+  if (code === 0) return;
+
+  throw new Error("Child exited with code " + code);
 });
 
 child.on("error", function (err) {
-  console.log("child errored...", err);
+  throw err;
 });
 
 // terminate children.
 process.on("SIGINT", function () {
   child.kill("SIGINT"); // calls runner.abort()
   child.kill("SIGTERM"); // if that didn"t work, we"re probably in an infinite loop, so make it die.
-  process.kill(process.pid, "SIGINT");
+  throw new Error("Main process received SIGINT");
 });
 
 setTimeout(function () {

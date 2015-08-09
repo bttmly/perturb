@@ -19,7 +19,7 @@ describe("#mapMirror", function () {
       expect(result).to.deep.equal({
         one: "one",
         two: "two",
-        three: "three"
+        three: "three",
       });
     });
 
@@ -39,17 +39,12 @@ describe("#mapMirror", function () {
       expect(result).to.deep.equal({
         one: "one",
         two: "two",
-        three: "three"
+        three: "three",
       });
     });
   });
 
 });
-
-// describe("#constObj", function () {
-
-// });
-
 
 describe("#mutantIsDead", function () {
   it("just returns the boolean cast of the input's `failed` property", function () {

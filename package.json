@@ -15,6 +15,7 @@
     "commander": "^2.6.0",
     "diff": "^1.2.1",
     "escodegen": "^1.5.0",
+    "eslint": "^1.1.0",
     "esprima": "^2.0.0",
     "fs-extra": "^0.16.3",
     "glob": "^4.3.2",
