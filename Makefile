@@ -17,7 +17,10 @@ events:
 	./bin/perturb -r ./examples/event-emitter
 
 dogfood:
-	NODE_ENV=testing ./bin/perturb -r ./ -c 'make test'
+	NODE_ENV=testing ./bin/perturb --rootDir ./ --testCmd 'make test'
+
+dogfood-parallel:
+	NODE_ENV=testing ./bin/perturb --rootDir ./ --testCmd 'make test' --runner mochaChild --parallel
 
 dogfood-i:
 	NODE_ENV=testing ./bin/perturb -r ./ -i

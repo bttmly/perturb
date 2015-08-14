@@ -25,6 +25,8 @@ program
   .option("-i, --interception", "use interception strategy (no disk I/O)")
   .option("-v, --verbose", "lots of logging")
   .option("-k, --killRate", "minimum kill rate to exit with code 0")
+  .option("-p, --parallel", "run mutants in parallel (careful!)")
+  .option("-u, --runner <runner>")
   .parse(process.argv);
 
 if (program.rootDir && program.rootDir[0] !== "/") {
@@ -39,6 +41,7 @@ var userConfig = omitUndefined({
   sourceGlob: program.sourceGlob,
   testCmd: program.testCmd,
   interception: program.interception,
+  runner: program.runner,
 });
 
 // this will become the default reporter
