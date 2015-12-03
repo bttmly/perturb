@@ -28,4 +28,7 @@ dogfood-parallel:
 dogfood-i:
 	NODE_ENV=testing ./bin/perturb -r ./ -i
 
+build:
+	./node_modules/babel-cli/bin/babel.js --out-dir _lib _src,
+
 .PHONY: test example
