@@ -10,6 +10,7 @@
   "repository": "git@github.com:nickb1080/perturb.git",
   "dependencies": {
     "async": "^0.9.0",
+    "bluebird": "^3.0.6",
     "chalk": "^0.5.1",
     "change-case": "^2.2.0",
     "commander": "^2.6.0",
@@ -19,6 +20,7 @@
     "esprima": "^2.0.0",
     "fs-extra": "^0.16.3",
     "glob": "^4.3.2",
+    "highland": "^2.5.1",
     "immutable": "^3.5.0",
     "intercept-require": "^0.6.1",
     "lodash": "^3.10.1",
@@ -34,7 +36,9 @@
     "mocha": "^2.1.0",
     "must": "^0.12.0",
     "npm": "^2.3.0",
-    "object-assign": "^2.0.0"
+    "object-assign": "^2.0.0",
+    "ramda": "^0.18.0",
+    "ramda-fantasy": "^0.4.1"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.1",
