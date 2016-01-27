@@ -1,0 +1,28 @@
+"use strict";
+
+var NODE_TYPES = require("../constants/node-types");
+var NODE_ATTRS = require("../constants/node-attrs");
+var IMap = require("immutable").Map;
+var voidNode = require("../util/void-node");
+
+// drop return w/o affecting the rest of the expression/statement
+// if return statement has no argument, instead transform it into `void 0;`
+// `return something;` => `something;`
+// `return;` => `void 0;`
+module.exports = {
+  name: "dropReturn",
+  type: NODE_TYPES.ReturnStatement,
+  nodeType: NODE_TYPES.ReturnStatement,
+  mutator (node) {
+    var arg = node.get(NODE_ATTRS.argument);
+
+    if (arg) {
+      return IMap({
+        type: NODE_TYPES.ExpressionStatement,
+        expression: arg,
+      });
+    }
+
+    return voidNode();
+  },
+};
