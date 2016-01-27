@@ -18,18 +18,12 @@ const Future = require("bluebird");
 const matchFiles = require("./match-files");
 const makeMutations = require("./make-mutations");
 const runMutation = require("./run-mutation");
+const report = require("./reporters").diff;
 
 const fileSystem = require("./file-system");
 const generateConfig = require("./generate-config");
 
-// var isFunction = require("./util/is-function");
-// var get = require("./util/get");
 // var ERRORS = require("./constant/errors");
-
-// const getMutantsBySourceFile = R.pipe(
-//   R.map(createMutants(config)),
-//   R.reject(R.isEmpty),
-// );
 
 const pGlob = Future.promisify(glob);
 const pMap = R.flip(Future.map);
@@ -73,48 +67,21 @@ function perturb (_cfg) {
         var mutations = R.chain(makeMutations, matches);
         console.log("mutations", mutations.length);
 
+        mutations.forEach(m => {
+          if (m.sourceCode === m.mutatedSourceCode) {
+            throw new Error("Mutation not applied! " + m.name);
+          }
+        })
+
+        // TODO make this a stream for live result reporting
         Future.mapSeries(mutations, runMutation)
           .then(function (results) {
-            console.log("\n\n\n\n\n\n\n\n");
-            console.log("------------------------");
-            console.log("------------------------");
-            console.log("------------------------");
-            console.log("------------------------");
-            console.log("------------------------");
-            console.log("\n\n\n\n\n\n\n\n");
-            console.log("KILLED", results.filter(r => r.failedOn).length);
+            results.map(report).map(r => r.print());
+            console.log("kill count", results.filter(r => r.error).length, "/", results.length)
           });
       });
   });
 }
-
-// function createMutantReport (mutants) {
-
-//   // TODO remove this is for backwards compat
-//   const matches = {};
-
-//   const meta = {
-//     duration: Date.now() - start,
-//     matchesCount: matches.length,
-//     mutantCount: mutants.length,
-//     killedMutants: killCount(mutants),
-//   };
-
-//   meta.killRate = meta.killedMutants / meta.mutantCount;
-//   return {meta, config, matches, mutants}
-// }
-
-// const makeMutantRunner = R.curry(function (config, mutants) {
-//   const {sourceFile, sourceCode} = mutants[0];
-  
-//   return Future.map(mutants, runMutant(config))
-//     .then(processed => ({
-//         sourceFile,
-//         testFiles: R.unique(R.pluck("testFile", mutants)),
-//         mutants: processed,
-//     }))
-//     .finally(() => fs.writeFileSync(sourceFile, sourceCode));
-// });
 
 const killCount = R.pipe(
   R.filter(R.prop("failed")),

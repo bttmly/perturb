@@ -12,7 +12,9 @@ const mapMirror = require("../util/map-mirror");
 module.exports = {
   // before :: Muatation -> Promise<Void>
   before (mutation) {
-    fs.writeFileSync(mutation.source, escodegen.generate(mutation.ast.toJS()));
+    delete require.cache[mutation.source];
+
+    fs.writeFileSync(mutation.source, mutation.mutatedSourceCode);
     return {
       cache: mapMirror(Object.keys(require.cache)),
       listeners: process.listeners("uncaughtException"),
@@ -21,20 +23,21 @@ module.exports = {
 
   // runner :: Mutation -> Promise<MutationResult>
   run (mutation) {
-    return new Future(function (resolve, reject) {
+    return new Future(function (resolve) {
       let failedOn;
 
-      function reporter (testRunner) {
-        testRunner.on("fail", test => failedOn = test);
+      function reporter (suite) {
+        suite.on("fail", test => failedOn = test);
       }
 
       const mocha = new Mocha({reporter, bail: true});
       mutation.tests.forEach(t => mocha.addFile(t));
 
       try {
-        mocha.run(() => resolve(failedOn));
+        mocha.run(function () {
+          resolve(failedOn);
+        });
       } catch (err) {
-        console.log("Mocha errored during require resolution", err);
         return resolve(err);
       }
     })
@@ -52,7 +55,6 @@ module.exports = {
     // remove danging uncaughtException listeners Mocha didn't clean up
     process.listeners("uncaughtException")
       .filter(f => !before.listeners.includes(f))
-      .map(f => (console.log("mocha argh", f.name), f))
       .forEach(f => process.removeListener("uncaughtException", f));
 
     // remove all modules that were required by this test

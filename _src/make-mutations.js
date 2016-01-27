@@ -36,6 +36,8 @@ module.exports = function makeMutants (match) {
   const ast = I.fromJS(__ast);
   const paths = getMutationPaths(__ast);
 
+  const regeneratedSource = escodegen.generate(__ast);
+
   return paths.reduce(function (mutations, path) {
     return mutations.concat(mutationsFromPath(path));
   }, [])
@@ -46,7 +48,14 @@ module.exports = function makeMutants (match) {
       .filter(makeFilter(node))
       .map(function ({mutator, name}) {
         const updatedAst = ast.updateIn(path, mutator);
-        return { tests, source, sourceCode, name, path, mutator, ast: updatedAst, runner: match.runner };
+        return { 
+          tests, source, name, path, mutator,
+          loc: node.get("loc"),
+          ast: updatedAst, 
+          runner: match.runner,
+          sourceCode: regeneratedSource,
+          mutatedSourceCode: escodegen.generate(updatedAst.toJS()),
+        };
       });
   }
 
