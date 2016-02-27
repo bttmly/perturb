@@ -53,7 +53,7 @@ function run (perturb, which, cb) {
 }
 
 if (!module.parent) {
-  run(proess.argv[2], require("./"))
+  run(require("./"), process.argv[2]);
 }
 
 module.exports = run;
