@@ -28,14 +28,21 @@ var ENC_UTF8 = {
 
 var R = require("ramda");
 
-module.exports = function makeMutants (match) {
+module.exports = function makeMutations (match) {
 
   const {source, tests} = match;
   const sourceCode = fs.readFileSync(source, ENC_UTF8);
-  const __ast = esprima.parse(sourceCode, ESPRIMA_SETTINGS);
+  let __ast;
+
+  try {
+    __ast = esprima.parse(sourceCode, ESPRIMA_SETTINGS);
+  } catch (err) {
+    console.log(sourceCode);
+    throw err;
+  }
+
   const ast = I.fromJS(__ast);
   const paths = getMutationPaths(__ast);
-
   const regeneratedSource = escodegen.generate(__ast);
 
   return paths.reduce(function (mutations, path) {
@@ -85,13 +92,6 @@ function getMutationPaths (ast) {
   return mutationPaths;
 }
 
-// expects a mutable tree
-// callback can alter the tree in place
-// useful for mutating the AST in place before making it immutable
-//
-// TODO - we need a safe iterative function to handle this to guarantee
-// we don't blow the stack
-//
 function traverseWithPath (tree, visitor, currentPath) {
   currentPath = currentPath || [];
 

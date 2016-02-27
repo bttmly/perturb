@@ -7,7 +7,7 @@ function diffReporter (result) {
   var report = {
     loc: result.loc.start.line + "," + result.loc.start.column,
     name: result.name,
-    failedOn: result.failedOn,
+    error: result.error,
     diff: generateDiff(result),
     print: () => printDiffReport(report),
   }
@@ -20,21 +20,21 @@ function identifier (report) {
 }
 
 function printDiffReport (report) {
-  // var alive = "\u2714  ";
-  // var zombie = "\u26A0  ";
-  // var killed = "\u2718  ";
 
   var alive = "#ALIVE: ";
   var dead = "#DEAD: ";
-
   var id = identifier(report);
 
-  var title = chalk.gray.underline(
-    (report.failedOn ? dead : alive) + identifier(report)
-  );
+  if (report.error) {
+    console.log(chalk.gray(id));
+    return;
+  }
 
+  var title = chalk.red.underline(alive + identifier(report));
   var plus = "+    ";
   var minus = "-    ";
+
+  if (report.error) return;
 
   var output = [
     title,

@@ -1,3 +1,5 @@
+"use strict";
+
 const Future = require("bluebird");
 
 function runMutation (mutation) {

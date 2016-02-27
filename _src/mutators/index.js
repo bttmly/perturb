@@ -26,9 +26,9 @@ var coreMutators = [
   require("./swap-binary-operators"),
   require("./swap-logical-operators"),
   require("./tweak-array-literal"),
+  require("./tweak-object-literal"),
   require("./tweak-boolean-literal"),
   require("./tweak-number-literal"),
-  require("./tweak-object-literal"),
   require("./tweak-string-literal"),
 ];
 

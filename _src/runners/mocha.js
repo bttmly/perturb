@@ -9,6 +9,10 @@ const escodegen = require("escodegen");
 
 const mapMirror = require("../util/map-mirror");
 
+const doesNotInclude = R.curry(function (arr, val) {
+  return arr.indexOf(val) === -1;
+});
+
 module.exports = {
   // before :: Muatation -> Promise<Void>
   before (mutation) {
@@ -41,10 +45,7 @@ module.exports = {
         return resolve(err);
       }
     })
-    .then(failedOn => {
-      // generate the MutationResult
-      return {...mutation, failedOn};
-    });
+    .then(error => Object.assign({}, mutation, {error}));
   },
 
   // after :: Mutation -> Before? -> Promise<Void>
@@ -54,7 +55,7 @@ module.exports = {
 
     // remove danging uncaughtException listeners Mocha didn't clean up
     process.listeners("uncaughtException")
-      .filter(f => !before.listeners.includes(f))
+      .filter(doesNotInclude(before.listeners))
       .forEach(f => process.removeListener("uncaughtException", f));
 
     // remove all modules that were required by this test

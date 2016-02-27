@@ -5,7 +5,8 @@ const join = require("path").join;
 
 const assign = require("object-assign");
 
-const runners = require("./runners");
+const getRunner = require("./runners");
+const getMatcher = require("./matchers");
 
 const DEFAULT_SOURCE = "lib";
 const DEFAULT_TEST = "test";
@@ -37,7 +38,7 @@ function calculateExtraConfig (config) {
     perturbRoot: join(config.rootDir, config.perturbDirName),
     perturbSourceDir: join(config.perturbDirName, config.sourceDir),
     perturbTestDir: join(config.perturbDirName, config.testDir),
-    runner: runners.get(config.runner),
+    runner: getRunner(config.runner),
   });
 
   if (newConfig.cacheInvalidationPredicate == null) {
@@ -55,7 +56,7 @@ function generateConfig (userConfig) {
   const result = calculateExtraConfig(assign({}, defaultConfig, userConfig));
 
   // TODO let configuration dictate which matchers and reporters are used
-  result.matcher = require("./matchers/contains-comparative-matcher")(result);
+  result.matcher = getMatcher("contains-comparative")(result);
   
   // result.mutantReporter = require("./reporters").mutantReporter;
 

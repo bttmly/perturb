@@ -14,14 +14,16 @@ const _ = require("lodash");
 const async = require("async");
 const glob = require("glob");
 const Future = require("bluebird");
+const through2 = require("through2");
 
 const matchFiles = require("./match-files");
 const makeMutations = require("./make-mutations");
 const runMutation = require("./run-mutation");
-const report = require("./reporters").diff;
+const getReporter = require("./reporters");
 
 const fileSystem = require("./file-system");
 const generateConfig = require("./generate-config");
+const mapSeriesStream = require("./util/map-series-stream");
 
 // var ERRORS = require("./constant/errors");
 
@@ -43,49 +45,76 @@ type Mutation
 
 */
 
+
+// make file-system module work like this
+// (may help for spawning multiple parallel perturb
+// processes side-by-side)
+function tempFiles (config) {
+  return {
+    setup () {
+      fileSystem.setup(config);
+    },
+    teardown () {
+      fileSystem.teardown(config);
+    },
+  }
+}
+
+// TODO allow configure
+const reporter = getReporter("diff");
+
 function perturb (_cfg) {
 
   const config = generateConfig(_cfg);
   console.log("Pertrubing with config");
   console.log(config);
   
-  return new Future(function (resolve, reject) {
+  const {setup, teardown} = tempFiles(config);
 
-    fileSystem.setup(config);
+  setup();
+
+  return new Future(function (resolve, reject) {  
 
     const start = Date.now();
-    const sources = pGlob(config.perturbSourceDir + config.sourceGlob);
-    const tests = pGlob(config.perturbTestDir + config.testGlob);
-
-    Future.props({sources, tests})
-      .then(function ({sources, tests}) {
+    const sources = glob.sync(config.perturbSourceDir + config.sourceGlob);
+    const tests = glob.sync(config.perturbTestDir + config.testGlob);
         
-        var matches = matchFiles(config, sources, tests).filter(hasTests);
-        console.log("MATCHES", matches.length);
-        // if (matches.length === 0) throw new Error("no matches");
+    // matchFiles :: Config -> [String] -> [String] -> [Match]
+    const matches = matchFiles(config, sources, tests).filter(hasTests);
 
-        var mutations = R.chain(makeMutations, matches);
-        console.log("mutations", mutations.length);
+    console.log("after matches");
 
-        mutations.forEach(m => {
-          if (m.sourceCode === m.mutatedSourceCode) {
-            throw new Error("Mutation not applied! " + m.name);
-          }
-        })
+    // makeMutations :: Match -> [Mutation]
+    const mutations = R.chain(makeMutations, matches);
 
-        // TODO make this a stream for live result reporting
-        Future.mapSeries(mutations, runMutation)
-          .then(function (results) {
-            results.map(report).map(r => r.print());
-            console.log("kill count", results.filter(r => r.error).length, "/", results.length)
-          });
-      });
+    console.log("after mutations");
+
+    // runMutation :: Mutation -> Promise<Result>
+    // mapSeriesStream :: (T -> Promise<Result>) -> [T] -> ReadableStream<Promise<Result>>
+    const st = mapSeriesStream(runMutation, mutations)
+
+    console.log("after stream");
+
+    // resultReporter :: Result -> Any?
+    // provided for visual reporters to give output as the test is running
+    st.pipe(streamifyReporter(reporter));
+
+    // aggregateReporter :: [Result] -> Any?
+    //
+    // provided for all runners to do things like "74% mutations killed", and
+    // for reporters who write, say, structured results to the file system
+    st.on("complete", function (results) {
+      teardown();
+      resolve(results);
+    })
   });
 }
 
-const killCount = R.pipe(
-  R.filter(R.prop("failed")),
-  R.prop("length")
-);
+function streamifyReporter (reporter) {
+  return through2.obj(function (data, enc, next) {
+    reporter(data).print();
+    next();
+  });
+}
 
 module.exports = perturb;

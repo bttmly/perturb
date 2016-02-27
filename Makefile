@@ -4,29 +4,14 @@ test: lint
 lint:
 	./node_modules/.bin/eslint ./lib/**/*.js
 
-test-example:
-	./node_modules/.bin/_mocha ./example/test/**/*-test.js
-
-example:
-	./bin/perturb -r ./examples/toy-lib
-
-example-i:
-	./bin/perturb -r ./examples/toy-lib -i
-
 events:
 	./bin/perturb -r ./examples/event-emitter
 
+example:
+	./node_modules/.bin/babel-node ./_src/run.js example
+
 dogfood:
-	NODE_ENV=testing ./bin/perturb --rootDir ./ --testCmd 'make test'
-
-dogfood-child:
-	NODE_ENV=testing ./bin/perturb --rootDir ./ --testCmd 'make test' --runner mochaChild
-
-dogfood-parallel:
-	NODE_ENV=testing ./bin/perturb --rootDir ./ --testCmd 'make test' --runner mochaChild --parallel
-
-dogfood-i:
-	NODE_ENV=testing ./bin/perturb -r ./ -i
+	./node_modules/.bin/babel-node ./_src/run.js dogfood
 
 build:
 	./node_modules/babel-cli/bin/babel.js --out-dir _lib _src,

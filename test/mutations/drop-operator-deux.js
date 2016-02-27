@@ -1,1 +1,1 @@
-console.log("XXX RAN XXX");
+console.log("drop-operator second test file ran...");
