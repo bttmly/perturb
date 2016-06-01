@@ -2,7 +2,7 @@
 
 var expect = require("chai").expect;
 
-var mapMirror = require("../../lib/util/map-mirror")
+var mapMirror = require("../../src/util/map-mirror")
 
 xdescribe("#mapMirror", function () {
 
