@@ -4,8 +4,8 @@ var esprima = require("esprima");
 var _ = require("lodash");
 var assign = require("object-assign");
 var I = require("immutable");
-var NODE_TYPES = require("../lib/constant/node-types");
-var mutators = require("../lib/mutators").mutators;
+var NODE_TYPES = require("../src/constants/node-types");
+var mutators = require("../src/mutators").mutators;
 
 function isPrimitiveValue (value) {
   var t = typeof value;

@@ -20,5 +20,5 @@ function likeLodashMap (arr, cb) {
 
 module.exports = {
   likeEs5Map: likeEs5Map,
-  likeLodashMap: likeLodashMap
+  likeLodashMap: likeLodashMap,
 };
