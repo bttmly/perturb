@@ -1,7 +1,3 @@
-"use strict";
-
-function isBoolean (b) {
-  return typeof b === "boolean";
-}
-
-module.exports = isBoolean;
+module.exports = function (b) {
+  return b === true || b === false;
+};

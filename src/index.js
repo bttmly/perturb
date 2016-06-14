@@ -48,15 +48,13 @@ function perturb (_cfg) {
   // matchFiles :: Config -> [String] -> [String] -> [Match]
   const matches = matchFiles(config, sources, tests).filter(hasTests);
 
-  console.log(matches.map(m => m.source));
-
   // makeMutations :: Match -> [Mutation]
   const mutations = R.chain(makeMutations, matches);
 
   // runMutation :: Mutation -> Promise<Result>
   // SingleResultReporter :: Result -> Any?
   // AllResultsReporter :: [Result] -> Any?
-    
+
   return Bluebird.mapSeries(mutations, runAndReport)
     .then(results => {
     console.log("tearing down...");

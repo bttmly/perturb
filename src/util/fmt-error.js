@@ -14,10 +14,9 @@ function FmtError () {
 
 util.inherits(FmtError, Error);
 
-// FmtError.prototype.inspect = function () {};
-
 FmtError.prototype.assign = function (extraData) {
-  return assign(this, extraData);
+  assign(this, extraData);
+  return this;
 };
 
 module.exports = FmtError;
