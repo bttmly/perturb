@@ -32,3 +32,4 @@ node_modules
 .perturb
 example/.DS_Store
 example/.perturb
+typings
