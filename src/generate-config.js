@@ -13,13 +13,6 @@ const DEFAULT_TEST = "test";
 const PERTURB_DIR = ".perturb";
 const DEFAULT_GLOB = "/**/*.js";
 
-function createDefaultCacheInvalidator (config) {
-  return function shouldInvalidate (modulePath) {
-    // assert(isString(modulePath), "Expected a string module path");
-    return modulePath.indexOf(config.perturbDirName) !== -1;
-  };
-}
-
 // TODO add a configurable predicate for clearing the require.cache
 
 const defaultConfig = {
@@ -40,10 +33,6 @@ function calculateExtraConfig (config) {
     perturbTestDir: join(config.perturbDirName, config.testDir),
     runner: getRunner(config.runner),
   });
-
-  if (newConfig.cacheInvalidationPredicate == null) {
-    newConfig.cacheInvalidationPredicate = createDefaultCacheInvalidator(newConfig);
-  }
 
   return newConfig;
 }

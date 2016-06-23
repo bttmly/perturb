@@ -1,0 +1,27 @@
+import NODE_TYPES from "../constants/node-types";
+import NODE_ATTRS from "../constants/node-attrs";
+import * as R from "ramda";
+import { MutatorPlugin } from "../types";
+
+interface StringLiteral extends ESTree.Node {
+  value: string;
+}
+
+const EMPTY_REPLACEMENT = "a";
+
+export default <MutatorPlugin>{
+  // drops first character of non-empty string; changes
+  // empty strings to "a"
+  // var s = ""; => var s = "a";
+  // var name = "nick"; => var name = "ick";
+  name: "tweakStringLiteral",
+  nodeTypes: [NODE_TYPES.Literal],
+  filter: function (node) {
+    return typeof (<ESTree.Literal>node).value === "string";
+  },
+  mutator: function (node) {
+    const {value} = <StringLiteral>node;
+    const replacement = value.length ? value.slice(1) : EMPTY_REPLACEMENT;
+    return R.assoc("value", replacement, node);
+  },
+};

@@ -43,18 +43,10 @@ var fns = [
       node.expression.value === "use strict"
     );
   },
-
 ];
 
 function shouldSkip (node, path) {
-  return fns.some(callWith(node, path));
-}
-
-function callWith () {
-  var args = arguments;
-  return function (fn) {
-    return fn.apply(this, args);
-  };
+  return fns.some(f => f(node, path));
 }
 
 module.exports = shouldSkip;

@@ -42,8 +42,9 @@ module.exports = R.curry(function matchFiles (config, sources, tests) {
 });
 
 function runGenerativeMatcher (generateTestName, source, tests) {
-  var test = tests[generateTestName(source)];
-  return test ? [test] : [];
+  const name = generateTestName(source);
+  if (!tests.hasOwnProperty(name)) return [];
+  return [tests[name]];
 }
 
 function runComparativeMatcher (isMatch, source, tests) {
