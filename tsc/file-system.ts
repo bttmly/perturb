@@ -1,15 +1,21 @@
 "use strict";
 
+///<reference path="../typings/globals/node/index.d.ts"/>
+///<reference path="../typings/globals/fs-extra/index.d.ts"/>
+///<reference path="../typings/modules/ramda/index.d.ts"/>
+
 const join = require("path").join;
 const glob = require("glob");
 const fs = require("fs-extra");
 const R = require("ramda");
 
-const shouldSymlink = {node_modules: "node_modules"};
+import {PerturbConfig} = "./types";
 
-const has = obj => key => obj.hasOwnProperty(key);
+const shouldSymlink = new Set([
+  "node_modules"
+ ]);
 
-function setupPerturbDirectory (config) {
+function setupPerturbDirectory (config): void {
 
   // maybe remove this? if it exists it means there is a bug with cleanup
   fs.removeSync(config.perturbRoot);
@@ -18,40 +24,33 @@ function setupPerturbDirectory (config) {
   fs.copySync(config.originalTestDir, config.perturbTestDir);
 
   fs.readdirSync(config.rootDir)
-    .filter(has(shouldSymlink))
+    .filter(f => shouldSymlink.has(f))
     .map(item => [join(config.rootDir, item), join(config.perturbRoot, item)])
     .forEach(R.apply(fs.symlinkSync))
 }
 
-function teardownPerturbDirectory (config) {
+function teardownPerturbDirectory (config): void {
   fs.removeSync(config.perturbRoot);
 }
 
-function getFilePaths (config) {
-  // const sources = glob.sync(config.perturbTestDir + config.testGlob)
-  //   .map(p => path.resolve(p)) // get absolute paths
-  //   .map(s => s.slice(config.perturbRoot)); // trim to path w/in project
-  
-  // const tests = glob.sync(config.perturbSourceDir + config.sourceGlob)
-  //   .map(p => path.resolve(p)) // get absolute paths
-  //   .map(s => s.slice(config.perturbRoot)); // trim to path w/in project
-
+type filePathResult = { sources: string[], tests: string[] }
+function getFilePaths (config): filePathResult {
   return {
     sources: glob.sync(config.perturbSourceDir + config.sourceGlob),
     tests: glob.sync(config.perturbTestDir + config.testGlob),
   };
 }
 
-module.exports = function (config) {
+module.exports = function createFsHelpers (c: PerturbConfig) {
   return {
     setup () {
-      setupPerturbDirectory(config);
+      setupPerturbDirectory(c);
     },
     teardown () {
-      teardownPerturbDirectory(config);
+      teardownPerturbDirectory(c);
     },
     paths () {
-      return getFilePaths(config);
+      return getFilePaths(c);
     },
   };
 }

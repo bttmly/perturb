@@ -1,0 +1,15 @@
+{
+  "name": "perturb",
+  "dependencies": {
+    "ramda": "registry:npm/ramda#0.21.0+20160531162943"
+  },
+  "globalDependencies": {
+    "bluebird": "registry:dt/bluebird#2.0.0+20160319051630",
+    "escodegen": "registry:dt/escodegen#0.0.0+20160524140038",
+    "esprima": "registry:dt/esprima#2.1.0+20160317120654",
+    "estree": "registry:dt/estree#0.0.0+20160317120654",
+    "fs-extra": "registry:dt/fs-extra#0.0.0+20160319124112",
+    "immutable": "registry:dt/immutable#3.8.1+20160608070634",
+    "node": "registry:dt/node#6.0.0+20160613154055"
+  }
+}

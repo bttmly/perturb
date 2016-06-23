@@ -5,7 +5,6 @@
 const I = require("immutable");
 const R = require("ramda");
 const fs = require("fs-extra");
-const async = require("async");
 const esprima = require("esprima");
 const escodegen = require("escodegen");
 const assign = require("object-assign");

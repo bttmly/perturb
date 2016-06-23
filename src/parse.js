@@ -1,4 +1,3 @@
-const babel = require("babel-core");
 const esprima = require("esprima");
 const escodegen = require("escodegen");
 
