@@ -10,5 +10,5 @@ export default <MutatorPlugin>{
     NODE_TYPES.ContinueStatement,
     NODE_TYPES.BreakStatement,
   ],
-  mutator: function { return voidNode },
+  mutator: function () { return voidNode },
 };

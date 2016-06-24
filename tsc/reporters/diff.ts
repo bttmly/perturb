@@ -1,22 +1,23 @@
-import chalk from "chalk";
-import { diffLines } from "diff";
-import * as changeCase from "change-case";
-import * as R from "ramda";
+const chalk = require("chalk");
+const { diffLines } = require("diff");
+const changeCase = require("change-case");
+const R = require("ramda");
 
 import { ReporterPlugin, RunnerResult } from "../types";
 
-const plugin : ReporterPlugin = {
+module.exports = <ReporterPlugin>{
   name: "diff",
-  onResult: function (r: RunnerResult) {
+  onResult: function(r: RunnerResult) {
     console.log(generateReport(r));
   },
-  onFinish: function (rs: Array<RunnerResult>) {
+  onFinish: function(rs: Array<RunnerResult>) {
     const [killed, alive] = R.partition(r => r.error, rs);
-    console.log(`Total: ${rs.length}. Killed: ${killed.length}. Rate: ${(rs.length / killed.length).toFixed(4) * 100}%`)
+    const total = rs.length;
+    const killCount = killed.length;
+    const killRate = Number((total / killCount).toFixed(4)) * 100;
+    console.log(`Total: ${total}. Killed: ${killCount}. Rate: ${killRate}%`);
   },
-}
-
-export default plugin;
+};
 
 function generateReport (r: RunnerResult): string {
   const plus = "+    ";
@@ -50,5 +51,5 @@ function generateDiff (r: RunnerResult) {
 
 function identifier (r: RunnerResult) {
   const loc = r.loc.start.line + "," + r.loc.start.column;
-  return changeCase.sentence(r.name) + " @" + r.loc;
+  return changeCase.sentence(r.mutatorName) + " @" + r.loc;
 }

@@ -1,6 +1,4 @@
-var constObj = require("../util/const-obj");
-
-module.exports = constObj({
+module.exports = {
   NotKeyedIterable: "Node must be an Immutable.js keyed iterable",
   WrongNodeType: "Node is of wrong type. Actual: %s; Expected: %s",
   TestsFailed: "Test command `%s` failed. Tests must be passing for perturb to work properly.",
@@ -10,4 +8,4 @@ module.exports = constObj({
   InvalidRunner: "No test runner named '%s' found.",
   InvalidMutator: "Invalid mutator",
   NoCallback: "Must Provide a callback function.",
-});
+};

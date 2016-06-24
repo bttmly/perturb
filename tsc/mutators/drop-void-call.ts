@@ -1,14 +1,13 @@
-"use strict";
+const NODE_TYPES = require("../constants/node-types");
+const R = require("ramda");
+const voidNode = require("./_void-node");
 
-import NODE_TYPES from "../constants/node-types";
-import voidNode from "../util/void-node";
 import { MutatorPlugin } from "../types";
-import * as R from "ramda";
 
 // drops a function call made for side effects
 // (the return value isn't assigned to a variable)
 // (will this cause lots of test timeouts due to uncalled callbacks?)
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "dropVoidCall",
   nodeTypes: [NODE_TYPES.ExpressionStatement],
   filter: function (node) {
@@ -21,5 +20,5 @@ export default <MutatorPlugin>{
       return false;
     }
   },
-  mutator: function { return voidNode },
+  mutator: function () { return voidNode },
 };

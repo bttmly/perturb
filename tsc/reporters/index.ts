@@ -1,12 +1,12 @@
 import { ReporterPlugin } from "../types";
 
-const diffReporter = require("./mocha");
+const diffReporter = require("./diff");
 
-const plugins = new Map<ReporterPlugin>([
+const plugins = new Map<string, ReporterPlugin>([
   [ "diff", diffReporter ],
 ]);
 
-export function locateReporterPlugins (names) {
+function locateReporterPlugins (names) {
   names.forEach(function (name) {
     let plugin: ReporterPlugin;
     try {
@@ -21,7 +21,7 @@ export function locateReporterPlugins (names) {
   });
 }
 
-export default function get (name: string): ReporterPlugin {
+module.exports = function get (name: string): ReporterPlugin {
   const p = plugins.get(name);
   if (p == null) {
     throw new Error(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);

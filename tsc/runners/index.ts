@@ -1,17 +1,16 @@
-import { RunnerPlugin } = "../types";
+import { RunnerPlugin } from "../types";
+import mochaRunner from "./mocha";
 
-const mochaRunner = require("./mocha");
-
-const builtIns = new Map<RunnerPlugin>([
+const plugins = new Map<string, RunnerPlugin>([
   [ "mocha", mochaRunner ],
 ]);
 
-export function locateRunnerPlugins (names) {
+export function injectPlugins (names) {
   names.forEach(function (name) {
     let plugin: RunnerPlugin;
     try {
       plugin = require(`perturb-plugin-runner-${name}`);
-      builtIns.set(name, plugin);
+      plugins.set(name, plugin);
       return;
     } catch (err) {
       // any way to recover? other locate strategy?
@@ -22,7 +21,7 @@ export function locateRunnerPlugins (names) {
 }
 
 export default function get (name: string): RunnerPlugin {
-  const plugin = RunnerPlugin.get(name);
+  const plugin = plugins.get(name);
   if (plugin == null) {
     throw new Error(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);
   }

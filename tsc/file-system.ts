@@ -1,19 +1,13 @@
-"use strict";
-
-///<reference path="../typings/globals/node/index.d.ts"/>
-///<reference path="../typings/globals/fs-extra/index.d.ts"/>
-///<reference path="../typings/modules/ramda/index.d.ts"/>
-
-const join = require("path").join;
+const path = require("path");
 const glob = require("glob");
 const fs = require("fs-extra");
 const R = require("ramda");
 
-import {PerturbConfig} = "./types";
+import { PerturbConfig } from "./types";
 
 const shouldSymlink = new Set([
   "node_modules"
- ]);
+]);
 
 function setupPerturbDirectory (config): void {
 
@@ -25,7 +19,7 @@ function setupPerturbDirectory (config): void {
 
   fs.readdirSync(config.rootDir)
     .filter(f => shouldSymlink.has(f))
-    .map(item => [join(config.rootDir, item), join(config.perturbRoot, item)])
+    .map(item => [path.join(config.rootDir, item), path.join(config.perturbRoot, item)])
     .forEach(R.apply(fs.symlinkSync))
 }
 
@@ -33,8 +27,15 @@ function teardownPerturbDirectory (config): void {
   fs.removeSync(config.perturbRoot);
 }
 
-type filePathResult = { sources: string[], tests: string[] }
-function getFilePaths (config): filePathResult {
+type FilePathResult = { sources: string[], tests: string[] };
+
+interface FsHelper {
+  setup(): void;
+  teardown(): void;
+  paths(): FilePathResult;
+}
+
+function getFilePaths (config): FilePathResult {
   return {
     sources: glob.sync(config.perturbSourceDir + config.sourceGlob),
     tests: glob.sync(config.perturbTestDir + config.testGlob),
@@ -42,7 +43,7 @@ function getFilePaths (config): filePathResult {
 }
 
 module.exports = function createFsHelpers (c: PerturbConfig) {
-  return {
+  return <FsHelper>{
     setup () {
       setupPerturbDirectory(c);
     },

@@ -1,32 +1,40 @@
-"use strict";
+///<reference path="../../typings/modules/ramda/index.d.ts"/>
+///<reference path="./mocha.d.ts"/>
 
-const fs = require("fs");
 
-const R = require("ramda");
-const Mocha = require("mocha");
-const Future = require("bluebird");
-const escodegen = require("escodegen");
+import * as fs from "fs";
+import * as R from "ramda";
+import * as Bluebird from "bluebird";
+import * as Mocha from "mocha";
 
-const mapMirror = require("../util/map-mirror");
+import {
+  RunnerPlugin,
+  Mutant,
+  RunnerResult
+} from "../types";
 
-const doesNotContain = R.complement(R.flip(R.contains));
-const doesNotHave = R.complement(R.flip(R.has));
-const delProp = (obj: Object) => (prop: string) => delete obj[prop];
+const doesNotContain = arr => item => !R.contains(item, arr);
+const doesNotHave = obj => prop => !R.has(prop, obj);
+const delProp = obj => prop => delete obj[prop];
 
-import { RunnerPlugin, MutationDescriptor } from "../types";
+function mirror (arr: string[]) {
+  const out = {};
+  arr.forEach(x => out[x] = x);
+  return out;
+}
 
-const plugin : RunnerPlugin = {
+export default <RunnerPlugin>{
 
-  prepare: function (m: MutationDescriptor): {
-    delete require.cache[m.source];
-    fs.writeFileSync(m.source, m.mutatedSourceCode);
+  prepare: function (m: Mutant): Promise<any> {
+    delete require.cache[m.sourceFile];
+    fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
     return Promise.resolve({
-      cache: mapMirror(Object.keys(require.cache)),
+      cache: mirror(Object.keys(require.cache)),
       listeners: process.listeners("uncaughtException"),
     });
   },
 
-  run: function (m: MutationDescriptor) {
+  run: function (m: Mutant): Promise<RunnerResult> {
     return new Promise(function(resolve) {
       let failedOn;
 
@@ -35,7 +43,7 @@ const plugin : RunnerPlugin = {
 
       const mocha = new Mocha({ reporter, bail: true });
 
-      m.tests.forEach(t => mocha.addFile(t));
+      m.testFiles.forEach(t => mocha.addFile(t));
 
       try {
         mocha.run(() => resolve(failedOn));
@@ -46,9 +54,9 @@ const plugin : RunnerPlugin = {
       .then(error => Object.assign({}, m, { error }));
   },
 
-  cleanup: function (m: MutationDescriptor, before: any) {
+  cleanup: function (m: Mutant, before: any): Promise<void> {
     // write the original source code back to it's location
-    fs.writeFileSync(m.source, m.sourceCode);
+    fs.writeFileSync(m.sourceFile, m.originalSourceCode);
 
     // remove danging uncaughtException listeners Mocha didn't clean up
     process.listeners("uncaughtException")
@@ -62,6 +70,4 @@ const plugin : RunnerPlugin = {
 
     return Promise.resolve();
   }
-}
-
-export default plugin;
+};

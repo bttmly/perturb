@@ -7,9 +7,11 @@
     "bluebird": "registry:dt/bluebird#2.0.0+20160319051630",
     "escodegen": "registry:dt/escodegen#0.0.0+20160524140038",
     "esprima": "registry:dt/esprima#2.1.0+20160317120654",
+    "estraverse": "registry:dt/estraverse#0.0.0+20160523040947",
     "estree": "registry:dt/estree#0.0.0+20160317120654",
-    "fs-extra": "registry:dt/fs-extra#0.0.0+20160319124112",
+    "fs-extra": "registry:dt/fs-extra#0.0.0+20160517121359",
     "immutable": "registry:dt/immutable#3.8.1+20160608070634",
+    "mocha": "registry:dt/mocha#2.2.5+20160619032855",
     "node": "registry:dt/node#6.0.0+20160613154055"
   }
 }

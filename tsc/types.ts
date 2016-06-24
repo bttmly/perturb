@@ -1,23 +1,25 @@
+///<reference path="../typings/globals/estree/index.d.ts"/>
+
 // reporter function types
 export interface ResultReporter {
-  (r: MutationResult): void;
+  (r: RunnerResult): void;
 }
 
 export interface AggregateReporter {
-  (rs: Array<MutationResult>): void;
+  (rs: Array<RunnerResult>): void;
 }
 
 // runner plugin function types
 export interface Runner {
-  (m: MutationDescriptor): Promise<MutationResult>;
+  (m: Mutant): Promise<RunnerResult>;
 }
 
 export interface PrepareRun {
-  (m: MutationDescriptor): Promise<any>;
+  (m: Mutant): Promise<any>;
 }
 
 export interface CleanupRun {
-  (m: MutationDescriptor, before?: any): Promise<void>;
+  (m: Mutant, before?: any): Promise<void>;
 }
 
 // mutator plugin function types
@@ -35,16 +37,16 @@ export interface Skipper {
 }
 
 // matcher plugin function types
-interface ComparativeMatcher {
+export interface ComparativeMatcher {
   (sourceFile: string, testFile: string): boolean;
 }
 
-interface GenerativeMatcher {
+export interface GenerativeMatcher {
   (sourceFile: string): string;
 }
 
 // plugin interfaces
-interface Plugin {
+export interface Plugin {
   name: string;
 }
 
@@ -69,45 +71,52 @@ export interface SkipperPlugin extends Plugin {
   skipper: Skipper;
 }
 
+// plugins
 export interface MatcherPlugin extends Plugin {
   type: "generative" | "comparative";
+  makeMatcher: (c: PerturbConfig) => GenerativeMatcher | ComparativeMatcher;
 }
 
 export interface GenerativeMatcherPlugin extends MatcherPlugin {
   type: "generative";
-  matcher: GenerativeMatcher;
+  makeMatcher: (c: PerturbConfig) => GenerativeMatcher;
 }
 
 export interface ComparativeMatcherPlugin extends MatcherPlugin {
   type: "comparative";
-  matcher: ComparativeMatcher;
+  makeMatcher: (c: PerturbConfig) => ComparativeMatcher;
 }
 
 // structural data types
 
 export interface PerturbConfig {
+  mutators: string[]; // names of mutator plugins to apply
+  skippers: string[]; // names of skipper plugins to apply
+
+  reporter: string; // name of reporter plugin
+  matcher: string; // name of matcher plugin
+  runner: string; // name of runner plugin
+
   originalSourceDir: string;
   originalTestDir: string;
   perturbRoot: string;
   perturbSourceDir: string;
   perturbTestDir: string;
-  runner: string;
-  reporter: string;
 }
 
 export interface Mutant {
-  mutator: string; // name of mutator
-  source: string;
-  tests: Array<string>;
-  name: string; // name of mutation operation
+  mutatorName: string; // name of mutator plugin
+  sourceFile: string;
+  testFiles: Array<string>;
   path: Array<string>; // path to AST node under mutation
-  loc: number; // line of code where mutation occurred
-  ast: Object; // the AST after mutation
-  sourceCode: string; // source code before mutation
-  mutatedSourceCode: string; // source code after mutation
+  astBefore: ESTree.Node;
+  astAfter: ESTree.Node;
+  loc: ESTree.SourceLocation; // line of code where mutation occurred
+  originalSourceCode: string;
+  mutatedSourceCode: string;
 }
 
-export interface MutationResult extends MutationDescriptor {
+export interface RunnerResult extends Mutant {
   error?: any;
 }
 

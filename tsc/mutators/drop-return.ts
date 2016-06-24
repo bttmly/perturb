@@ -1,10 +1,9 @@
-"use strict";
+const NODE_TYPES = require("../constants/node-types");
+const NODE_ATTRS = require("../constants/node-attrs");
+const voidNode = require("./_void-node");
+const R = require("ramda");
 
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
-import voidNode from "./_void-node";
 import { MutatorPlugin } from "../types";
-import * as R from "ramda";
 
 // drop return w/o affecting the rest of the expression/statement
 // if return statement has no argument, instead transform it into `void 0;`

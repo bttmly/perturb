@@ -1,6 +1,6 @@
-import NODE_TYPES from "./node-types";
+const NODE_TYPES = require("./node-types");
 
-export default {
+module.exports = {
   [NODE_TYPES.IfStatement]: NODE_TYPES.IfStatement,
   [NODE_TYPES.WhileStatement]: NODE_TYPES.WhileStatement,
   [NODE_TYPES.DoWhileStatement]: NODE_TYPES.DoWhileStatement,
