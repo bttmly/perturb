@@ -1,6 +1,6 @@
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
-import * as R from "ramda";
+const { Syntax } = require("estraverse");
+const R = require("ramda");
+
 import { MutatorPlugin } from "../types";
 
 interface StringLiteral extends ESTree.Node {
@@ -15,7 +15,7 @@ export default <MutatorPlugin>{
   // var s = ""; => var s = "a";
   // var name = "nick"; => var name = "ick";
   name: "tweakStringLiteral",
-  nodeTypes: [NODE_TYPES.Literal],
+  nodeTypes: [Syntax.Literal],
   filter: function (node) {
     return typeof (<ESTree.Literal>node).value === "string";
   },

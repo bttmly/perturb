@@ -1,27 +1,32 @@
-import * as R from "ramda";
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
-import TEST_NODES from "../constants/test-nodes";
+const R = require("ramda");
+const { Syntax } = require("estraverse");
+const TEST_NODES = require("../constants/test-nodes");
+
 import { MutatorPlugin } from "../types";
 
 const BANG = "!";
+
+interface TestNode extends ESTree.Node {
+  test: ESTree.Node
+}
 
 // inverts a conditional test with a bang
 // `if (isReady) {}` => `if (!(isReady)) {}`
 // `while (arr.length) {} => `while(!(arr.length)) {}`
 // `for (; i < 10; i++) {}` => `for(; (!(i < 10)); i++)`
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "invertConditionalTest",
   nodeTypes: Object.keys(TEST_NODES),
   filter: function (node) {
     // using get() over has() ensures it isn't null (switch case `default`!)
-    return Boolean(R.prop(NODE_ATTRS.test, node));
+    return Boolean(R.prop("test", node));
   },
   mutator: function (node) {
-    return R.assoc(NODE_ATTRS.test, <ESTree.UnaryExpression>{
-      type: NODE_TYPES.UnaryExpression,
+    const testNode = <TestNode>node;
+    return R.assoc("test", <ESTree.UnaryExpression>{
+      type: Syntax.UnaryExpression,
       operator: BANG,
-      argument: node[NODE_ATTRS.test],
-    }, node);
+      argument: testNode.test,
+    }, testNode);
   },
 };

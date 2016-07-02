@@ -6,7 +6,6 @@ const estraverse = require("estraverse");
 
 const shouldSkip = require("./skippers");
 const { getMutatorsForNode, hasAvailableMutations } = require("./mutators");
-const JS_TYPES = require("./constants/js-types");
 
 import {
   Mutant,

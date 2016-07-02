@@ -2,10 +2,10 @@
 ///<reference path="./mocha.d.ts"/>
 
 
-import * as fs from "fs";
-import * as R from "ramda";
-import * as Bluebird from "bluebird";
-import * as Mocha from "mocha";
+const fs = require("fs");
+const R = require("ramda");
+const Bluebird = require("bluebird");
+const Mocha = require("mocha");
 
 import {
   RunnerPlugin,
@@ -23,7 +23,7 @@ function mirror (arr: string[]) {
   return out;
 }
 
-export default <RunnerPlugin>{
+module.exports = <RunnerPlugin>{
 
   prepare: function (m: Mutant): Promise<any> {
     delete require.cache[m.sourceFile];

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   func: "function",
   bool: "boolean",
   str: "string",

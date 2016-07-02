@@ -65,16 +65,16 @@ function locateMutatorPlugins (names: string[]): MutatorPlugin[] {
 
 let mutatorIndex = {}
 
-export function injectPlugins (names: string[]) {
+exports.injectPlugins = function (names: string[]) {
   mutatorIndex = locateMutatorPlugins(names);
 }
 
-export function hasAvailableMutations (node: ESTree.Node): boolean {
+exports.hasAvailableMutations = function (node: ESTree.Node): boolean {
   return R.has(node.type, mutatorIndex);
 }
 
-export function getMutatorsForNode (node: ESTree.Node): MutatorPlugin[] {
+exports.getMutatorsForNode = function (node: ESTree.Node): MutatorPlugin[] {
   return R.propOr([], node.type, mutatorIndex);
 }
 
-injectPlugins([]);
+exports.injectPlugins([]);

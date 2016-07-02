@@ -1,4 +1,4 @@
-import * as path from "path"
+const path = require("path");
 
 import {
   GenerativeMatcherPlugin,
@@ -9,13 +9,14 @@ import {
 // input: project/lib/dir/car.js
 // output: project/test/dir/car.js
 
-export default <GenerativeMatcherPlugin>{
+module.exports = <GenerativeMatcherPlugin>{
   type: "generative",
   makeMatcher: function(c: PerturbConfig): GenerativeMatcher {
     return function(sourceFile: string) {
-      var sourceRelPath = path.join(c.perturbRoot, c.perturbSourceDir);
-      var testRelPath = path.join(c.perturbRoot, c.perturbTestDir);
-      return sourceFile.replace(sourceRelPath, testRelPath);
+      const perturbRoot = path.join(c.projectRoot, c.perturbDir);
+      const perturbSourceDir = path.join(perturbRoot, c.sourceDir);
+      const perturbTestDir = path.join(perturbRoot, c.testDir);
+      return sourceFile.replace(perturbSourceDir, perturbTestDir);
     };
   },
 };

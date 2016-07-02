@@ -1,4 +1,4 @@
-const NODE_TYPES = require("../constants/node-types");
+const { Syntax } = require("estraverse");
 const R = require("ramda");
 const voidNode = require("./_void-node");
 
@@ -9,14 +9,14 @@ import { MutatorPlugin } from "../types";
 // (will this cause lots of test timeouts due to uncalled callbacks?)
 module.exports = <MutatorPlugin>{
   name: "dropVoidCall",
-  nodeTypes: [NODE_TYPES.ExpressionStatement],
+  nodeTypes: [Syntax.ExpressionStatement],
   filter: function (node) {
-    if (R.path(["expression", "type"], node) !== NODE_TYPES.CallExpression) {
+    if (R.path(["expression", "type"], node) !== Syntax.CallExpression) {
       return false;
     }
 
     // skip method calls of objects since often called for side effects on `this`
-    if (R.path(["callee", "type"], node) !== NODE_TYPES.Identifier) {
+    if (R.path(["callee", "type"], node) !== Syntax.Identifier) {
       return false;
     }
   },

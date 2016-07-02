@@ -1,8 +1,6 @@
-"use strict";
+const { Syntax } = require("estraverse");
+const R = require("ramda");
 
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
-import * as R from "ramda";
 import { MutatorPlugin } from "../types";
 
 const AND = "&&";
@@ -11,12 +9,12 @@ const OR = "||";
 // swaps && for || and vice versa
 // `if (x && y)` => `if (x || y)`
 // `while (f() || g())` => `while(f() && g())`
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "swapLogicalOperators",
-  nodeTypes: [NODE_TYPES.LogicalExpression],
+  nodeTypes: [Syntax.LogicalExpression],
   mutator: function (node) {
-    const prevOp = <string>node[NODE_ATTRS.operator]
+    const prevOp = <string>R.prop("operator", node);
     const newOp = (prevOp === AND ? OR : AND);
-    return R.assoc(NODE_ATTRS.operator, newOp, node);
+    return R.assoc("operator", newOp, node);
   },
 };

@@ -33,3 +33,5 @@ node_modules
 example/.DS_Store
 example/.perturb
 typings
+lib
+built

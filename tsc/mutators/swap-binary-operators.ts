@@ -1,7 +1,9 @@
-import BINARY_OPERATOR_SWAPS from "../constants/binary-operator-swaps";
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
-import * as R from "ramda";
+const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
+const NODE_TYPES = require("../constants/node-types");
+const NODE_ATTRS = require("../constants/node-attrs");
+const R = require("ramda");
+const { Syntax } = require("estraverse");
+
 import { MutatorPlugin } from "../types";
 
 const NO_SWAP = {
@@ -16,14 +18,14 @@ const NO_SWAP = {
 // `var area = w * h;` => `var area = w / h;`
 export default <MutatorPlugin>{
   name: "swapBinaryOperators",
-  nodeTypes: [NODE_TYPES.BinaryExpression],
+  nodeTypes: [Syntax.BinaryExpression],
   filter: function (node) {
-    const op = <string>R.prop(NODE_ATTRS.operator, node);
+    const op = <string>R.prop("operator", node);
     return !R.has(op, NO_SWAP);
   },
   mutator: function (node) {
-    var prevOp = node[NODE_ATTRS.operator];
-    var newOp = BINARY_OPERATOR_SWAPS[prevOp];
-    return R.assoc(NODE_ATTRS.operator, newOp, node);
+    const prevOp = R.prop("operator", node);
+    const newOp = BINARY_OPERATOR_SWAPS[prevOp];
+    return R.assoc("operator", newOp, node);
   },
 };

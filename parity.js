@@ -1,19 +1,9 @@
 require("babel-register");
 
-const rewrite = require("./_src");
-const original = require("./lib");
+const rewrite = require("./built");
+const original = require("./src");
 
-// const time = fn => (..._args) => {
-//   const start = Date.now();
-//   const [...args, cb] = _args;
-//   fn(...args, function (err, result) {
-//     const duration = Date.now - start;
-//     console.log(duration);
-    
-//   })
-// }
-
-const run = require("./_src/run");
+const run = require("./src/run");
 
 run(rewrite, "dogfood")
   .then(function (results) {

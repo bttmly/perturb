@@ -1,11 +1,11 @@
-import NODE_TYPES from "../constants/node-types";
+var S = require("estraverse").Syntax;
 
-export default <ESTree.UnaryExpression>{
-  type: NODE_TYPES.UnaryExpression,
+module.exports = <ESTree.UnaryExpression>{
+  type: S.UnaryExpression,
   operator: "void",
   prefix: true,
   argument: <ESTree.Literal>{
-    type: NODE_TYPES.Literal,
+    type: S.Literal,
     value: 0,
   }
 };

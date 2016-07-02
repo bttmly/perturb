@@ -1,7 +1,7 @@
-import NODE_TYPES from "./node-types";
+var S = require("estraverse").Syntax;
 
 module.exports = {
-  [NODE_TYPES.FunctionDeclaration]: NODE_TYPES.FunctionDeclaration,
-  [NODE_TYPES.FunctionExpression]: NODE_TYPES.FunctionExpression,
-  [NODE_TYPES.ArrowFunctionExpression]: NODE_TYPES.ArrowFunctionExpression,
+  [S.FunctionDeclaration]: S.FunctionDeclaration,
+  [S.FunctionExpression]: S.FunctionExpression,
+  [S.ArrowFunctionExpression]: S.ArrowFunctionExpression,
 }

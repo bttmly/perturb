@@ -1,6 +1,6 @@
-import NODE_ATTRS from "../constants/node-attrs";
-import FUNC_NODES from "../constants/func-nodes";
-import * as R from "ramda";
+const R = require("ramda");
+const FUNC_NODES = require("../constants/func-nodes");
+
 import { MutatorPlugin } from "../types";
 
 interface FunctionNode extends ESTree.Node {
@@ -13,10 +13,10 @@ export default <MutatorPlugin>{
   name: "reverseFunctionParameters",
   nodeTypes: Object.keys(FUNC_NODES),
   filter: function (node) {
-    return R.path([NODE_ATTRS.params, "length"], node) > 1;
+    return R.path(["params", "length"], node) > 1;
   },
   mutator: function (node) {
     const params = (<FunctionNode>node).params.slice().reverse();
-    return R.assoc(NODE_ATTRS.params, params, node);
+    return R.assoc("params", params, node);
   },
 };

@@ -1,14 +1,15 @@
-import * as R from "ramda";
+const R = require("ramda");
+const { Syntax } = require("estraverse");
+
 import { MutatorPlugin } from "../types";
-import NODE_TYPES from "../constants/node-types";
 
 // drops a member assignment
 // `obj.prop = 'value';` => `obj.prop;`
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "dropMemberAssignment",
-  nodeTypes: [NODE_TYPES.AssignmentExpression],
+  nodeTypes: [Syntax.AssignmentExpression],
   filter: function (node) {
-    return R.path(["left", "type"], node) === NODE_TYPES.MemberExpression
+    return R.path(["left", "type"], node) === Syntax.MemberExpression
   },
   mutator: function (node) {
     return (<ESTree.AssignmentExpression>node).left;

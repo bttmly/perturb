@@ -1,8 +1,7 @@
-"use strict";
+const { Syntax } = require("estraverse");
 
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
 import { MutatorPlugin } from "../types";
+
 // throw new Error(); => new Error();
 // delete obj.x; => obj.x;
 // typeof obj; => obj;
@@ -15,8 +14,8 @@ interface ArgumentedNode extends ESTree.Node {
 export default <MutatorPlugin>{
   name: "dropOperator",
   nodeTypes: [
-    NODE_TYPES.ThrowStatement,
-    NODE_TYPES.UnaryExpression,
+    Syntax.ThrowStatement,
+    Syntax.UnaryExpression,
   ],
   mutator: function (node) {
     return (<ArgumentedNode>node).argument;

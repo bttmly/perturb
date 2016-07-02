@@ -14,6 +14,6 @@ dogfood:
 	./node_modules/.bin/babel-node ./src/run.js dogfood
 
 build:
-	./node_modules/babel-cli/bin/babel.js --out-dir lib src,
+	./node_modules/babel-cli/bin/babel.js --out-dir built src
 
 .PHONY: test example

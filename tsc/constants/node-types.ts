@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   AssignmentExpression: "AssignmentExpression",
   ArrayExpression: "ArrayExpression",
   ArrowFunctionExpression: "ArrowFunctionExpression",

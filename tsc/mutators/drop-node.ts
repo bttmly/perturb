@@ -1,14 +1,13 @@
-"use strict";
+const { Syntax } = require("estraverse");
+const voidNode = require("./_void-node");
 
-import NODE_TYPES from "../constants/node-types";
-import voidNode from "./_void-node";
 import { MutatorPlugin } from "../types";
 
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "dropNode",
   nodeTypes: [
-    NODE_TYPES.ContinueStatement,
-    NODE_TYPES.BreakStatement,
+    Syntax.ContinueStatement,
+    Syntax.BreakStatement,
   ],
   mutator: function () { return voidNode },
 };

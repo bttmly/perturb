@@ -1,13 +1,13 @@
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
-import * as R from "ramda";
+const { Syntax } = require("estraverse");
+const R = require("ramda");
+
 import { MutatorPlugin } from "../types";
 
 export default <MutatorPlugin>{
   // drops the first declared property in an object literal
   // `{prop1: "val1", prop2: "val2"}` => `{prop2: "val2"}`
   name: "tweakObjectLiteral",
-  nodeTypes: [NODE_TYPES.ObjectExpression],
+  nodeTypes: [Syntax.ObjectExpression],
   filter: function (node) {
     return R.path(["properties", "length"], node) !== 0;
   },

@@ -36,7 +36,7 @@ function generateReport (r: RunnerResult): string {
 
   return [
     title,
-    report.diff.map(function (entry) {
+    diff.map(function (entry) {
       const color = entry.added ? "green" : "red";
       const sign = entry.added ? plus : minus;
       return chalk[color](sign + entry.value.trim());
@@ -45,7 +45,7 @@ function generateReport (r: RunnerResult): string {
 }
 
 function generateDiff (r: RunnerResult) {
-  return diffLines(r.sourceCode, r.mutatedSourceCode)
+  return diffLines(r.originalSourceCode, r.mutatedSourceCode)
     .filter(node => node.added || node.removed);
 }
 

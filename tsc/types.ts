@@ -97,11 +97,13 @@ export interface PerturbConfig {
   matcher: string; // name of matcher plugin
   runner: string; // name of runner plugin
 
-  originalSourceDir: string;
-  originalTestDir: string;
-  perturbRoot: string;
-  perturbSourceDir: string;
-  perturbTestDir: string;
+  projectRoot: string;
+  perturbDir: string;
+  sourceDir: string;
+  testDir: string;
+
+  sourceGlob: string;
+  testGlob: string;
 }
 
 export interface Mutant {

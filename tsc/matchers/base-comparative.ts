@@ -1,4 +1,4 @@
-import * as path from "path"
+const path = require("path");
 
 import {
   ComparativeMatcherPlugin,
@@ -10,12 +10,13 @@ import {
 //   source: project/lib/dir/file.js
 //   test: project/test/dir/file.js
 
-export default <ComparativeMatcherPlugin>{
+module.exports = <ComparativeMatcherPlugin>{
   type: "comparative",
   makeMatcher: function (c: PerturbConfig): ComparativeMatcher {
     return function (sourceFile: string, testFile: string): boolean {
-      var sourceName = sourceFile.split(path.join(c.perturbRoot, c.perturbSourceDir)).pop();
-      var testName = testFile.split(path.join(c.perturbRoot, c.perturbTestDir)).pop();
+      const perturbRoot = path.join(c.projectRoot, c.perturbDir);
+      const sourceName = sourceFile.split(path.join(perturbRoot, c.sourceDir)).pop();
+      const testName = testFile.split(path.join(perturbRoot, c.testDir)).pop();
       return sourceName === testName;
     };
   }

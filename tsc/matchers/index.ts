@@ -29,7 +29,7 @@ function runGenerative (
   return R.contains(name, tests) ? [name] : [];
 }
 
-export default function getMatcher (c: PerturbConfig) {
+module.exports = function getMatcher (c: PerturbConfig) {
 
   const matcherPlugin = getMatcherPlugin(c.matcher);
   const {type} = matcherPlugin;
@@ -43,9 +43,9 @@ export default function getMatcher (c: PerturbConfig) {
   }
 }
 
-import baseGenerative from "./base-generative";
-import baseComparative from "./base-comparative";
-import containsComparative from "./contains-comparative";
+const baseGenerative = require("./base-generative");
+const baseComparative = require("./base-comparative");
+const containsComparative = require("./contains-comparative");
 
 const builtIns = new Map<string, MatcherPlugin>([
   ["base-generative", baseGenerative],

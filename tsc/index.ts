@@ -2,12 +2,14 @@
 ///<reference path="../typings/globals/bluebird/index.d.ts"/>
 ///<reference path="../typings/modules/ramda/index.d.ts"/>
 
-const Bluebird = require("bluebird");
 const R = require("ramda");
-const getRunner = require("./runners/index");
-const getReporter = require("./reporters/index");
-const getMatcher = require("./matchers/index");
+const Bluebird = require("bluebird");
+
+const getRunner = require("./runners");
+const getReporter = require("./reporters");
+const getMatcher = require("./matchers");
 const makeMutants = require("./make-mutants");
+const makeConfig = require("./make-config");
 const fileSystem = require("./file-system");
 
 import {
@@ -24,7 +26,9 @@ function hasTests (m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
 }
 
-module.exports = function perturb (cfg: PerturbConfig) {
+module.exports = function perturb (_cfg: PerturbConfig) {
+  const cfg = makeConfig(_cfg);
+
   const {setup, teardown, paths} = fileSystem(cfg);
 
   const matcher = getMatcher(cfg);

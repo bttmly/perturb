@@ -1,6 +1,6 @@
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
-import * as R from "ramda";
+const { Syntax } = require("estraverse");
+const R = require("ramda");
+
 import { MutatorPlugin } from "../types";
 
 interface NumberLiteral extends ESTree.Literal {
@@ -12,7 +12,7 @@ module.exports = {
   // var num = 0; => var num = 1;
   // var x = 735; => var x = 736;
   name: "tweakNumberLiteral",
-  nodeTypes: [NODE_TYPES.Literal],
+  nodeTypes: [Syntax.Literal],
   filter: function (node) {
     return typeof node.value === "number";
   },

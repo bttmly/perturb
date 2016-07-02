@@ -1,15 +1,13 @@
-"use strict";
+const R = require("ramda");
+const { Syntax } = require("estraverse");
 
-import NODE_TYPES from "../constants/node-types";
-import NODE_ATTRS from "../constants/node-attrs";
-import * as R from "ramda";
 import { MutatorPlugin } from "../types";
 
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   // drops the first declared element in an array literal
   // `['a', 'b']` => `['a']`
   name: "tweakArrayLiteral",
-  nodeTypes: [NODE_TYPES.ArrayExpression],
+  nodeTypes: [Syntax.ArrayExpression],
   filter: function (node) {
     return R.path(["elements", "length"], node) !== 0;
   },

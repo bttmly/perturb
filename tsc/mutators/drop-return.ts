@@ -1,5 +1,4 @@
-const NODE_TYPES = require("../constants/node-types");
-const NODE_ATTRS = require("../constants/node-attrs");
+const { Syntax } = require("estraverse")
 const voidNode = require("./_void-node");
 const R = require("ramda");
 
@@ -14,13 +13,13 @@ interface MaybeArgumentedNode extends ESTree.Node {
   argument?: any
 }
 
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "dropReturn",
-  nodeTypes: [NODE_TYPES.ReturnStatement],
+  nodeTypes: [Syntax.ReturnStatement],
   mutator: function (node: MaybeArgumentedNode) {
     if (node.argument == null) return voidNode;
     return <ESTree.ExpressionStatement>{
-      type: NODE_TYPES.ExpressionStatement,
+      type: Syntax.ExpressionStatement,
       expression: node.argument,
     }
   },
