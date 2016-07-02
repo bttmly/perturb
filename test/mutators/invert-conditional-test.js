@@ -10,9 +10,9 @@ describe("invertConditionalTest()", function () {
     var arg = "someIdentifier";
     var node = makeNodeOfType("IfStatement", {test: arg});
     var m = mutatorByName("invertConditionalTest");
-    var test = m.mutator(node).get("test");
-    expect(test.get("type")).to.equal("UnaryExpression");
-    expect(test.get("operator")).to.equal("!");
-    expect(test.get("argument")).to.equal(arg);
+    var test = m.mutator(node).test
+    expect(test.type).to.equal("UnaryExpression");
+    expect(test.operator).to.equal("!");
+    expect(test.argument).to.equal(arg);
   });
 });

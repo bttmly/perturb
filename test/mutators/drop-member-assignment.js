@@ -7,10 +7,10 @@ var nodeFromCode = helpers.nodeFromCode;
 
 describe("dropMemberAssignment", function () {
   it("drops a member assignment", function () {
-    var node = nodeFromCode("x.y = 100;").get("expression");
-    expect(node.get("type")).to.equal("AssignmentExpression");
+    var node = nodeFromCode("x.y = 100;").expression
+    expect(node.type).to.equal("AssignmentExpression");
     var m = mutatorByName("dropMemberAssignment");
     var mutated = m.mutator(node);
-    expect(mutated.get("type")).to.equal("MemberExpression");
+    expect(mutated.type).to.equal("MemberExpression");
   });
 });

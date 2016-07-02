@@ -7,18 +7,18 @@ var nodeFromCode = helpers.nodeFromCode;
 
 describe("swapLogicalOperators", function () {
   it("changes `&&` to `||`", function () {
-    var node = nodeFromCode("x && y;").get("expression");
-    expect(node.get("type")).to.equal("LogicalExpression");
+    var node = nodeFromCode("x && y;").expression;
+    expect(node.type).to.equal("LogicalExpression");
     var m = mutatorByName("swapLogicalOperators");
     var mutated = m.mutator(node);
-    expect(mutated.get("operator")).to.equal("||");
+    expect(mutated.operator).to.equal("||");
   });
 
   it("changes `||` to `&&`", function () {
-    var node = nodeFromCode("x || y;").get("expression");
-    expect(node.get("type")).to.equal("LogicalExpression");
+    var node = nodeFromCode("x || y;").expression;
+    expect(node.type).to.equal("LogicalExpression");
     var m = mutatorByName("swapLogicalOperators");
     var mutated = m.mutator(node);
-    expect(mutated.get("operator")).to.equal("&&");
+    expect(mutated.operator).to.equal("&&");
   });
 });

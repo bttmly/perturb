@@ -21,6 +21,9 @@ const coreMutators: MutatorPlugin[] = [
   require("./tweak-string-literal"),
 ];
 
+let mutatorIndex = {}
+let activeMutators = []
+
 // temporary stub -- this function will return false for disabled mutators (based on config)
 function isMutatorEnabled (m: MutatorPlugin): boolean {
   return true;
@@ -34,11 +37,19 @@ function isMutatorEnabled (m: MutatorPlugin): boolean {
 
 function makeMutatorIndex (names: string[]) {
   const additionalMutators = locateMutatorPlugins(names);
-  const allMutators = coreMutators.concat(additionalMutators).filter(isMutatorEnabled);
+  
+  activeMutators = coreMutators.concat(additionalMutators)
+    .filter(m => Object.keys(m).length > 0) // HACK :!
+    .filter(isMutatorEnabled);
 
   // const index : { string: MutatorPlugin[] } = {};
   const index = {};
-  allMutators.forEach(function (m: MutatorPlugin) {
+  activeMutators.forEach(function (m: MutatorPlugin) {
+
+    if (m.nodeTypes == null) {
+      console.log(m);
+    }
+
     m.nodeTypes.forEach(function (type: string) {
       if (index[type] == null) {
         index[type] = []
@@ -63,8 +74,6 @@ function locateMutatorPlugins (names: string[]): MutatorPlugin[] {
   });
 }
 
-let mutatorIndex = {}
-
 exports.injectPlugins = function (names: string[]) {
   mutatorIndex = locateMutatorPlugins(names);
 }
@@ -75,6 +84,10 @@ exports.hasAvailableMutations = function (node: ESTree.Node): boolean {
 
 exports.getMutatorsForNode = function (node: ESTree.Node): MutatorPlugin[] {
   return R.propOr([], node.type, mutatorIndex);
+}
+
+exports.getMutatorByName = function (name: string): MutatorPlugin {
+  return activeMutators.find(m => m.name === name);
 }
 
 mutatorIndex = makeMutatorIndex([]);

@@ -14,7 +14,7 @@ module.exports = <ReporterPlugin>{
     const [killed, alive] = R.partition(r => r.error, rs);
     const total = rs.length;
     const killCount = killed.length;
-    const killRate = Number((total / killCount).toFixed(4)) * 100;
+    const killRate = Number((killCount / total).toFixed(4)) * 100;
     console.log(`Total: ${total}. Killed: ${killCount}. Rate: ${killRate}%`);
   },
 };
