@@ -27,6 +27,8 @@ function hasTests (m: Match): boolean {
 }
 
 module.exports = function perturb (_cfg: PerturbConfig) {
+  console.log("START...");
+
   const cfg = makeConfig(_cfg);
 
   const {setup, teardown, paths} = fileSystem(cfg);

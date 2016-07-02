@@ -29,6 +29,7 @@
     "estraverse": "^4.2.0",
     "fs-extra": "^0.16.5",
     "glob": "^4.5.3",
+    "graceful-fs": "^4.1.4",
     "highland": "^2.5.1",
     "immutable": "^3.5.0",
     "intercept-require": "^0.6.1",
@@ -57,6 +58,7 @@
     "jshint": "^2.6.0",
     "lodash": "^3.9.2",
     "sync-exec": "^0.4.0",
+    "typescript": "^1.8.10",
     "watch": "^0.13.0"
   },
   "scripts": {

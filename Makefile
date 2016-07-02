@@ -8,12 +8,14 @@ events:
 	./bin/perturb -r ./examples/event-emitter
 
 example:
-	./node_modules/.bin/babel-node ./src/run.js example
+	./node_modules/.bin/tsc
+	node ./run.js example
 
 dogfood:
-	./node_modules/.bin/babel-node ./src/run.js dogfood
+	./node_modules/.bin/tsc
+	node ./run.js dogfood
 
 build:
-	./node_modules/babel-cli/bin/babel.js --out-dir built src
+	./node_modules/.bin/tsc
 
 .PHONY: test example

@@ -28,7 +28,7 @@ module.exports = function makeConfig (userConfig = {}): PerturbConfig {
     let str = fs.readFileSync(`${process.cwd()}/${CONFIG_FILE_NAME}`).toString();
     fileConfig = JSON.parse(str);
   } catch (err) {
-    console.log("error finding configuration file", err);
+    console.log("No config file present");
     fileConfig = {};
   }
 
