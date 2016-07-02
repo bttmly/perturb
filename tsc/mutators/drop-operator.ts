@@ -11,7 +11,7 @@ interface ArgumentedNode extends ESTree.Node {
   argument: any
 }
 
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "dropOperator",
   nodeTypes: [
     Syntax.ThrowStatement,

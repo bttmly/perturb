@@ -7,11 +7,8 @@ lint:
 events:
 	./bin/perturb -r ./examples/event-emitter
 
-example:
-	./node_modules/.bin/tsc
-	node ./run.js example
-
 dogfood:
+	rm -rf ./.perturb
 	./node_modules/.bin/tsc
 	node ./run.js dogfood
 

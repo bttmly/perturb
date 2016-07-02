@@ -8,6 +8,7 @@ function run (perturb, which, cb) {
       config = {
         rootDir: path.join(__dirname, ".."),
         runner: "mocha",
+        sourceDir: "built",
       };
       break;
 

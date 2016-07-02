@@ -27,16 +27,15 @@ function hasTests (m: Match): boolean {
 }
 
 module.exports = function perturb (_cfg: PerturbConfig) {
-  console.log("START...");
-
   const cfg = makeConfig(_cfg);
+
 
   const {setup, teardown, paths} = fileSystem(cfg);
 
   const matcher = getMatcher(cfg);
   const runner: RunnerPlugin = getRunner(cfg.runner);
   const reporter: ReporterPlugin = getReporter(cfg.reporter);
-
+  
   // this handler does all the interesting work on a single Mutant
   const handler = makeMutantHandler(runner, reporter);
 
@@ -49,10 +48,15 @@ module.exports = function perturb (_cfg: PerturbConfig) {
       const matches = matcher(sources, tests);
       const [tested, untested] = R.partition(hasTests, matches);
       // TODO -- surface untested file names somehow
+
+      if (tested.length === 0) {
+        throw new Error("No matched files!");
+      }
+
       return tested;
     })
     // 
-    .then(makeMutants)
+    .then(matches => R.chain(makeMutants, matches))
     .then(function (ms: Mutant[]) {
       // TODO -- right here we can serialize all the mutants before running them
       // any reason we might want to do this?

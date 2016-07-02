@@ -38,16 +38,24 @@ module.exports = <RunnerPlugin>{
     return new Promise(function(resolve) {
       let failedOn;
 
-      const reporter = suite =>
-        suite.on("fail", test => failedOn = test);
+      class Reporter {
+        constructor (runner) {
+          runner.on("fail", test => failedOn = test);
+        }
+      }
 
-      const mocha = new Mocha({ reporter, bail: true });
+      const mocha = new Mocha({ reporter: Reporter, bail: true });
 
       m.testFiles.forEach(t => mocha.addFile(t));
 
       try {
-        mocha.run(() => resolve(failedOn));
+        mocha.run(function (f) {
+          console.log("FAILURES", f);
+          resolve(failedOn);
+        });
+
       } catch (err) {
+        console.log("caught sync error starting mocha", err);
         return resolve(err);
       }
     })

@@ -4,7 +4,7 @@ const R = require("ramda");
 import { MutatorPlugin } from "../types";
 
 // `var isOk = true` => `var isOk = false`
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "tweakBooleanLiteral",
   nodeTypes: [Syntax.Literal],
   filter: function (node) {

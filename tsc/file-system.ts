@@ -35,14 +35,16 @@ function setupPerturbDirectory (config: PerturbConfig): void {
   fs.copySync(sourceAbs, pSourceAbs);
   fs.copySync(testAbs, pTestAbs);
 
-  // fs.readdirSync(config.rootDir)
-  //   .filter(f => shouldSymlink.has(f))
-  //   .map(item => [path.join(config.rootDir, item), path.join(config.perturbRoot, item)])
-  //   .forEach(R.apply(fs.symlinkSync))
+  fs.readdirSync(projectRoot)
+    .filter(f => shouldSymlink.has(f))
+    .map(item => [path.join(projectRoot, item), path.join(pAbs, item)])
+    .forEach(R.apply(fs.symlinkSync))
 }
 
 function teardownPerturbDirectory (config): void {
-  fs.removeSync(config.perturbRoot);
+  const {projectRoot, sourceDir, testDir, perturbDir} = config;
+  const pAbs = path.join(projectRoot, perturbDir);
+  fs.removeSync(pAbs);
 }
 
 type FilePathResult = { sources: string[], tests: string[] };
@@ -53,10 +55,15 @@ interface FsHelper {
   paths(): FilePathResult;
 }
 
-function getFilePaths (config): FilePathResult {
+function getFilePaths (config: PerturbConfig): FilePathResult {
+  const {projectRoot, sourceDir, testDir, perturbDir} = config;
+  const pAbs = path.join(projectRoot, perturbDir);
+  const pSourceAbs = path.join(pAbs, sourceDir);
+  const pTestAbs = path.join(pAbs, testDir);
+
   return {
-    sources: glob.sync(config.perturbSourceDir + config.sourceGlob),
-    tests: glob.sync(config.perturbTestDir + config.testGlob),
+    sources: glob.sync(pSourceAbs + config.sourceGlob),
+    tests: glob.sync(pTestAbs + config.testGlob),
   };
 }
 

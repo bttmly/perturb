@@ -51,5 +51,9 @@ function generateDiff (r: RunnerResult) {
 
 function identifier (r: RunnerResult) {
   const loc = r.loc.start.line + "," + r.loc.start.column;
-  return changeCase.sentence(r.mutatorName) + " @" + r.loc;
+
+  // hack :/
+  const file = r.sourceFile.split(".perturb")[1];
+
+  return changeCase.sentence(r.mutatorName) + " " + file + "@" + loc;
 }

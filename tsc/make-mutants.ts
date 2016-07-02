@@ -1,6 +1,6 @@
 const R = require("ramda");
 const fs = require("fs-extra");
-const exprima = require("esprima");
+const esprima = require("esprima");
 const escodegen = require("escodegen");
 const estraverse = require("estraverse");
 
@@ -23,7 +23,6 @@ const FS_SETTINGS = {
 };
 
 module.exports = function makeMutants (match: Match): Mutant[] {
-
   const {source, tests} = match;
   const {ast, code} = parse(source);
   const paths: Path[] = getMutationPaths(ast).map(p => p.map(String));
@@ -68,8 +67,13 @@ function getMutationPaths (ast: ESTree.Node) {
   estraverse.traverse(ast, {
     enter: function (node: ESTree.Node) {
       const path = <Path>this.path();
-      if (shouldSkip(node, path)) return this.skip();
-      if (hasAvailableMutations(node)) mutationPaths.push(path);
+      if (shouldSkip(node, path)) {
+        return this.skip();
+      }
+
+      if (hasAvailableMutations(node)) {
+        mutationPaths.push(path)
+      }
     },
   });
   return mutationPaths;
@@ -89,6 +93,7 @@ interface _ParseResult {
 }
 
 function parse (source: string): _ParseResult {
+  console.log("reading", source, "...");
   const originalSource = fs.readFileSync(source).toString();
 
   let ast : ESTree.Node;

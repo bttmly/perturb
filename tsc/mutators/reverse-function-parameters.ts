@@ -9,7 +9,7 @@ interface FunctionNode extends ESTree.Node {
 
 // reverse the perameter order for a function expression or declaration
 // `function fn (a, b) {}` => `function fn (b, a) {}`
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "reverseFunctionParameters",
   nodeTypes: Object.keys(FUNC_NODES),
   filter: function (node) {

@@ -35,7 +35,7 @@ function isMutatorEnabled (m: MutatorPlugin): boolean {
 function makeMutatorIndex (names: string[]) {
   const additionalMutators = locateMutatorPlugins(names);
   const allMutators = coreMutators.concat(additionalMutators).filter(isMutatorEnabled);
-  
+
   // const index : { string: MutatorPlugin[] } = {};
   const index = {};
   allMutators.forEach(function (m: MutatorPlugin) {
@@ -77,4 +77,4 @@ exports.getMutatorsForNode = function (node: ESTree.Node): MutatorPlugin[] {
   return R.propOr([], node.type, mutatorIndex);
 }
 
-exports.injectPlugins([]);
+mutatorIndex = makeMutatorIndex([]);

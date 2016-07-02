@@ -16,7 +16,7 @@ const NO_SWAP = {
 // `var since = new Date() - start;` => `var since = new Date() + start;`
 // `var dy = rise / run;` => `var dy = rise * run;`
 // `var area = w * h;` => `var area = w / h;`
-export default <MutatorPlugin>{
+module.exports = <MutatorPlugin>{
   name: "swapBinaryOperators",
   nodeTypes: [Syntax.BinaryExpression],
   filter: function (node) {
