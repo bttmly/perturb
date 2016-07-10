@@ -5,7 +5,7 @@ import { MutatorPlugin } from "../types";
 
 // `var isOk = true` => `var isOk = false`
 module.exports = <MutatorPlugin>{
-  name: "tweakBooleanLiteral",
+  name: "tweak-boolean-literal",
   nodeTypes: [Syntax.Literal],
   filter: function (node) {
     const {value} = (<ESTree.Literal>node);

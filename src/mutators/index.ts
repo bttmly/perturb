@@ -79,10 +79,12 @@ exports.injectPlugins = function (names: string[]) {
 }
 
 exports.hasAvailableMutations = function (node: ESTree.Node): boolean {
+  if (node == null || node.type == null) return false;
   return R.has(node.type, mutatorIndex);
 }
 
 exports.getMutatorsForNode = function (node: ESTree.Node): MutatorPlugin[] {
+  if (node == null || node.type == null) return [];
   return R.propOr([], node.type, mutatorIndex);
 }
 

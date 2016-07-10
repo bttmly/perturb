@@ -14,7 +14,7 @@ module.exports = <MutatorPlugin>{
   // empty strings to "a"
   // var s = ""; => var s = "a";
   // var name = "nick"; => var name = "ick";
-  name: "tweakStringLiteral",
+  name: "tweak-string-literal",
   nodeTypes: [Syntax.Literal],
   filter: function (node) {
     return typeof (<ESTree.Literal>node).value === "string";

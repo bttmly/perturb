@@ -29,6 +29,7 @@ function hasTests (m: Match): boolean {
 module.exports = function perturb (_cfg: PerturbConfig) {
   const cfg = makeConfig(_cfg);
 
+  console.log("init with config\n", cfg);
 
   const {setup, teardown, paths} = fileSystem(cfg);
 
@@ -57,6 +58,11 @@ module.exports = function perturb (_cfg: PerturbConfig) {
     })
     // 
     .then(matches => R.chain(makeMutants, matches))
+    .then(function (ms: Mutant[]) {
+      const noSource = ms.filter(m => m.mutatedSourceCode === "");
+      console.log("NO SOURCE:", noSource.length, "of total", ms.length);
+      return ms;
+    })
     .then(function (ms: Mutant[]) {
       // TODO -- right here we can serialize all the mutants before running them
       // any reason we might want to do this?

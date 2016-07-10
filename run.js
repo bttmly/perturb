@@ -7,8 +7,8 @@ function run (perturb, which, cb) {
     case "dogfood":
       config = {
         rootDir: path.join(__dirname, ".."),
-        runner: "mocha",
         sourceDir: "built",
+        runner: "mocha",
       };
       break;
 

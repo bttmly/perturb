@@ -39,7 +39,9 @@ function generateReport (r: RunnerResult): string {
     diff.map(function (entry) {
       const color = entry.added ? "green" : "red";
       const sign = entry.added ? plus : minus;
-      return chalk[color](sign + entry.value.trim());
+      return chalk[color](
+        entry.value.trim().split("\n").map(l => sign + l).join("\n")
+       );
     }).join("\n"),
   ].join("\n");
 }

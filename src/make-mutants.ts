@@ -5,6 +5,7 @@ const escodegen = require("escodegen");
 const estraverse = require("estraverse");
 
 const shouldSkip = require("./skippers");
+const updateIn = require("./util/update-in");
 const { getMutatorsForNode, hasAvailableMutations } = require("./mutators");
 
 import {
@@ -38,8 +39,14 @@ module.exports = function makeMutants (match: Match): Mutant[] {
       .map(function (m: MutatorPlugin) {
         // this can be done more elegantly with Ramda lenses, probably
         const newNode = m.mutator(node);
-        const updatedAst = R.assocPath(path, newNode, ast);
+
+        // PATH
+        const updatedAst = updateIn(path, newNode, ast);
         const mutatedSourceCode = escodegen.generate(updatedAst);
+
+        if (mutatedSourceCode === "") {
+          console.log("EMPTY SOURCE");
+        }
 
         // both the original source and the mutated source are present here
         // to avoid unnecessary extra code generation in mutator prep/teardown,

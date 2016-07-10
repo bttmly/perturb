@@ -15,7 +15,7 @@ interface TestNode extends ESTree.Node {
 // `while (arr.length) {} => `while(!(arr.length)) {}`
 // `for (; i < 10; i++) {}` => `for(; (!(i < 10)); i++)`
 module.exports = <MutatorPlugin>{
-  name: "invertConditionalTest",
+  name: "invert-conditional-test",
   nodeTypes: Object.keys(TEST_NODES),
   filter: function (node) {
     // using get() over has() ensures it isn't null (switch case `default`!)

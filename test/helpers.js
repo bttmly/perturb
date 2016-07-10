@@ -30,9 +30,29 @@ function nodeFromCode (code) {
   return ast.body[0];
 }
 
+// standard PerturbConfig for tests
+function makeConfig () {
+  return {
+    mutators: [],
+    skippers: [],
+    reporter: "",
+    matcher: "",
+    runner: "",
+
+    projectRoot: "/code/project",
+    perturbDir: ".perturb",
+    sourceDir: "lib",
+    testDir: "test",
+
+    sourceGlob: "/**/*.js",
+    testGlob: "/**/*.js",
+  }
+}
+
 module.exports = {
-  objIsShallow: objIsShallow,
-  makeNodeOfType: makeNodeOfType,
-  nodeFromCode: nodeFromCode,
+  makeConfig,
+  objIsShallow,
+  makeNodeOfType,
+  nodeFromCode,
   mutatorByName: getMutatorByName,
 };

@@ -1,10 +1,13 @@
-const mochaRunner = require("./mocha");
-
 import { RunnerPlugin } from "../types";
 
-const plugins = new Map<string, RunnerPlugin>([
-  [ "mocha", mochaRunner ],
-]);
+const plugins = new Map<string, RunnerPlugin>()
+
+;[
+  require("./mocha"),
+  require("./mocha-child-process"),
+].forEach(function (runner) {
+  plugins.set(runner.name, runner);
+});
 
 function injectPlugins (names) {
   names.forEach(function (name) {

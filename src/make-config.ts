@@ -18,7 +18,7 @@ const defaultConfig: PerturbConfig = {
   skippers: [],
   reporter: "diff",
   matcher: "contains-comparative",
-  runner: "mocha",
+  runner: "mocha-child-process",
 }
 
 module.exports = function makeConfig (userConfig = {}): PerturbConfig {

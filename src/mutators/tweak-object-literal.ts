@@ -6,7 +6,7 @@ import { MutatorPlugin } from "../types";
 module.exports = <MutatorPlugin>{
   // drops the first declared property in an object literal
   // `{prop1: "val1", prop2: "val2"}` => `{prop2: "val2"}`
-  name: "tweakObjectLiteral",
+  name: "tweak-object-literal",
   nodeTypes: [Syntax.ObjectExpression],
   filter: function (node) {
     return R.path(["properties", "length"], node) !== 0;

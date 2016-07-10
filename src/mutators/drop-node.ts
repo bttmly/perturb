@@ -4,7 +4,7 @@ const voidNode = require("./_void-node");
 import { MutatorPlugin } from "../types";
 
 module.exports = <MutatorPlugin>{
-  name: "dropNode",
+  name: "drop-node",
   nodeTypes: [
     Syntax.ContinueStatement,
     Syntax.BreakStatement,

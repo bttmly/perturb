@@ -6,7 +6,7 @@ import { MutatorPlugin } from "../types";
 module.exports = <MutatorPlugin>{
   // drops the first declared element in an array literal
   // `['a', 'b']` => `['a']`
-  name: "tweakArrayLiteral",
+  name: "tweak-array-literal",
   nodeTypes: [Syntax.ArrayExpression],
   filter: function (node) {
     return R.path(["elements", "length"], node) !== 0;

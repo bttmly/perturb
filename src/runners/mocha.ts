@@ -25,9 +25,14 @@ function mirror (arr: string[]) {
 
 module.exports = <RunnerPlugin>{
 
+  name: "mocha",
+
   prepare: function (m: Mutant): Promise<any> {
-    delete require.cache[m.sourceFile];
+    
+    console.log("writing mutated code!");
     fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
+    
+    delete require.cache[m.sourceFile];
     return Promise.resolve({
       cache: mirror(Object.keys(require.cache)),
       listeners: process.listeners("uncaughtException"),
@@ -38,19 +43,20 @@ module.exports = <RunnerPlugin>{
     return new Promise(function(resolve) {
       let failedOn;
 
-      class Reporter {
-        constructor (runner) {
-          runner.on("fail", test => failedOn = test);
-        }
+      function reporter (runner) {
+        runner.on("fail", (test, err) => {
+          console.log("FAIL", err.message);
+          test.err = err;
+          failedOn = test
+        });
       }
 
-      const mocha = new Mocha({ reporter: Reporter, bail: true });
+      const mocha = new Mocha({ reporter, bail: true });
 
       m.testFiles.forEach(t => mocha.addFile(t));
 
       try {
         mocha.run(function (f) {
-          console.log("FAILURES", f);
           resolve(failedOn);
         });
 
@@ -64,6 +70,7 @@ module.exports = <RunnerPlugin>{
 
   cleanup: function (m: Mutant, before: any): Promise<void> {
     // write the original source code back to it's location
+    console.log("writing original source code back");
     fs.writeFileSync(m.sourceFile, m.originalSourceCode);
 
     // remove danging uncaughtException listeners Mocha didn't clean up

@@ -17,7 +17,7 @@ const NO_SWAP = {
 // `var dy = rise / run;` => `var dy = rise * run;`
 // `var area = w * h;` => `var area = w / h;`
 module.exports = <MutatorPlugin>{
-  name: "swapBinaryOperators",
+  name: "swap-binary-operators",
   nodeTypes: [Syntax.BinaryExpression],
   filter: function (node) {
     const op = <string>R.prop("operator", node);

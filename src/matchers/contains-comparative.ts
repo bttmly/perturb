@@ -24,8 +24,8 @@ module.exports = <ComparativeMatcherPlugin>{
       const perturbSourceDir = path.join(perturbRoot, c.sourceDir);
       const perturbTestDir = path.join(perturbRoot, c.testDir);
 
-      var sourceName = withoutExt(sourceFile.split(perturbSourceDir).pop());
-      var testName = withoutExt(testFile.split(perturbTestDir).pop());
+      const sourceName = withoutExt(sourceFile.split(perturbSourceDir).pop());
+      const testName = withoutExt(testFile.split(perturbTestDir).pop());
       return testName.slice(0, sourceName.length) === sourceName;
     };
   }

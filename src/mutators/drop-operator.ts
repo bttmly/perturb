@@ -12,7 +12,7 @@ interface ArgumentedNode extends ESTree.Node {
 }
 
 module.exports = <MutatorPlugin>{
-  name: "dropOperator",
+  name: "drop-operator",
   nodeTypes: [
     Syntax.ThrowStatement,
     Syntax.UnaryExpression,

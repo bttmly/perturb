@@ -6,7 +6,7 @@ import { MutatorPlugin } from "../types";
 // drops a member assignment
 // `obj.prop = 'value';` => `obj.prop;`
 module.exports = <MutatorPlugin>{
-  name: "dropMemberAssignment",
+  name: "drop-member-assignment",
   nodeTypes: [Syntax.AssignmentExpression],
   filter: function (node) {
     return R.path(["left", "type"], node) === Syntax.MemberExpression

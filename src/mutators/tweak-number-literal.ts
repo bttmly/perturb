@@ -11,7 +11,7 @@ module.exports = {
   // adds 1 to any number literal OR replaces 1 with 0
   // var num = 0; => var num = 1;
   // var x = 735; => var x = 736;
-  name: "tweakNumberLiteral",
+  name: "tweak-number-literal",
   nodeTypes: [Syntax.Literal],
   filter: function (node) {
     return typeof node.value === "number";
