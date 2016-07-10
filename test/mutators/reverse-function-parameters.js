@@ -1,31 +1,22 @@
-"use strict";
+const expect = require("expect");
+const helpers = require("../helpers");
+const mutatorByName = helpers.mutatorByName;
+const nodeFromCode = helpers.nodeFromCode;
 
-var expect = require("must");
-var helpers = require("../helpers");
-var mutatorByName = helpers.mutatorByName;
-var nodeFromCode = helpers.nodeFromCode;
-
-// function get (p) {
-//   return function (o) {
-//     if (!Object.prototype.hasOwnProperty.call(o, p)) return undefined;
-//     return o[p];
-//   };
-// }
-
-describe("reverseFunctionParameters", function () {
+describe("reverse-function-parameters", function () {
   it("reverses the order of a function's declaration's arguments", function () {
-    var node = nodeFromCode("function func (a, b, c, d) {}");
-    var m = mutatorByName("reverseFunctionParameters");
-    var mutated = m.mutator(node);
-    var paramNames = mutated.params.map(p => p.name);
-    expect(paramNames).to.eql(["d", "c", "b", "a"]);
+    const node = nodeFromCode("function func (a, b, c, d) {}");
+    const m = mutatorByName("reverse-function-parameters");
+    const mutated = m.mutator(node);
+    const paramNames = mutated.params.map(p => p.name);
+    expect(paramNames).toEqual(["d", "c", "b", "a"]);
   });
 
   it("reverses the order of a function's expression's arguments", function () {
-    var node = nodeFromCode("(function (a, b, c) {})").expression
-    var m = mutatorByName("reverseFunctionParameters");
-    var mutated = m.mutator(node);
-    var paramNames = mutated.params.map(p => p.name);
-    expect(paramNames).to.eql(["c", "b", "a"]);
+    const node = nodeFromCode("(function (a, b, c) {})").expression
+    const m = mutatorByName("reverse-function-parameters");
+    const mutated = m.mutator(node);
+    const paramNames = mutated.params.map(p => p.name);
+    expect(paramNames).toEqual(["c", "b", "a"]);
   });
 });

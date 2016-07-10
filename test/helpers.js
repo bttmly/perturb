@@ -49,10 +49,16 @@ function makeConfig () {
   }
 }
 
+function mutatorByName (name) {
+  const m = getMutatorByName(name);
+  if (m == null) throw new Error(`No mutator found for ${name}`);
+  return m;
+}
+
 module.exports = {
   makeConfig,
   objIsShallow,
   makeNodeOfType,
   nodeFromCode,
-  mutatorByName: getMutatorByName,
+  mutatorByName,
 };

@@ -27,9 +27,9 @@ function generateReport (r: RunnerResult): string {
 
   const id = identifier(r);
 
-  if (r.error) {
-    return chalk.gray(id);
-  }
+  // if (r.error) {
+  //   return chalk.gray(id);
+  // }
 
   const title = chalk.red.underline(alive + id);
   const diff = generateDiff(r);
@@ -37,7 +37,7 @@ function generateReport (r: RunnerResult): string {
   return [
     title,
     diff.map(function (entry) {
-      const color = entry.added ? "green" : "red";
+      const color = r.error ? "gray" : entry.added ? "green" : "red";
       const sign = entry.added ? plus : minus;
       return chalk[color](
         entry.value.trim().split("\n").map(l => sign + l).join("\n")

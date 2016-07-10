@@ -1,24 +1,22 @@
-"use strict";
+const expect = require("expect");
+const helpers = require("../helpers");
+const mutatorByName = helpers.mutatorByName;
+const nodeFromCode = helpers.nodeFromCode;
 
-var expect = require("must");
-var helpers = require("../helpers");
-var mutatorByName = helpers.mutatorByName;
-var nodeFromCode = helpers.nodeFromCode;
-
-describe("swapLogicalOperators", function () {
+describe("swap-logical-operators", function () {
   it("changes `&&` to `||`", function () {
-    var node = nodeFromCode("x && y;").expression;
-    expect(node.type).to.equal("LogicalExpression");
-    var m = mutatorByName("swapLogicalOperators");
-    var mutated = m.mutator(node);
-    expect(mutated.operator).to.equal("||");
+    const node = nodeFromCode("x && y;").expression;
+    expect(node.type).toEqual("LogicalExpression");
+    const m = mutatorByName("swap-logical-operators");
+    const mutated = m.mutator(node);
+    expect(mutated.operator).toEqual("||");
   });
 
   it("changes `||` to `&&`", function () {
-    var node = nodeFromCode("x || y;").expression;
-    expect(node.type).to.equal("LogicalExpression");
-    var m = mutatorByName("swapLogicalOperators");
-    var mutated = m.mutator(node);
-    expect(mutated.operator).to.equal("&&");
+    const node = nodeFromCode("x || y;").expression;
+    expect(node.type).toEqual("LogicalExpression");
+    const m = mutatorByName("swap-logical-operators");
+    const mutated = m.mutator(node);
+    expect(mutated.operator).toEqual("&&");
   });
 });

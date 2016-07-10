@@ -28,8 +28,6 @@ module.exports = <RunnerPlugin>{
   name: "mocha",
 
   prepare: function (m: Mutant): Promise<any> {
-    
-    console.log("writing mutated code!");
     fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
     
     delete require.cache[m.sourceFile];
@@ -45,7 +43,7 @@ module.exports = <RunnerPlugin>{
 
       function reporter (runner) {
         runner.on("fail", (test, err) => {
-          console.log("FAIL", err.message);
+          console.log(err.stack);
           test.err = err;
           failedOn = test
         });
@@ -70,7 +68,6 @@ module.exports = <RunnerPlugin>{
 
   cleanup: function (m: Mutant, before: any): Promise<void> {
     // write the original source code back to it's location
-    console.log("writing original source code back");
     fs.writeFileSync(m.sourceFile, m.originalSourceCode);
 
     // remove danging uncaughtException listeners Mocha didn't clean up

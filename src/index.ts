@@ -88,6 +88,8 @@ module.exports = function perturb (_cfg: PerturbConfig) {
 function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
   return function handler (m: Mutant): Promise<RunnerResult> {
     let _before, _result;
+
+    // TODO: allow prepare and cleanup to be omitted
     return runner.prepare(m)
       .then(before => {
         _before = before;

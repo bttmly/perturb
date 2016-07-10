@@ -11,11 +11,11 @@ function assoc(prop: Prop, val: any, target: Target): Target {
   }
 
   const obj = {};
-  for (let p in obj) {
+  for (let p in target) {
     obj[p] = target[p];
   }
-  target[prop] = val;
-  return target;
+  obj[prop] = val;
+  return obj;
 }
 
 function assocPath(path: Prop[], val: any, target: Target): Target {

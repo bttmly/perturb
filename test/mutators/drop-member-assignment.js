@@ -1,16 +1,14 @@
-"use strict";
+const expect = require("expect");
+const helpers = require("../helpers");
+const mutatorByName = helpers.mutatorByName;
+const nodeFromCode = helpers.nodeFromCode;
 
-var expect = require("must");
-var helpers = require("../helpers");
-var mutatorByName = helpers.mutatorByName;
-var nodeFromCode = helpers.nodeFromCode;
-
-describe("dropMemberAssignment", function () {
+describe("drop-member-assignment", function () {
   it("drops a member assignment", function () {
-    var node = nodeFromCode("x.y = 100;").expression
-    expect(node.type).to.equal("AssignmentExpression");
-    var m = mutatorByName("dropMemberAssignment");
-    var mutated = m.mutator(node);
-    expect(mutated.type).to.equal("MemberExpression");
+    const node = nodeFromCode("x.y = 100;").expression
+    expect(node.type).toEqual("AssignmentExpression");
+    const m = mutatorByName("drop-member-assignment");
+    const mutated = m.mutator(node);
+    expect(mutated.type).toEqual("MemberExpression");
   });
 });
