@@ -6,7 +6,7 @@ export interface ResultReporter {
 }
 
 export interface AggregateReporter {
-  (rs: Array<RunnerResult>): void;
+  (rs: RunnerResult[]): void;
 }
 
 // runner plugin function types
@@ -33,7 +33,7 @@ export interface NodeFilter {
 
 // skipper plugin function types
 export interface Skipper {
-  (node: ESTree.Node, path: Array<string>): boolean;
+  (node: ESTree.Node, path: string[]): boolean;
 }
 
 // matcher plugin function types
@@ -56,7 +56,7 @@ export interface ReporterPlugin extends Plugin {
 }
 
 export interface MutatorPlugin extends Plugin {
-  nodeTypes: Array<string>;
+  nodeTypes: string[];
   filter?: NodeFilter;
   mutator: NodeMutator;
 }
@@ -111,8 +111,8 @@ export interface PerturbConfig {
 export interface Mutant {
   mutatorName: string; // name of mutator plugin
   sourceFile: string;
-  testFiles: Array<string>;
-  path: Array<string>; // path to AST node under mutation
+  testFiles: string[];
+  path: string[]; // path to AST node under mutation
   astBefore: ESTree.Node;
   astAfter: ESTree.Node;
   loc: ESTree.SourceLocation; // line of code where mutation occurred
@@ -126,6 +126,6 @@ export interface RunnerResult extends Mutant {
 
 export interface Match {
   source: string;
-  tests: Array<string>;
+  tests: string[];
 }
 

@@ -10,7 +10,7 @@ module.exports = <ReporterPlugin>{
   onResult: function(r: RunnerResult) {
     console.log(generateReport(r));
   },
-  onFinish: function(rs: Array<RunnerResult>) {
+  onFinish: function(rs: RunnerResult[]) {
     const [killed, alive] = R.partition(r => r.error, rs);
     const total = rs.length;
     const killCount = killed.length;

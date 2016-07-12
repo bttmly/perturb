@@ -67,7 +67,7 @@ module.exports = function makeMutants (match: Match): Mutant[] {
   }
 }
 
-type Path = Array<string>;
+type Path = string[];
 
 function getMutationPaths (ast: ESTree.Node) {
   const mutationPaths: Path[] = [];

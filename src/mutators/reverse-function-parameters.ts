@@ -4,7 +4,7 @@ const FUNC_NODES = require("../constants/func-nodes");
 import { MutatorPlugin } from "../types";
 
 interface FunctionNode extends ESTree.Node {
-  params: Array<ESTree.Identifier>
+  params: ESTree.Identifier[];
 }
 
 // reverse the perameter order for a function expression or declaration

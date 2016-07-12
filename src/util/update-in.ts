@@ -1,7 +1,7 @@
 const R = require("ramda");
 
 type Prop = string | number;
-type Target = Array<any> | Object
+type Target = any[] | Object
 
 function assoc(prop: Prop, val: any, target: Target): Target {
   if (Array.isArray(target)) {

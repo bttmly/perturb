@@ -29,9 +29,6 @@ function isMutatorEnabled (m: MutatorPlugin): boolean {
   return true;
 }
 
-// temporary stub -- plugin mutators will go into this array
-// const mutatorPlugins: Array<Mutator> = [];
-
 // creating the internal state of this module should happen in the exported function
 // so we can pass in config, which is necessary for filtering out disabled mutators
 

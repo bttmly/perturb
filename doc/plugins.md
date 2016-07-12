@@ -5,7 +5,7 @@
 ```typescript
 interface MutatorPlugin {
   name: string;
-  nodeTypes: Array<string>;
+  nodeTypes: string[];
   filter?: (n: ESTree.Node): boolean;
   mutator: (n: ESTree.Node): ESTree.Node;
 }
@@ -70,7 +70,7 @@ A runner plugin describes how to run a single mutation. As such, it needs to und
 interface ReporterPlugin {
   name: string:
   onResult: (r: RunnerResult): void;
-  onFinish: (rs: Array<RunnerResult>): void;
+  onFinish: (rs: RunnerResult[]): void;
 }
 ```
 
@@ -85,7 +85,7 @@ A reporter plugin describes how to transmit the results of running tests on muta
 ```typescript
 interface SkipperPlugin {
   name: string
-  skipper: (node: ESTree.Node, path: Array<string>): boolean;
+  skipper: (node: ESTree.Node, path: string[]): boolean;
 }
 ```
 
