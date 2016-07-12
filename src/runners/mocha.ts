@@ -14,7 +14,7 @@ import {
 } from "../types";
 
 const doesNotContain = arr => item => !R.contains(item, arr);
-const doesNotHave = obj => prop => !R.has(prop, obj);
+const doesNotHave = set => prop => !set.has(prop);
 const delProp = obj => prop => delete obj[prop];
 
 function mirror (arr: string[]) {
@@ -27,12 +27,13 @@ module.exports = <RunnerPlugin>{
 
   name: "mocha",
 
-  prepare: function (m: Mutant): Promise<any> {
+  setup: function (m: Mutant): Promise<any> {
     fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
     
     delete require.cache[m.sourceFile];
+    
     return Promise.resolve({
-      cache: mirror(Object.keys(require.cache)),
+      cache: new Set(Object.keys(require.cache)),
       listeners: process.listeners("uncaughtException"),
     });
   },

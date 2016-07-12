@@ -14,7 +14,7 @@ export interface Runner {
   (m: Mutant): Promise<RunnerResult>;
 }
 
-export interface PrepareRun {
+export interface SetupRun {
   (m: Mutant): Promise<any>;
 }
 
@@ -33,7 +33,7 @@ export interface NodeFilter {
 
 // skipper plugin function types
 export interface Skipper {
-  (n: ESTree.Node, p?: Array<string>): boolean;
+  (node: ESTree.Node, path: Array<string>): boolean;
 }
 
 // matcher plugin function types
@@ -62,7 +62,7 @@ export interface MutatorPlugin extends Plugin {
 }
 
 export interface RunnerPlugin extends Plugin {
-  prepare: PrepareRun;
+  setup: SetupRun;
   run: Runner;
   cleanup: CleanupRun;
 }

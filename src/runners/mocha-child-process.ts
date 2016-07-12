@@ -12,7 +12,7 @@ import {
 module.exports = <RunnerPlugin>{
   name: "mocha-child-process",
 
-  prepare (m: Mutant): Promise<any> {
+  setup (m: Mutant): Promise<any> {
     fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
     return Promise.resolve();
   },
