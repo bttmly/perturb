@@ -4,6 +4,8 @@
 
 const R = require("ramda");
 const Bluebird = require("bluebird");
+const { spawn } = require("child_process");
+const assert = require("assert");
 
 const getRunner = require("./runners");
 const getReporter = require("./reporters");
@@ -36,12 +38,11 @@ module.exports = function perturb (_cfg: PerturbConfig) {
   const matcher = getMatcher(cfg);
   const runner: RunnerPlugin = getRunner(cfg.runner);
   const reporter: ReporterPlugin = getReporter(cfg.reporter);
-  
-  // this handler does all the interesting work on a single Mutant
-  const handler = makeMutantHandler(runner, reporter);
 
-  // first, set up the "shadow" file system that we'll work against
-  return Promise.resolve(setup())
+  // first run the tests, otherwise why bother at all?
+  return runTest(cfg)
+    // then, set up the "shadow" file system that we'll work against
+    .then(() => setup())
     // read those "shadow" directories and find the source and test files
     .then(() => paths())
     // use the matcher function to group {sourceFile, testFiles}
@@ -57,22 +58,12 @@ module.exports = function perturb (_cfg: PerturbConfig) {
       return tested;
     })
     // 
-    .then(matches => R.chain(makeMutants, matches))
+    .then(R.chain(makeMutants))
+    .then(sanityCheckAndSideEffects)
+    // run the mutatnts and gather the results
     .then(function (ms: Mutant[]) {
-      const noSource = ms.filter(m => m.mutatedSourceCode === "");
-      console.log("NO SOURCE:", noSource.length, "of total", ms.length);
-      return ms;
-    })
-    .then(function (ms: Mutant[]) {
-      // TODO -- right here we can serialize all the mutants before running them
-      // any reason we might want to do this?
-      // 
-      // this is the separation point between pure data and actually executing
-      // the tests against mutated source code
-      return ms;
-    })
-    // crank the mutants through the handler and gather the results
-    .then(function (ms: Mutant[]) {
+      // this handler does all the interesting work on a single Mutant
+      const handler = makeMutantHandler(runner, reporter);
       return Bluebird.mapSeries(ms, handler);
     })
     // run the final results handler, if supplied, then pass the results back
@@ -82,6 +73,10 @@ module.exports = function perturb (_cfg: PerturbConfig) {
         reporter.onFinish(rs);
       }
       return rs;
+    })
+    .catch(err => {
+      console.log("ERROR IN PERTURB MAIN CHAIN", err);
+      throw err;
     });
 }
 
@@ -106,4 +101,24 @@ function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
         return _result;
       })
   }
+}
+
+function runTest (cfg: PerturbConfig) {
+  return new Promise(function (resolve, reject) {
+    const [cmd, ...rest] = cfg.testCmd.split(/\s+/);
+    const child = spawn(cmd, rest);
+    child.stdout.pipe(process.stdout);
+    child.stderr.pipe(process.stderr);
+    child.on("close", function (code) {
+      code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
+    });
+  });
+}
+
+// TODO -- what else? Any reason might want to serialize mutants here?
+function sanityCheckAndSideEffects (ms: Mutant[]) {
+  ms.forEach(function (m: Mutant) {
+    assert.notEqual(m.mutatedSourceCode, "", "Mutated source code should not be empty.");
+  });
+  return ms;
 }

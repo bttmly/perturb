@@ -46,9 +46,12 @@ function makeMutatorIndex (names: string[]) {
   const index = {};
   activeMutators.forEach(function (m: MutatorPlugin) {
 
-    if (m.nodeTypes == null) {
-      console.log(m);
-    }
+    // if (process.env.ENFORCE_INVARIANTS) {
+    //   let original = m.mutator;
+    //   m.mutator = function (node: ESTree.Node) {
+    //     return original(Object.freeze(node));
+    //   }
+    // }
 
     m.nodeTypes.forEach(function (type: string) {
       if (index[type] == null) {
@@ -67,7 +70,7 @@ function locateMutatorPlugins (names: string[]): MutatorPlugin[] {
       plugin = require(`perturb-plugin-mutator-${name}`);
       return plugin;
     } catch (err) {
-      // any way to recover? other locate strategy?
+      // any way to recover? other locate strategy? something with local path resolution?
       console.log(`unable to locate -MUTATOR- plugin "${name}" -- fatal error, exiting`);
       throw err;
     }

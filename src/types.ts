@@ -90,6 +90,8 @@ export interface ComparativeMatcherPlugin extends MatcherPlugin {
 // structural data types
 
 export interface PerturbConfig {
+  testCmd: string;
+  
   mutators: string[]; // names of mutator plugins to apply
   skippers: string[]; // names of skipper plugins to apply
 

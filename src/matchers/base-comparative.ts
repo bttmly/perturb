@@ -17,7 +17,6 @@ module.exports = <ComparativeMatcherPlugin>{
       const perturbRoot = path.join(c.projectRoot, c.perturbDir);
       const sourceName = sourceFile.split(path.join(perturbRoot, c.sourceDir)).pop();
       const testName = testFile.split(path.join(perturbRoot, c.testDir)).pop();
-      console.log("SOURCE NAME", sourceName, "TEST NAME", testName)
       return sourceName === testName;
     };
   }

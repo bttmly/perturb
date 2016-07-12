@@ -1,8 +1,6 @@
-"use strict";
+const esprima = require("esprima");
+const R = require("ramda");
 
-var esprima = require("esprima");
-var _ = require("lodash");
-var assign = require("object-assign");
 const { getMutatorByName } = require("../built/mutators");
 const { Syntax } = require("estraverse");
 
@@ -19,11 +17,11 @@ function objIsShallow (obj) {
 
 function makeNodeOfType (type, props = {}) {
   if (!(type in Syntax)) throw new Error("Invalid node type " + type);
-  return assign({type}, props);
+  return R.merge({type}, props);
 }
 
 function nodeFromCode (code) {
-  var ast = esprima.parse(code);
+  const ast = esprima.parse(code);
   if (ast.body.length !== 1) {
     throw new Error("Rendered AST did not have exactly one node");
   }
@@ -55,10 +53,15 @@ function mutatorByName (name) {
   return m;
 }
 
+function applyMutation (node, name) {
+  return mutatorByName("tweak-object-literal").mutator(node);
+}
+
 module.exports = {
   makeConfig,
   objIsShallow,
   makeNodeOfType,
   nodeFromCode,
   mutatorByName,
+  applyMutation,
 };

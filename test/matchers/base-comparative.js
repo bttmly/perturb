@@ -31,4 +31,5 @@ describe("base-comparative matcher", function () {
     const test = path.join(pTestDir, "some/long/file/path.js");
     expect(matcher(source, test)).toEqual(false);
   });
+
 });

@@ -9,6 +9,7 @@ function run (perturb, which, cb) {
         rootDir: path.join(__dirname, ".."),
         sourceDir: "built",
         runner: "mocha",
+        testCmd: "make test-bail",
       };
       break;
 
@@ -47,8 +48,6 @@ function run (perturb, which, cb) {
       return results;
     }).catch(function (err) {
       console.log("fatal error in perturb");
-      console.log(err);
-      console.log(err.stack);
       process.exit(1);
     });
 }

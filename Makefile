@@ -1,6 +1,9 @@
 test: lint
 	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/**/*.js
 
+test-bail: lint
+	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/**/*.js --bail
+
 lint:
 	./node_modules/.bin/eslint ./src/**/*.js
 

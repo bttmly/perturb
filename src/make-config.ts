@@ -6,6 +6,8 @@ import { PerturbConfig } from "./types";
 const CONFIG_FILE_NAME = ".perturbrc";
 
 const defaultConfig: PerturbConfig = {
+  testCmd: "npm test",
+  
   projectRoot: process.cwd(),
   testDir: "test",
   sourceDir: "src",

@@ -3,21 +3,21 @@ const expect = require("expect");
 
 const { makeConfig } = require("../helpers");
 
-const containsComparative = require("../../built/matchers/contains-comparative");
+const plugin = require("../../built/matchers/contains-comparative");
 
 let config, matcher, perturbDir;
 describe("base-comparative matcher", function () {
   
   beforeEach(function () {
     config = makeConfig();
-    matcher = containsComparative.makeMatcher(config);
+    matcher = plugin.makeMatcher(config);
     perturbDir = path.join(config.projectRoot, config.perturbDir);
     pTestDir = path.join(perturbDir, config.testDir);
     pSourceDir = path.join(perturbDir, config.sourceDir);
   });
 
   it("has type 'comparative'", function () {
-    expect(containsComparative.type).toEqual("comparative");
+    expect(plugin.type).toEqual("comparative");
   });
 
   it("matches same paths relative to source and test directories", function () {
