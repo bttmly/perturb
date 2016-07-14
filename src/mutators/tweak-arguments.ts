@@ -8,12 +8,12 @@ import { MutatorPlugin } from "../types";
 module.exports = <MutatorPlugin>{
   // drops the first declared element in an array literal
   // `['a', 'b']` => `['a']`
-  name: "tweak-array-literal",
-  nodeTypes: [Syntax.ArrayExpression],
+  name: "tweak-arguments",
+  nodeTypes: [Syntax.CallExpression],
   filter: function (node) {
-    return R.path(["elements", "length"], node) !== 0;
+    return R.path(["arguments", "length"], node) !== 0;
   },
   mutator: function (node) {
-    return dropItem(<ESTree.ArrayExpression>node, "elements", "first");
+    return dropItem(node, "arguments", "first");
   },
 };

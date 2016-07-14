@@ -1,0 +1,8 @@
+mutators
+- drop last argument of function
+- drop a case from a switch statement
+
+
+API
+- how to skip or mark OK? i.e. "reverse-function-parameters" applied to (a, b) => a + b will not report a failure, but it is ok
+

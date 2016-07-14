@@ -24,19 +24,19 @@ const FS_SETTINGS = {
 };
 
 module.exports = function makeMutants (match: Match): Mutant[] {
-  const {source, tests} = match;
-  const {ast, code} = parse(source);
+  const { source, tests } = match;
+  const { ast, code } = parse(source);
   const paths: Path[] = getMutationPaths(ast).map(p => p.map(String));
 
   // we regenerate the source code here to make it easy for diffing
   const originalSourceCode = escodegen.generate(ast);
-  return R.chain(mutationsFromPath, paths);
+  return R.chain(mutantsFromPath, paths);
 
-  function mutationsFromPath (path: Path): Mutant[] {
+  function mutantsFromPath (path: Path): Mutant[] {
     const node = <ESTree.Node>R.path(path, ast);
-    return getMutatorsForNode(node)
-      .filter(mutatorFilterFromNode(node))
-      .map(function (m: MutatorPlugin) {
+    return R.pipe(
+      R.filter(mutatorFilterFromNode(node)),
+      R.chain(function (m: MutatorPlugin) {
         // this can be done more elegantly with Ramda lenses, probably
         const newNode = m.mutator(node);
 
@@ -63,7 +63,8 @@ module.exports = function makeMutants (match: Match): Mutant[] {
           originalSourceCode: originalSourceCode,
           mutatedSourceCode: mutatedSourceCode,
         };
-      });
+      })
+     )(getMutatorsForNode(node));
   }
 }
 
@@ -94,24 +95,15 @@ function mutatorFilterFromNode (node: ESTree.Node) {
   };
 }
 
-interface _ParseResult {
-  ast: ESTree.Node;
-  code: string;
-}
-
-function parse (source: string): _ParseResult {
-  console.log("reading", source, "...");
+function parse (source: string) {
   const originalSource = fs.readFileSync(source).toString();
-
-  let ast : ESTree.Node;
   try {
-     ast = esprima.parse(originalSource, ESPRIMA_SETTINGS);
+    const ast: ESTree.Node = esprima.parse(originalSource, ESPRIMA_SETTINGS);
+    const code: string = escodegen.generate(ast);
+    return { ast, code };
   } catch (err) {
     // TODO -- better error handling here
     console.log("ERROR PARSING SOURCE FILE", source);
     throw err;
   }
-
-  const code = escodegen.generate(ast);
-  return { ast, code }
 }

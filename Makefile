@@ -16,6 +16,6 @@ dogfood:
 	node ./run.js dogfood
 
 build:
-	./node_modules/.bin/tsc
+	./node_modules/.bin/tsc --strictNullChecks
 
 .PHONY: test example

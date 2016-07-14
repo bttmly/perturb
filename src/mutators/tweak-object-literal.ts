@@ -1,6 +1,8 @@
 const { Syntax } = require("estraverse");
 const R = require("ramda");
 
+const dropItem = require("../util/drop-item");
+
 import { MutatorPlugin } from "../types";
 
 module.exports = <MutatorPlugin>{
@@ -12,25 +14,6 @@ module.exports = <MutatorPlugin>{
     return R.path(["properties", "length"], node) !== 0;
   },
   mutator: function (node) {
-    return strategies.dropFirst(<ESTree.ObjectExpression>node);
+    return dropItem(<ESTree.ArrayExpression>node, "properties", "first");
   },
 };
-
-// TODO -- DRY this up w/ array literal tweak mutator and string mutator
-
-const strategies = {
-  dropFirst: function(node: ESTree.ObjectExpression) {
-    return R.assoc("properties", node.properties.slice(1), node);
-  },
-  dropLast: function(node: ESTree.ObjectExpression) {
-    return R.assoc("properties", node.properties.slice(0, -1), node);
-  },
-  dropRandom: function(node: ESTree.ObjectExpression) {
-    return R.assoc("properties", dropRandom(node.properties), node);
-  }
-}
-
-function dropRandom (s) {
-  const pos = Math.round(Math.random() * s.length - 1);
-  return s.slice(0, pos) + s.slice(pos + 1);
-}

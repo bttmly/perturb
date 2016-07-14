@@ -33,7 +33,7 @@ module.exports = function perturb (_cfg: PerturbConfig) {
 
   console.log("init with config\n", cfg);
 
-  const {setup, teardown, paths} = fileSystem(cfg);
+  const { setup, teardown, paths } = fileSystem(cfg);
 
   const matcher = getMatcher(cfg);
   const runner: RunnerPlugin = getRunner(cfg.runner);
@@ -77,7 +77,8 @@ module.exports = function perturb (_cfg: PerturbConfig) {
     .catch(err => {
       console.log("ERROR IN PERTURB MAIN CHAIN", err);
       throw err;
-    });
+    })
+    .finally(teardown)
 }
 
 function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
@@ -119,4 +120,11 @@ function sanityCheckAndSideEffects (ms: Mutant[]) {
     assert.notEqual(m.mutatedSourceCode, "", "Mutated source code should not be empty.");
   });
   return ms;
+}
+
+Promise.prototype.finally = function (cb) {
+  return this.then(
+    value => this.constructor.resolve(cb()).then(() => value),
+    reason => this.constructor.resolve(cb()).then(() => { throw reason; })
+  );
 }

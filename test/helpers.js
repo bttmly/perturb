@@ -54,7 +54,7 @@ function mutatorByName (name) {
 }
 
 function applyMutation (node, name) {
-  return mutatorByName("tweak-object-literal").mutator(node);
+  return mutatorByName(name).mutator(node);
 }
 
 module.exports = {

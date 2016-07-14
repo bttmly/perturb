@@ -31,7 +31,9 @@ function generateReport (r: RunnerResult): string {
   //   return chalk.gray(id);
   // }
 
-  const title = chalk.red.underline(alive + id);
+  const title = r.error ? chalk.gray(dead + id) :
+    chalk.red.underline(alive + id);
+
   const diff = generateDiff(r);
 
   return [

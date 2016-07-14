@@ -18,11 +18,13 @@ const coreMutators: MutatorPlugin[] = [
   require("./tweak-object-literal"),
   require("./tweak-boolean-literal"),
   require("./tweak-number-literal"),
-  require("./tweak-string-literal"),
+  // require("./tweak-string-literal"),
+  require("./tweak-arguments"),
+  require("./tweak-switch"),
 ];
 
 let mutatorIndex = {}
-let activeMutators = []
+let activeMutators: MutatorPlugin[] = [];
 
 // temporary stub -- this function will return false for disabled mutators (based on config)
 function isMutatorEnabled (m: MutatorPlugin): boolean {
@@ -62,10 +64,8 @@ function makeMutatorIndex (names: string[]) {
 
 function locateMutatorPlugins (names: string[]): MutatorPlugin[] {
   return names.map(function (name: string): MutatorPlugin {
-    let plugin: MutatorPlugin;
     try {
-      plugin = require(`perturb-plugin-mutator-${name}`);
-      return plugin;
+      return <MutatorPlugin>require(`perturb-plugin-mutator-${name}`)
     } catch (err) {
       // any way to recover? other locate strategy? something with local path resolution?
       console.log(`unable to locate -MUTATOR- plugin "${name}" -- fatal error, exiting`);
@@ -88,7 +88,7 @@ exports.getMutatorsForNode = function (node: ESTree.Node): MutatorPlugin[] {
   return R.propOr([], node.type, mutatorIndex);
 }
 
-exports.getMutatorByName = function (name: string): MutatorPlugin {
+exports.getMutatorByName = function (name: string): MutatorPlugin | undefined {
   return activeMutators.find(m => m.name === name);
 }
 
