@@ -1,5 +1,3 @@
-///<reference path="../../typings/modules/ramda/index.d.ts"/>
-
 // extra block-scope hack to account for "error TS2451: Cannot redeclare block-scoped variable 'R'" (???)
 {
 

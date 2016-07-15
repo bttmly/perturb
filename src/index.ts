@@ -1,6 +1,3 @@
-///<reference path="../typings/globals/node/index.d.ts"/>
-///<reference path="../typings/globals/bluebird/index.d.ts"/>
-///<reference path="../typings/modules/ramda/index.d.ts"/>
 
 const R = require("ramda");
 const Bluebird = require("bluebird");
@@ -57,7 +54,7 @@ module.exports = function perturb (_cfg: PerturbConfig) {
 
       return tested;
     })
-    // 
+    //
     .then(R.chain(makeMutants))
     .then(sanityCheckAndSideEffects)
     // run the mutatnts and gather the results

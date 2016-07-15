@@ -1,4 +1,3 @@
-///<reference path="../../typings/modules/ramda/index.d.ts"/>
 ///<reference path="./mocha.d.ts"/>
 
 
@@ -29,9 +28,9 @@ module.exports = <RunnerPlugin>{
 
   setup: function (m: Mutant): Promise<any> {
     fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
-    
+
     delete require.cache[m.sourceFile];
-    
+
     return Promise.resolve({
       cache: new Set(Object.keys(require.cache)),
       listeners: process.listeners("uncaughtException"),
