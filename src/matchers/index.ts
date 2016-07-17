@@ -29,7 +29,7 @@ function runGenerative (
   return R.contains(name, tests) ? [name] : [];
 }
 
-module.exports = function getMatcher (c: PerturbConfig) {
+export = function getMatcher (c: PerturbConfig) {
 
   const matcherPlugin = getMatcherPlugin(c.matcher);
   const {type} = matcherPlugin;

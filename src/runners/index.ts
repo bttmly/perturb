@@ -24,7 +24,7 @@ function injectPlugins (names) {
   });
 }
 
-module.exports = function get (name: string): RunnerPlugin {
+export = function get (name: string): RunnerPlugin {
   const plugin = plugins.get(name);
   if (plugin == null) {
     throw new Error(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);

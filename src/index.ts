@@ -2,17 +2,17 @@
 ///<reference path="../typings/globals/bluebird/index.d.ts"/>
 ///<reference path="../typings/modules/ramda/index.d.ts"/>
 
-const R = require("ramda");
-const Bluebird = require("bluebird");
-const { spawn } = require("child_process");
-const assert = require("assert");
+import R = require("ramda");
+import Bluebird = require("bluebird");
+import { spawn } from "child_process";
+import assert = require("assert");
 
-const getRunner = require("./runners");
-const getReporter = require("./reporters");
-const getMatcher = require("./matchers");
-const makeMutants = require("./make-mutants");
-const makeConfig = require("./make-config");
-const fileSystem = require("./file-system");
+import getRunner = require("./runners");
+import getReporter = require("./reporters");
+import getMatcher = require("./matchers");
+import makeMutants = require("./make-mutants");
+import makeConfig = require("./make-config");
+import fileSystem = require("./file-system");
 
 import {
   PerturbConfig,

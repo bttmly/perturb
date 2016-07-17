@@ -67,7 +67,7 @@ function getFilePaths (config: PerturbConfig): FilePathResult {
   };
 }
 
-module.exports = function createFsHelpers (c: PerturbConfig) {
+export = function createFsHelpers (c: PerturbConfig) {
   return <FsHelper>{
     setup () {
       setupPerturbDirectory(c);

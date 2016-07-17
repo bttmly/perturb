@@ -21,7 +21,7 @@ function locateReporterPlugins (names) {
   });
 }
 
-module.exports = function get (name: string): ReporterPlugin {
+export = function get (name: string): ReporterPlugin {
   const p = plugins.get(name);
   if (p == null) {
     throw new Error(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);
