@@ -1,5 +1,3 @@
-///<reference path="../typings/globals/node/index.d.ts"/>
-
 const path = require("path");
 const glob = require("glob");
 const fs = require("fs-extra");

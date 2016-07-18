@@ -1,5 +1,3 @@
-///<reference path="../typings/globals/estree/index.d.ts"/>
-
 // reporter function types
 export interface ResultReporter {
   (r: RunnerResult): void;
@@ -91,7 +89,7 @@ export interface ComparativeMatcherPlugin extends MatcherPlugin {
 
 export interface PerturbConfig {
   testCmd: string;
-  
+
   mutators: string[]; // names of mutator plugins to apply
   skippers: string[]; // names of skipper plugins to apply
 

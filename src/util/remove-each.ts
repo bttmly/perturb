@@ -1,5 +1,3 @@
-///<reference path="../../typings/modules/ramda/index.d.ts"/>
-
 {
 
 const R = require("ramda");

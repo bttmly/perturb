@@ -1,5 +1,3 @@
-///<reference path="../../typings/modules/ramda/index.d.ts"/>
-
 // copied and (slightly) moddified from Ramda source code
 
 const R = require("ramda");
