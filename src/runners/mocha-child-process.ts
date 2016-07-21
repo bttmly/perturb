@@ -1,7 +1,7 @@
-const {spawn} = require("child_process");
-const fs = require("fs");
 const debug = require("debug")("runner:mocha-child-process");
-const Bluebird = require("bluebird");
+import fs = require("fs");
+import cp = require("child_process");
+import BaseRunner = require("./base");
 
 import {
   RunnerPlugin,
@@ -9,66 +9,64 @@ import {
   RunnerResult
 } from "../types";
 
-module.exports = <RunnerPlugin>{
-  name: "mocha-child-process",
-
-  setup (m: Mutant): Promise<any> {
-    fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
-    return Promise.resolve();
-  },
-
-  run (m: Mutant): Promise<RunnerResult> {
-    return Bluebird.mapSeries(m.testFiles, makeFileRunner(m))
-      .then(() => Object.assign({}, m, { error: null }))
-      .catch(err => Object.assign({}, m, { error: err }));
-  },
-
-  cleanup (m: Mutant): Promise<void> {
-    fs.writeFileSync(m.sourceFile, m.originalSourceCode);
-    return Promise.resolve();
-  }
-}
-
+// TODO -- make configurable
 const TIMEOUT = 10000;
 
+class MochaChildRunner extends BaseRunner implements RunnerPlugin {
+  name: string;
 
-// this function *rejects* if there is an error so we can skip
-// running subsequent test files
-function makeFileRunner (m: Mutant) {
-  const cmd = getMocha(m);
-  return function runOne (testFile: string) {
+  constructor (m: Mutant) {
+    super(m);
+    this.name = "mocha-child";
+  }
+
+  setup () {
+    fs.writeFileSync(this._mutant.sourceFile, this._mutant.mutatedSourceCode);
+    return Promise.resolve();
+  }
+
+  run () {
+    const cmd = mochaExecutable();
+    const args = ["-b", ...this._mutant.testFiles];
+    const opts = { timeout: TIMEOUT };
+
     return new Promise(function (resolve, reject) {
-      // TODO should use locally installed mocha if available
-      const opts = { timeout: TIMEOUT };
-      const child = spawn(cmd, ["-b", testFile]);
-
+      const child = cp.spawn(cmd, args, opts);
       child.stdout.on("data", d => debug(d.toString()));
       child.stderr.on("data", d => debug(d.toString()));
-
-      let ended = false;
-      
       child.on("error", err => {
-        if (ended) {
-          console.log("Error in child process after ended", err.stack);
-          return;
-        }
-
-        ended = true;
+        console.log("child error"); 
         reject(err);
       });
 
       child.on("exit", code => {
-        if (code === 0) return resolve();
-        if (ended) return;
+        if (code === 0) {
+          console.log("child exit 0")
+          return resolve();
+        }
 
-        ended = true;
-        console.log("code not zero, but no child error!", code, typeof code);
+        console.log("child exit non zero");
         reject(new Error("Non-zero exit code from child process"));
       });
     })
+    .then(() => Object.assign({}, this._mutant, { error: null }))
+    .catch(err => Object.assign({}, this._mutant, { error: err }));
   }
+
+  cleanup () {
+    fs.writeFileSync(this._mutant.sourceFile, this._mutant.originalSourceCode);
+    return Promise.resolve();
+  }
+
 }
 
-function getMocha (m: Mutant) {
+Object.defineProperty(MochaChildRunner, "name", {
+  value: "mocha-child",
+  enumerable: true,
+});
+
+function mochaExecutable () {
   return "mocha";
 }
+
+export = MochaChildRunner;

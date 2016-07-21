@@ -65,6 +65,10 @@ export interface RunnerPlugin extends Plugin {
   cleanup: CleanupRun;
 }
 
+export interface RunnerPluginCtor {
+  new(m: Mutant): RunnerPlugin
+}
+
 export interface SkipperPlugin extends Plugin {
   skipper: Skipper;
 }

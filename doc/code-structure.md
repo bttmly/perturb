@@ -1,4 +1,4 @@
-# Code Structure
+# Code Structure & Method of Operation
 
 This project is structured as a series of independent steps which are orchestrated by the main function `perturb()` in `src/index.ts`. Each step's behavior can be customized through the use of plugins.
 

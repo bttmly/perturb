@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-import { Mutant } from "../types";
+import { Mutant, RunnerResult } from "../types";
 
 class BaseRunner {
 
@@ -12,43 +12,24 @@ class BaseRunner {
     this._cache = new Set();
   }
 
-  _baseSetup () {
+  run () {
+    throw new Error("Must be implemented in subclass!");
+  }
+
+  _baseSetup (): Promise<void> {
     delete require.cache[this._mutant.sourceFile];
     fs.writeFileSync(this._mutant.sourceFile, this._mutant.mutatedSourceCode);
     this._cache = new Set(Object.keys(require.cache));
     return Promise.resolve();
   }
 
-  _baseTeardown () {
+  _baseCleanup (): Promise<void> {
     fs.writeFileSync(this._mutant.sourceFile, this._mutant.originalSourceCode);
     Object.keys(require.cache)
       .filter(key => this._cache.has(key))
       .forEach(key => delete require.cache[key]);
-    
     return Promise.resolve();
   }
-
 }
 
-/*
-// ad hoc with property assignment
-var runner = new BaseRunner();
-runner.name = "";
-runner.setup = function (m: Mutant) {
-  return this._baseSetup(m);
-}
-runner.run = // ... implementation
-runner.cleanup = function (m: Mutant) {
-  return this._baseTeardown(m);
-}
-
-// as a class
-class MyRunner extends BaseRunner implements Runner {
-  setup (m) {
-    return this._baseSetup(m);
-  }
-  cleanup (m) {
-    return this._baseTeardown(m);
-  }
-}
-*/
+export = BaseRunner;

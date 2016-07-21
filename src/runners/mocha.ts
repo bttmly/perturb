@@ -1,10 +1,8 @@
 ///<reference path="./mocha.d.ts"/>
 
-
-const fs = require("fs");
-const R = require("ramda");
-const Bluebird = require("bluebird");
-const Mocha = require("mocha");
+import R = require("ramda");
+import Mocha = require("mocha");
+import BaseRunner = require("./base");
 
 import {
   RunnerPlugin,
@@ -12,74 +10,63 @@ import {
   RunnerResult
 } from "../types";
 
-const doesNotContain = arr => item => !R.contains(item, arr);
-const doesNotHave = set => prop => !set.has(prop);
-const delProp = obj => prop => delete obj[prop];
+class MochaRunner extends BaseRunner implements RunnerPlugin {
+  _listeners: Set<Function>
+  name: string;
 
-function mirror (arr: string[]) {
-  const out = {};
-  arr.forEach(x => out[x] = x);
-  return out;
-}
+  constructor (m: Mutant) {
+    super(m);
+    this.name = "mocha";    
+  }
 
-module.exports = <RunnerPlugin>{
+  setup (): Promise<void> {
+    this._listeners = new Set(process.listeners("uncaughtException"));
+    return this._baseSetup();
+  }
 
-  name: "mocha",
-
-  setup: function (m: Mutant): Promise<any> {
-    fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
-
-    delete require.cache[m.sourceFile];
-
-    return Promise.resolve({
-      cache: new Set(Object.keys(require.cache)),
-      listeners: process.listeners("uncaughtException"),
-    });
-  },
-
-  run: function (m: Mutant): Promise<RunnerResult> {
-    return new Promise(function(resolve) {
-      let failedOn;
-
-      function reporter (runner) {
-        runner.on("fail", (test, err) => {
-          console.log(err.stack);
-          test.err = err;
-          failedOn = test
+  run (): Promise<RunnerResult> {
+    const mutant = this._mutant;
+    return new Promise(function (resolve, reject) {
+      
+      function reporter (mochaRunner) {
+        mochaRunner.on("fail", function (test, err) {
+          console.log("bailed on error");
+          reject(err);
         });
       }
 
       const mocha = new Mocha({ reporter, bail: true });
-
-      m.testFiles.forEach(t => mocha.addFile(t));
+      mutant.testFiles.forEach(t => mocha.addFile(t));
+      // mocha.run(resolve);
 
       try {
-        mocha.run(function (f) {
-          resolve(failedOn);
+        mocha.run(() => {
+          console.log("finished with no error");
+          resolve()
         });
-
-      } catch (err) {
-        console.log("caught sync error starting mocha", err);
-        return resolve(err);
+      } catch (e) {
+        console.log("error during require");
+        throw e
       }
+
     })
-      .then(error => Object.assign({}, m, { error }));
-  },
-
-  cleanup: function (m: Mutant, before: any): Promise<void> {
-    // write the original source code back to it's location
-    fs.writeFileSync(m.sourceFile, m.originalSourceCode);
-
-    // remove danging uncaughtException listeners Mocha didn't clean up
-    process.listeners("uncaughtException")
-      .filter(doesNotContain(before.listeners))
-      .forEach(f => process.removeListener("uncaughtException", f));
-
-    // remove all modules that were required by this test
-    Object.keys(require.cache)
-      .filter(doesNotHave(before.cache))
-      .forEach(delProp(require.cache));
-
-    return Promise.resolve();
+    .then(() => Object.assign({}, mutant, { error: null }))
+    .catch(error => Object.assign({}, mutant, { error }));
   }
-};
+
+  cleanup (): Promise<void> {
+    // edge case: multiple of same handler somehow attached. this will
+    // only unbind one copy ... hmmm
+    process.listeners("uncaughtException")
+      .filter(f => !this._listeners.has(f))
+      .forEach(f => process.removeListener("uncaughtException", f));
+    return this._baseCleanup();
+  }
+}
+
+Object.defineProperty(MochaRunner, "name", {
+  value: "mocha",
+  enumerable: true,
+});
+
+export = MochaRunner;

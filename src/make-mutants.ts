@@ -40,13 +40,8 @@ export = function makeMutants (match: Match): Mutant[] {
         // this can be done more elegantly with Ramda lenses, probably
         const newNode = m.mutator(node);
 
-        // PATH
         const updatedAst = updateIn(path, newNode, ast);
         const mutatedSourceCode = escodegen.generate(updatedAst);
-
-        if (mutatedSourceCode === "") {
-          console.log("EMPTY SOURCE");
-        }
 
         // both the original source and the mutated source are present here
         // to avoid unnecessary extra code generation in mutator prep/teardown,

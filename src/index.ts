@@ -16,6 +16,7 @@ import {
   MatcherPlugin,
   ReporterPlugin,
   RunnerPlugin,
+  RunnerPluginCtor,
   RunnerResult,
   Mutant,
   Match,
@@ -33,8 +34,12 @@ module.exports = function perturb (_cfg: PerturbConfig) {
   const { setup, teardown, paths } = fileSystem(cfg);
 
   const matcher = getMatcher(cfg);
-  const runner: RunnerPlugin = getRunner(cfg.runner);
+  // const runner: RunnerPlugin = getRunner(cfg.runner);
+  const Runner: RunnerPluginCtor = getRunner(cfg.runner);
   const reporter: ReporterPlugin = getReporter(cfg.reporter);
+  const handler = makeMutantHandler(Runner, reporter);
+  
+  let start;
 
   // first run the tests, otherwise why bother at all?
   return runTest(cfg)
@@ -52,20 +57,30 @@ module.exports = function perturb (_cfg: PerturbConfig) {
         throw new Error("No matched files!");
       }
 
-      return tested;
+      start = Date.now();
+
+      const mutants = R.chain(makeMutants, tested);
+
+      sanityCheckAndSideEffects(mutants);
+
+      return mutants;
     })
-    //
-    .then(R.chain(makeMutants))
     .then(sanityCheckAndSideEffects)
     // run the mutatnts and gather the results
     .then(function (ms: Mutant[]) {
-      // this handler does all the interesting work on a single Mutant
-      const handler = makeMutantHandler(runner, reporter);
       return Bluebird.mapSeries(ms, handler);
     })
     // run the final results handler, if supplied, then pass the results back
     // to the caller
     .then(function (rs: RunnerResult[]) {
+      // some run metadata here:
+      // duration: number
+      // runner: string
+      // sourceCount: number
+
+      const duration = (Date.now() - start) / 1000;
+      console.log("duration:", duration, "rate:", (rs.length / duration), "/s");
+
       if (reporter.onFinish) {
         reporter.onFinish(rs);
       }
@@ -78,8 +93,9 @@ module.exports = function perturb (_cfg: PerturbConfig) {
     .finally(teardown)
 }
 
-function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
+function makeMutantHandler (Runner: RunnerPluginCtor, reporter: ReporterPlugin) {
   return function handler (m: Mutant): Promise<RunnerResult> {
+    const runner = new Runner(m);
     let _before, _result;
     return runner.setup(m)
       .then(before => {
@@ -112,11 +128,11 @@ function runTest (cfg: PerturbConfig) {
 }
 
 // TODO -- what else? Any reason might want to serialize mutants here?
-function sanityCheckAndSideEffects (ms: Mutant[]) {
+function sanityCheckAndSideEffects (ms: Mutant[]): Promise<Mutant[]> {
   ms.forEach(function (m: Mutant) {
     assert.notEqual(m.mutatedSourceCode, "", "Mutated source code should not be empty.");
   });
-  return ms;
+  return Promise.resolve(ms);
 }
 
 Promise.prototype.finally = function (cb) {
