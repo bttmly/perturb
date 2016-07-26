@@ -1,8 +1,6 @@
 const R = require("ramda");
 
-import {
-  MutatorPlugin
-} from "../types";
+import { MutatorPlugin } from "../types";
 
 const coreMutators: MutatorPlugin[] = [
   require("./drop-member-assignment"),

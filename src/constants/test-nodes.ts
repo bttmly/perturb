@@ -1,6 +1,6 @@
 var S = require("estraverse").Syntax;
 
-module.exports = {
+export = {
   [S.IfStatement]: S.IfStatement,
   [S.WhileStatement]: S.WhileStatement,
   [S.DoWhileStatement]: S.DoWhileStatement,

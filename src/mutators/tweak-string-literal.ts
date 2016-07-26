@@ -9,7 +9,7 @@ interface StringLiteral extends ESTree.Node {
 
 const EMPTY_REPLACEMENT = "a";
 
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   // drops first character of non-empty string; changes
   // empty strings to "a"
   // var s = ""; => var s = "a";

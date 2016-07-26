@@ -1,4 +1,4 @@
-module.exports = {
+export = {
   NotKeyedIterable: "Node must be an Immutable.js keyed iterable",
   WrongNodeType: "Node is of wrong type. Actual: %s; Expected: %s",
   TestsFailed: "Test command `%s` failed. Tests must be passing for perturb to work properly.",

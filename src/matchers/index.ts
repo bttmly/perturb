@@ -8,6 +8,10 @@ import {
   Match
 } from "../types";
 
+import baseGenerative = require("./base-generative");
+import baseComparative = require("./base-comparative");
+import containsComparative = require("./contains-comparative");
+
 interface runMatcher {
   (matcher: ComparativeMatcher | GenerativeMatcher, source: string, tests: string[]): string[];
 }
@@ -29,39 +33,41 @@ function runGenerative (
   return R.contains(name, tests) ? [name] : [];
 }
 
-export = function getMatcher (c: PerturbConfig) {
-
-  const matcherPlugin = getMatcherPlugin(c.matcher);
-  const {type} = matcherPlugin;
-  const matcher = matcherPlugin.makeMatcher(c);
-
-  return function findMatches (sources: string[], tests: string[]): Match[] {
-    const runMatch: runMatcher = type === "generative" ? runGenerative : runComparative;
-    return sources.map(function (source) {
-      return <Match>{ source, tests: runMatch(matcher, source, tests) };
-    });
-  }
-}
-
-const baseGenerative = require("./base-generative");
-const baseComparative = require("./base-comparative");
-const containsComparative = require("./contains-comparative");
-
 const builtIns = new Map<string, MatcherPlugin>([
   ["base-generative", baseGenerative],
   ["base-comparative", baseComparative],
   ["contains-comparative", containsComparative],
 ]);
 
-function getMatcherPlugin (name): MatcherPlugin {
-  const plugin = builtIns.get(name);
-  if (plugin) return plugin;
-
-  try {
-    // TODO -- runtime type check this import
-    return require(`perturb-matcher-plugin-${name}`);
-  } catch (err) {
-    console.log("Fatal error: unable to resolve MATCHER plugin name", name);
-    throw err;
+function getMatcher (c: PerturbConfig) {
+  const matcherPlugin = getMatcherPlugin(c.matcher);
+  const {type} = matcherPlugin;
+  const matcher = matcherPlugin.makeMatcher(c);
+  
+  return function findMatches (sources: string[], tests: string[]): Match[] {
+    const runMatch: runMatcher = type === "generative" ? runGenerative : runComparative;
+    return sources.map(source => ({
+      source, tests: runMatch(matcher, source, tests),
+    }));
   }
 }
+
+function getMatcherPlugin (input: string | MatcherPlugin): MatcherPlugin {
+  if (typeof input === "string") {
+    const plugin = builtIns.get(input);
+    
+    if (plugin) return plugin;
+    
+    try {
+      // TODO -- runtime type check this import
+      return require(`perturb-matcher-plugin-${input}`);
+    } catch (err) {
+      console.log("Fatal error: unable to resolve MATCHER plugin name", input);
+      throw err;
+    }
+  } else {
+    return input;
+  }
+}
+
+export = getMatcher;

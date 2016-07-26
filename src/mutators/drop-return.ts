@@ -13,7 +13,7 @@ interface MaybeArgumentedNode extends ESTree.Node {
   argument?: any
 }
 
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   name: "drop-return",
   nodeTypes: [Syntax.ReturnStatement],
   mutator: function (node: MaybeArgumentedNode) {

@@ -23,7 +23,7 @@ const defaultConfig: PerturbConfig = {
   runner: "mocha-child-process",
 }
 
-export = function makeConfig (userConfig = {}): PerturbConfig {
+function makeConfig (userConfig = {}): PerturbConfig {
   let fileConfig;
 
   try {
@@ -36,3 +36,5 @@ export = function makeConfig (userConfig = {}): PerturbConfig {
 
   return <PerturbConfig>assign({}, defaultConfig, fileConfig, userConfig);
 }
+
+export = makeConfig;

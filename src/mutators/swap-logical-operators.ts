@@ -9,7 +9,7 @@ const OR = "||";
 // swaps && for || and vice versa
 // `if (x && y)` => `if (x || y)`
 // `while (f() || g())` => `while(f() && g())`
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   name: "swap-logical-operators",
   nodeTypes: [Syntax.LogicalExpression],
   mutator: function (node) {

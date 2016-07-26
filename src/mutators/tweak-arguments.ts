@@ -5,7 +5,7 @@ const dropItem = require("../util/drop-item");
 
 import { MutatorPlugin } from "../types";
 
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   // drops the first declared element in an array literal
   // `['a', 'b']` => `['a']`
   name: "tweak-arguments",

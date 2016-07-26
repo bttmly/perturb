@@ -1,5 +1,5 @@
 const R = require("ramda");
-const FUNC_NODES = require("../constants/func-nodes");
+const S = require("estraverse").Syntax;
 
 import { MutatorPlugin } from "../types";
 
@@ -7,11 +7,17 @@ interface FunctionNode extends ESTree.Node {
   params: ESTree.Identifier[];
 }
 
+const FUNC_NODES = [
+  S.FunctionDeclaration,
+  S.FunctionExpression,
+  S.ArrowFunctionExpression,
+];
+
 // reverse the perameter order for a function expression or declaration
 // `function fn (a, b) {}` => `function fn (b, a) {}`
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   name: "reverse-function-parameters",
-  nodeTypes: Object.keys(FUNC_NODES),
+  nodeTypes: FUNC_NODES,
   filter: function (node) {
     return R.path(["params", "length"], node) > 1;
   },

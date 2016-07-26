@@ -9,7 +9,7 @@ import {
 // input: project/lib/dir/car.js
 // output: project/test/dir/car.js
 
-module.exports = <GenerativeMatcherPlugin>{
+export = <GenerativeMatcherPlugin>{
   type: "generative",
   makeMatcher: function(c: PerturbConfig): GenerativeMatcher {
     return function(sourceFile: string) {

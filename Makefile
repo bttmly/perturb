@@ -12,8 +12,9 @@ events:
 
 dogfood:
 	rm -rf ./.perturb
+	rm -rf ./built
 	./node_modules/.bin/tsc
-	node ./run.js dogfood
+	node ./run.js dogfood $(RUNNER)
 
 build:
 	./node_modules/.bin/tsc --strictNullChecks

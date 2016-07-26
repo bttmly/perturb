@@ -1,9 +1,11 @@
 import { ReporterPlugin } from "../types";
 
-const diffReporter = require("./diff");
+import diffReporter = require("./diff");
+import nameReporter = require("./name");
 
 const plugins = new Map<string, ReporterPlugin>([
   [ "diff", diffReporter ],
+  [ "name", nameReporter ],
 ]);
 
 function locateReporterPlugins (names) {
@@ -21,11 +23,15 @@ function locateReporterPlugins (names) {
   });
 }
 
-export = function get (name: string): ReporterPlugin {
-  const p = plugins.get(name);
-  if (p == null) {
-    throw new Error(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);
+export = function get (input: string | ReporterPlugin): ReporterPlugin {
+  if (typeof input === "string") {
+    const plugin = plugins.get(input);
+    if (plugin == null) {
+      throw new Error(`unable to locate -RUNNER- plugin "${input}" -- fatal error, exiting`);
+    }
+    return plugin;
+  } else {
+    return input;
   }
-  return p;
 }
 

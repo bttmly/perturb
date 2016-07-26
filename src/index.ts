@@ -26,7 +26,7 @@ function hasTests (m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
 }
 
-module.exports = function perturb (_cfg: PerturbConfig) {
+function perturb (_cfg: PerturbConfig) {
   const cfg = makeConfig(_cfg);
 
   console.log("init with config\n", cfg);
@@ -95,16 +95,13 @@ module.exports = function perturb (_cfg: PerturbConfig) {
 
 function makeMutantHandler (Runner: RunnerPluginCtor, reporter: ReporterPlugin) {
   return function handler (m: Mutant): Promise<RunnerResult> {
+    let _result;
     const runner = new Runner(m);
-    let _before, _result;
-    return runner.setup(m)
-      .then(before => {
-        _before = before;
-        return runner.run(m)
-      })
+    return runner.setup()
+      .then(() => runner.run())
       .then(result => {
         _result = result;
-        return runner.cleanup(result, _before);
+        return runner.cleanup();
       })
       .then(() => {
         if (reporter.onResult) {
@@ -141,3 +138,5 @@ Promise.prototype.finally = function (cb) {
     reason => this.constructor.resolve(cb()).then(() => { throw reason; })
   );
 }
+
+export = perturb;

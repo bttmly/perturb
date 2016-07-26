@@ -7,7 +7,7 @@ interface NumberLiteral extends ESTree.Literal {
   value: number;
 }
 
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   // adds 1 to any number literal OR replaces 1 with 0
   // `var num = 735;` => `var num = 736;`
   // `var num = 1;` => `var num = 0;`

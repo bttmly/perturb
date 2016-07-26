@@ -1,4 +1,4 @@
-module.exports = {
+export = {
   func: "function",
   bool: "boolean",
   str: "string",

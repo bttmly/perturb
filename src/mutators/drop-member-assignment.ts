@@ -5,7 +5,7 @@ import { MutatorPlugin } from "../types";
 
 // drops a member assignment
 // `obj.prop = 'value';` => `obj.prop;`
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   name: "drop-member-assignment",
   nodeTypes: [Syntax.AssignmentExpression],
   filter: function (node) {

@@ -7,7 +7,7 @@ import { MutatorPlugin } from "../types";
 // drops a function call made for side effects
 // (the return value isn't assigned to a variable)
 // (will this cause lots of test timeouts due to uncalled callbacks?)
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   name: "dropVoidCall",
   nodeTypes: [Syntax.ExpressionStatement],
   filter: function (node) {

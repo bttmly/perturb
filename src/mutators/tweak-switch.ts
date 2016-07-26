@@ -5,7 +5,7 @@ const dropItem = require("../util/drop-item");
 
 import { MutatorPlugin } from "../types";
 
-module.exports = <MutatorPlugin>{
+export = <MutatorPlugin>{
   name: "tweak-switch",
   nodeTypes: [Syntax.SwitchStatement],
   filter: function (node) {

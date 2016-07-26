@@ -30,7 +30,7 @@ class MochaRunner extends BaseRunner implements RunnerPlugin {
       
       function reporter (mochaRunner) {
         mochaRunner.on("fail", function (test, err) {
-          console.log("bailed on error");
+          // console.log("bailed on error");
           reject(err);
         });
       }
@@ -41,11 +41,11 @@ class MochaRunner extends BaseRunner implements RunnerPlugin {
 
       try {
         mocha.run(() => {
-          console.log("finished with no error");
+          // console.log("finished with no error");
           resolve()
         });
       } catch (e) {
-        console.log("error during require");
+        // console.log("error during require");
         throw e
       }
 

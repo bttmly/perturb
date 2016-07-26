@@ -4,7 +4,7 @@ const plugins = new Map<string, RunnerPluginCtor>()
 
 ;[
   require("./mocha"),
-  require("./mocha-child-process"),
+  require("./mocha-fork"),
 ].forEach(function (runner) {
   plugins.set(runner.name, runner);
 });
@@ -24,11 +24,15 @@ function injectPlugins (names) {
   });
 }
 
-export = function get (name: string): RunnerPluginCtor {
-  const plugin = plugins.get(name);
-  if (plugin == null) {
-    throw new Error(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);
+export = function get (input: string | RunnerPluginCtor): RunnerPluginCtor {
+  if (typeof input === "string") {
+    const runner = plugins.get(input);
+    if (runner == null) {
+      throw new Error(`unable to locate -RUNNER- plugin "${input}" -- fatal error, exiting`);
+    }
+    return runner;
+  } else {
+    return input;
   }
-  return plugin;
 }
 

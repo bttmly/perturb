@@ -1,4 +1,4 @@
-module.exports = {
+export = {
   operator: "operator",
   elements: "elements",
   properties: "properties",

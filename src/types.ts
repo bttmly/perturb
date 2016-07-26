@@ -60,9 +60,9 @@ export interface MutatorPlugin extends Plugin {
 }
 
 export interface RunnerPlugin extends Plugin {
-  setup: SetupRun;
-  run: Runner;
-  cleanup: CleanupRun;
+  setup: () => Promise<void>
+  run: () => Promise<RunnerResult>
+  cleanup: () => Promise<void>
 }
 
 export interface RunnerPluginCtor {

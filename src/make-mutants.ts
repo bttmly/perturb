@@ -23,7 +23,7 @@ const FS_SETTINGS = {
   encoding: "utf8",
 };
 
-export = function makeMutants (match: Match): Mutant[] {
+function makeMutants (match: Match): Mutant[] {
   const { source, tests } = match;
   const { ast, code } = parse(source);
   const paths: Path[] = getMutationPaths(ast).map(p => p.map(String));
@@ -102,3 +102,5 @@ function parse (source: string) {
     throw err;
   }
 }
+
+export = makeMutants;

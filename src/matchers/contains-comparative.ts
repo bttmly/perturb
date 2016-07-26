@@ -1,4 +1,4 @@
-const path = require("path");
+import path = require("path");
 
 import {
   ComparativeMatcherPlugin,
@@ -16,7 +16,7 @@ function withoutExt (file) {
   return file.slice(0, -1 * path.extname(file).length);
 }
 
-module.exports = <ComparativeMatcherPlugin>{
+export = <ComparativeMatcherPlugin>{
   type: "comparative",
   makeMatcher: function(c: PerturbConfig): ComparativeMatcher {
     return function(sourceFile: string, testFile: string): boolean {

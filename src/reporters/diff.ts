@@ -5,7 +5,7 @@ const R = require("ramda");
 
 import { ReporterPlugin, RunnerResult } from "../types";
 
-module.exports = <ReporterPlugin>{
+export = <ReporterPlugin>{
   name: "diff",
   onResult: function(r: RunnerResult) {
     console.log(generateReport(r));

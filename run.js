@@ -1,6 +1,6 @@
 const path = require("path");
 
-function run (perturb, which, cb) {
+function run (perturb, which, runner) {
   let config;
 
   switch (which) {
@@ -8,7 +8,8 @@ function run (perturb, which, cb) {
       config = {
         rootDir: path.join(__dirname, ".."),
         sourceDir: "built",
-        runner: "mocha",
+        runner: runner || "mocha",
+        reporter: "name",
         testCmd: "make test-bail",
       };
       break;
@@ -24,23 +25,6 @@ function run (perturb, which, cb) {
       throw new Error("Unknown config " + which);
   }
 
-  if (cb) {
-    return perturb(config, function (err, results) {
-      if (err) {
-        console.log("fatal error in perturb");
-        console.log(err);
-        console.log(err.stack);
-        cb(err);
-        process.exit(1);
-      }
-
-      try {
-        console.log("kill count", results.filter(r => r.error).length, "/", results.length)
-      } catch (e) {}
-      cb(null, results);
-    });
-  }
-
   return perturb(config)
     .then(function (results) {
       console.log("DONE!");
@@ -53,7 +37,7 @@ function run (perturb, which, cb) {
 }
 
 if (!module.parent) {
-  run(require("./built"), process.argv[2]);
+  run(require("./built"), process.argv[2], process.argv[3]);
 }
 
 module.exports = run;

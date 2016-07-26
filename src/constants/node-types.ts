@@ -1,4 +1,4 @@
-module.exports = {
+export = {
   AssignmentExpression: "AssignmentExpression",
   ArrayExpression: "ArrayExpression",
   ArrowFunctionExpression: "ArrowFunctionExpression",

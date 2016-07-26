@@ -38,6 +38,6 @@ function injectPlugins (names) {
   });
 }
 
-module.exports = function shouldSkip (node: ESTree.Node, path: string[]): boolean {
+export = function shouldSkip (node: ESTree.Node, path: string[]): boolean {
   return skippers.some(f => f(node, path));
 }
