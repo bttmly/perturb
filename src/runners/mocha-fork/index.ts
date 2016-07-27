@@ -21,7 +21,6 @@ if (process.send) {
         error: fixError(result.error)
       }));
     });
-
 } else {
   // we're in the parent process...
   module.exports = require("./parent");

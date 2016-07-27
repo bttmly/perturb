@@ -16,7 +16,7 @@ class MochaRunner extends BaseRunner implements RunnerPlugin {
 
   constructor (m: Mutant) {
     super(m);
-    this.name = "mocha";    
+    this.name = "mocha";
   }
 
   setup (): Promise<void> {
@@ -30,24 +30,25 @@ class MochaRunner extends BaseRunner implements RunnerPlugin {
       
       function reporter (mochaRunner) {
         mochaRunner.on("fail", function (test, err) {
-          // console.log("bailed on error");
           reject(err);
         });
       }
 
       const mocha = new Mocha({ reporter, bail: true });
       mutant.testFiles.forEach(t => mocha.addFile(t));
-      // mocha.run(resolve);
+      mocha.run(resolve);
 
-      try {
-        mocha.run(() => {
-          // console.log("finished with no error");
-          resolve()
-        });
-      } catch (e) {
-        // console.log("error during require");
-        throw e
-      }
+      // try {
+      //   mocha.run(() => {
+      //     if (err == null) {
+      //       console.log("finished with no error");
+      //     }
+      //     resolve()
+      //   });
+      // } catch (e) {
+      //   console.log("error during require");
+      //   throw e
+      // }
 
     })
     .then(() => Object.assign({}, mutant, { error: null }))

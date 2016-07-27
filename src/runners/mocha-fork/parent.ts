@@ -17,7 +17,7 @@ const TIMEOUT = 10000;
 // surface errors in the runner besides just "child exited with non-zero code"
 // 
 
-class MochaChildRunner extends BaseRunner implements RunnerPlugin {
+class MochaForkRunner extends BaseRunner implements RunnerPlugin {
   name: string;
 
   constructor (m: Mutant) {
@@ -25,10 +25,7 @@ class MochaChildRunner extends BaseRunner implements RunnerPlugin {
     this.name = "mocha-fork";
   }
 
-  setup () {
-    fs.writeFileSync(this._mutant.sourceFile, this._mutant.mutatedSourceCode);
-    return Promise.resolve();
-  }
+  setup () { return Promise.resolve() }
 
   run () {
     const args = [ JSON.stringify(this._mutant) ];
@@ -51,6 +48,11 @@ class MochaChildRunner extends BaseRunner implements RunnerPlugin {
 
       child.on("message", function (msg) {
         const data = JSON.parse(msg);
+        
+        if (data.error) {
+          console.log("got an error");
+        }
+
         data.error ? reject(data.error) : resolve();
       });
     })
@@ -59,20 +61,13 @@ class MochaChildRunner extends BaseRunner implements RunnerPlugin {
     .catch(err => Object.assign({}, this._mutant, { error: err }));
   }
 
-  cleanup () {
-    fs.writeFileSync(this._mutant.sourceFile, this._mutant.originalSourceCode);
-    return Promise.resolve();
-  }
+  cleanup () { return Promise.resolve() }
 
 }
 
-Object.defineProperty(MochaChildRunner, "name", {
+Object.defineProperty(MochaForkRunner, "name", {
   value: "mocha-fork",
   enumerable: true,
 });
 
-function mochaExecutable () {
-  return "mocha";
-}
-
-export = MochaChildRunner;
+export = MochaForkRunner;

@@ -17,17 +17,13 @@ class BaseRunner {
   }
 
   _baseSetup (): Promise<void> {
-    delete require.cache[this._mutant.sourceFile];
+    Object.keys(require.cache).forEach(k => delete require.cache[k]);
     fs.writeFileSync(this._mutant.sourceFile, this._mutant.mutatedSourceCode);
-    this._cache = new Set(Object.keys(require.cache));
     return Promise.resolve();
   }
 
   _baseCleanup (): Promise<void> {
     fs.writeFileSync(this._mutant.sourceFile, this._mutant.originalSourceCode);
-    Object.keys(require.cache)
-      .filter(key => this._cache.has(key))
-      .forEach(key => delete require.cache[key]);
     return Promise.resolve();
   }
 }
