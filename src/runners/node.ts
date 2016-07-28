@@ -1,4 +1,4 @@
-import BaseRunner = require("./base");
+import runnerUtils = require("./utils");
 
 import {
   RunnerPlugin,
@@ -6,28 +6,19 @@ import {
   RunnerResult
 } from "../types";
 
-class NodeRunner extends BaseRunner implements RunnerPlugin {
-  name: string;
-
-  constructor (m: Mutant) {
-    super(m);
-    this.name = "node";
-  }
-
-  setup () { return this._baseSetup(); }
-
-  run () {
-    return Promise.resolve(require(this._mutant.sourceFile))
-      .then(() => Object.assign({}, this._mutant, { error: null }))
-      .catch(error => Object.assign({}, this._mutant, { error }));
-  }
-
-  cleanup () { return this._baseCleanup(); }
+export = <RunnerPlugin>{
+  name: "node",
+  setup (m: Mutant) {
+    runnerUtils.writeMutatedCode(m);
+    return Promise.resolve();
+  },
+  run (m: Mutant) {
+    return Promise.resolve(require(m.sourceFile))
+      .then(() => Object.assign({}, m, { error: null }))
+      .catch(error => Object.assign({}, m, { error }));
+  },
+  cleanup (m: Mutant) {
+    runnerUtils.restoreOriginalCode(m);
+    return Promise.resolve();
+  },
 }
-
-Object.defineProperty(NodeRunner, "name", {
-  value: "node",
-  enumerable: true,
-});
-
-export = NodeRunner;

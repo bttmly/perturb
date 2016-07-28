@@ -1,6 +1,6 @@
 // copied and (slightly) moddified from Ramda source code
 
-const R = require("ramda");
+import R = require("ramda");
 
 type Prop = string | number;
 type Target = any[] | Object

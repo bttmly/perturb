@@ -1,7 +1,4 @@
-// extra block-scope hack to account for "error TS2451: Cannot redeclare block-scoped variable 'R'" (???)
-{
-
-const R = require("ramda");
+import R = require("ramda");
 
 type DropStrategy = "first" | "last" | "random"
 
@@ -30,5 +27,3 @@ function dropItemOfKey (node: ESTree.Node, key: string, strategy: DropStrategy) 
 }
 
 module.exports = dropItemOfKey;
-
-}

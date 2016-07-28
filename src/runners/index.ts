@@ -1,6 +1,6 @@
-import { RunnerPluginCtor } from "../types";
+import { RunnerPlugin } from "../types";
 
-const plugins = new Map<string, RunnerPluginCtor>()
+const plugins = new Map<string, RunnerPlugin>()
 
 ;[
   require("./mocha"),
@@ -11,7 +11,7 @@ const plugins = new Map<string, RunnerPluginCtor>()
 
 function injectPlugins (names) {
   names.forEach(function (name) {
-    let plugin: RunnerPluginCtor;
+    let plugin: RunnerPlugin;
     try {
       plugin = require(`perturb-plugin-runner-${name}`);
       plugins.set(name, plugin);
@@ -24,7 +24,7 @@ function injectPlugins (names) {
   });
 }
 
-export = function get (input: string | RunnerPluginCtor): RunnerPluginCtor {
+export = function get (input: string | RunnerPlugin): RunnerPlugin {
   if (typeof input === "string") {
     const runner = plugins.get(input);
     if (runner == null) {

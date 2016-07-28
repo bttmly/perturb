@@ -2,7 +2,6 @@
 
 import R = require("ramda");
 import Mocha = require("mocha");
-import BaseRunner = require("./base");
 import runnerUtils = require("./utils");
 
 import {
@@ -11,25 +10,16 @@ import {
   RunnerResult
 } from "../types";
 
-class MochaRunner implements RunnerPlugin {
-  name: string;
-  _listeners: Set<Function>;
-  _mutant: Mutant;
-
-  constructor (m: Mutant) {
-    this._mutant = m;
-    this.name = "mocha";
-  }
-
-  setup (): Promise<void> {
+export = <RunnerPlugin>{
+  name: "mocha",
+  setup (m: Mutant) {
     runnerUtils.clearRequireCache()
-    runnerUtils.writeMutatedCode(this._mutant)
-    this._listeners = new Set(process.listeners("uncaughtException"));
-    return Promise.resolve();
-  }
+    runnerUtils.writeMutatedCode(m)
+    const listeners = new Set(process.listeners("uncaughtException"));
+    return Promise.resolve({ listeners });
+  },
 
-  run (): Promise<RunnerResult> {
-    const mutant = this._mutant;
+  run (m: Mutant): Promise<RunnerResult> {
     return new Promise(function (resolve, reject) {
       
       function reporter (mochaRunner) {
@@ -39,28 +29,22 @@ class MochaRunner implements RunnerPlugin {
       }
 
       const mocha = new Mocha({ reporter, bail: true });
-      mutant.testFiles.forEach(t => mocha.addFile(t));
+      m.testFiles.forEach(t => mocha.addFile(t));
       mocha.run(resolve);
     })
-    .then(() => Object.assign({}, mutant, { error: null }))
-    .catch(error => Object.assign({}, mutant, { error }));
-  }
+    .then(() => Object.assign({}, m, { error: null }))
+    .catch(error => Object.assign({}, m, { error }));
+  },
 
-  cleanup (): Promise<void> {
+  cleanup (m: Mutant, b: any) {
     // edge case: multiple of same handler somehow attached. this will
     // only unbind one copy ... hmmm
     process.listeners("uncaughtException")
-      .filter(f => !this._listeners.has(f))
+      .filter(f => b.listeners.has(f))
       .forEach(f => process.removeListener("uncaughtException", f));
       
-    runnerUtils.restoreOriginalCode(this._mutant);
+    runnerUtils.restoreOriginalCode(m);
     return Promise.resolve();
   }
 }
 
-Object.defineProperty(MochaRunner, "name", {
-  value: "mocha",
-  enumerable: true,
-});
-
-export = MochaRunner;

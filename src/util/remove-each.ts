@@ -1,6 +1,4 @@
-{
-
-const R = require("ramda");
+import R = require("ramda");
 
 function mapRemoveKeyItem (key, obj) {
   return obj[key].map(function (_, i) {
@@ -9,5 +7,3 @@ function mapRemoveKeyItem (key, obj) {
 }
 
 module.exports = R.curry(mapRemoveKeyItem);
-
-}

@@ -16,7 +16,6 @@ import {
   MatcherPlugin,
   ReporterPlugin,
   RunnerPlugin,
-  RunnerPluginCtor,
   RunnerResult,
   Mutant,
   Match,
@@ -35,7 +34,7 @@ function perturb (_cfg: PerturbConfig) {
 
   const matcher = getMatcher(cfg);
   // const runner: RunnerPlugin = getRunner(cfg.runner);
-  const Runner: RunnerPluginCtor = getRunner(cfg.runner);
+  const Runner: RunnerPlugin = getRunner(cfg.runner);
   const reporter: ReporterPlugin = getReporter(cfg.reporter);
   const handler = makeMutantHandler(Runner, reporter);
   
@@ -93,15 +92,18 @@ function perturb (_cfg: PerturbConfig) {
     .finally(teardown)
 }
 
-function makeMutantHandler (Runner: RunnerPluginCtor, reporter: ReporterPlugin) {
+function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
   return function handler (m: Mutant): Promise<RunnerResult> {
-    let _result;
-    const runner = new Runner(m);
-    return runner.setup()
-      .then(() => runner.run())
+    let _result, _before;
+
+    return runner.setup(m)
+      .then(before => {
+        _before = before;
+        return runner.run(m)
+      })
       .then(result => {
         _result = result;
-        return runner.cleanup();
+        return runner.cleanup(m, _before);
       })
       .then(() => {
         if (reporter.onResult) {
