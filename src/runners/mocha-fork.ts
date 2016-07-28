@@ -1,36 +1,35 @@
 const debug = require("debug")("runner:mocha-fork");
 import fs = require("fs");
 import cp = require("child_process");
-import BaseRunner = require("../base");
+
+import runnerUtils = require("./utils");
 
 import {
   RunnerPlugin,
   Mutant,
-  RunnerResult
-} from "../../types";
+  RunnerResult,
+  RunnerPluginCtor,
+} from "../types";
 
 // TODO -- make configurable
 const TIMEOUT = 10000;
 
-// TODO -- use child_process.fork() here. This file needs to acommodate both
-// the parent and child, and handle passing messages between them, so we can
-// surface errors in the runner besides just "child exited with non-zero code"
-// 
-
-class MochaForkRunner extends BaseRunner implements RunnerPlugin {
+class MochaForkRunner implements RunnerPlugin {
   name: string;
-
+  _mutant: Mutant;
+  
   constructor (m: Mutant) {
-    super(m);
+    this._mutant = m;
     this.name = "mocha-fork";
   }
 
+  // child runner handles set up
   setup () { return Promise.resolve() }
 
   run () {
     const args = [ JSON.stringify(this._mutant) ];
-    const opts = { timeout: TIMEOUT, env: { PERTURB_MOCHA_FORK_CHILD: "yes" } };
-    const child = cp.fork(__dirname, args);
+    const opts = { timeout: TIMEOUT, env: { PERTURB_MOCHA_FORK_CHILD: true } };
+    const child = cp.fork(__filename, args, opts);
 
     return new Promise(function (resolve, reject) {
       child.on("error", function (err) {
@@ -48,26 +47,42 @@ class MochaForkRunner extends BaseRunner implements RunnerPlugin {
 
       child.on("message", function (msg) {
         const data = JSON.parse(msg);
-        
-        if (data.error) {
-          console.log("got an error");
-        }
-
         data.error ? reject(data.error) : resolve();
       });
     })
-    // so it will type 
     .then(() => Object.assign({}, this._mutant, { error: null }))
     .catch(err => Object.assign({}, this._mutant, { error: err }));
   }
 
+  // the child runner handles cleanup
   cleanup () { return Promise.resolve() }
 
+  // 
+  static childRunner () {
+    const mutant: Mutant = JSON.parse(process.argv[2]);
+    const MochaRunner: RunnerPluginCtor = require("./mocha");
+    const runner: RunnerPlugin = new MochaRunner(mutant);
+    let result: RunnerResult;
+    Promise.resolve()
+      .then(() => runner.setup())
+      .then(() => runner.run())
+      .then(_result => result = _result)
+      .then(() => runner.cleanup())
+      .then(function () {
+        process.send(JSON.stringify({
+          error: runnerUtils.makeErrorSerializable(result.error)
+        }));
+      });
+  }
 }
 
 Object.defineProperty(MochaForkRunner, "name", {
   value: "mocha-fork",
   enumerable: true,
 });
+
+if (process.env.PERTURB_MOCHA_FORK_CHILD) {
+  MochaForkRunner.childRunner();
+}
 
 export = MochaForkRunner;

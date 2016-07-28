@@ -5,11 +5,9 @@ import { Mutant, RunnerResult } from "../types";
 class BaseRunner {
 
   _mutant: Mutant;
-  _cache: Set<string>
-
+ 
   constructor (m: Mutant) {
     this._mutant = m;
-    this._cache = new Set();
   }
 
   run () {

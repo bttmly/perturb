@@ -3,6 +3,7 @@
 import R = require("ramda");
 import Mocha = require("mocha");
 import BaseRunner = require("./base");
+import runnerUtils = require("./utils");
 
 import {
   RunnerPlugin,
@@ -10,18 +11,21 @@ import {
   RunnerResult
 } from "../types";
 
-class MochaRunner extends BaseRunner implements RunnerPlugin {
-  _listeners: Set<Function>
+class MochaRunner implements RunnerPlugin {
   name: string;
+  _listeners: Set<Function>;
+  _mutant: Mutant;
 
   constructor (m: Mutant) {
-    super(m);
+    this._mutant = m;
     this.name = "mocha";
   }
 
   setup (): Promise<void> {
+    runnerUtils.clearRequireCache()
+    runnerUtils.writeMutatedCode(this._mutant)
     this._listeners = new Set(process.listeners("uncaughtException"));
-    return this._baseSetup();
+    return Promise.resolve();
   }
 
   run (): Promise<RunnerResult> {
@@ -37,19 +41,6 @@ class MochaRunner extends BaseRunner implements RunnerPlugin {
       const mocha = new Mocha({ reporter, bail: true });
       mutant.testFiles.forEach(t => mocha.addFile(t));
       mocha.run(resolve);
-
-      // try {
-      //   mocha.run(() => {
-      //     if (err == null) {
-      //       console.log("finished with no error");
-      //     }
-      //     resolve()
-      //   });
-      // } catch (e) {
-      //   console.log("error during require");
-      //   throw e
-      // }
-
     })
     .then(() => Object.assign({}, mutant, { error: null }))
     .catch(error => Object.assign({}, mutant, { error }));
@@ -61,7 +52,9 @@ class MochaRunner extends BaseRunner implements RunnerPlugin {
     process.listeners("uncaughtException")
       .filter(f => !this._listeners.has(f))
       .forEach(f => process.removeListener("uncaughtException", f));
-    return this._baseCleanup();
+      
+    runnerUtils.restoreOriginalCode(this._mutant);
+    return Promise.resolve();
   }
 }
 

@@ -10,7 +10,6 @@ describe("base-comparative matcher", function () {
   
   beforeEach(function () {
     config = makeConfig();
-    console.log("PLUGIN:", plugin);
     matcher = plugin.makeMatcher(config);
     perturbDir = path.join(config.projectRoot, config.perturbDir);
     pTestDir = path.join(perturbDir, config.testDir);
