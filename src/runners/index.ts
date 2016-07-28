@@ -5,6 +5,7 @@ const plugins = new Map<string, RunnerPlugin>()
 ;[
   require("./mocha"),
   require("./mocha-fork"),
+  require("./node"),
 ].forEach(function (runner) {
   plugins.set(runner.name, runner);
 });

@@ -4,7 +4,7 @@ var common = require('../common');
 var assert = require('assert');
 var events = require('../lib/events');
 
-var EventEmitter = require('events').EventEmitter;
+var EventEmitter = require('../lib/events').EventEmitter;
 var assert = require('assert');
 
 var e = new EventEmitter();
@@ -23,6 +23,8 @@ assert(fl.length === 1);
 assert(fl[0] === assert.fail);
 
 e.listeners('bar');
+console.log("HERE");
+console.log(e._events);
 assert(!e._events.hasOwnProperty('bar'));
 
 e.on('foo', assert.ok);

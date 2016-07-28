@@ -8,7 +8,10 @@ lint:
 	./node_modules/.bin/eslint ./src/**/*.js
 
 events:
-	./bin/perturb -r ./examples/event-emitter
+	rm -rf ./.perturb
+	rm -rf ./built
+	./node_modules/.bin/tsc
+	node ./run.js events
 
 dogfood:
 	rm -rf ./.perturb

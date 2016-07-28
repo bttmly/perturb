@@ -3,10 +3,12 @@ const path = require("path");
 function run (perturb, which, runner) {
   let config;
 
-  switch (which) {
+  console.log("WHICH", which);
+
+  switch (which.trim()) {
     case "dogfood":
       config = {
-        rootDir: path.join(__dirname, ".."),
+        projectRoot: path.join(__dirname, ".."),
         sourceDir: "built",
         runner: runner || "mocha",
         reporter: "name",
@@ -14,11 +16,18 @@ function run (perturb, which, runner) {
       };
       break;
 
-    case "example":
+    case "events":
       config = {
-        rootDir: path.join(__dirname, "../examples/toy-lib"),
-        runner: "mocha",
-      };
+        testCmd: `node ${path.join(__dirname, "./examples/event-emitter/test.js")}`,
+        matcher: {
+          type: "comparative",
+          makeMatcher: () => () => true,
+        },
+        projectRoot: path.join(__dirname, "./examples/event-emitter"),
+        sourceDir: "lib",
+        testDir: "test",
+        runner: "node",
+      }
       break;
 
     default:

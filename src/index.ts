@@ -49,12 +49,15 @@ function perturb (_cfg: PerturbConfig) {
     // use the matcher function to group {sourceFile, testFiles}
     .then(function ({ sources, tests }) {
       const matches = matcher(sources, tests);
+
       const [tested, untested] = R.partition(hasTests, matches);
       // TODO -- surface untested file names somehow
 
       if (tested.length === 0) {
         throw new Error("No matched files!");
       }
+
+      console.log("MATCHES:", matches);
 
       start = Date.now();
 

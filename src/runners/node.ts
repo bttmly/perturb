@@ -9,13 +9,20 @@ import {
 export = <RunnerPlugin>{
   name: "node",
   setup (m: Mutant) {
+    runnerUtils.clearRequireCache();
     runnerUtils.writeMutatedCode(m);
     return Promise.resolve();
   },
   run (m: Mutant) {
-    return Promise.resolve(require(m.sourceFile))
-      .then(() => Object.assign({}, m, { error: null }))
-      .catch(error => Object.assign({}, m, { error }));
+    try {
+      m.testFiles.map(f => {
+        console.log("about to require", f);
+        require(f) 
+      });
+    } catch (error) {
+      return Promise.resolve(Object.assign({}, m, { error }));
+    }
+    return Promise.resolve(Object.assign({}, m, { error: null }));
   },
   cleanup (m: Mutant) {
     runnerUtils.restoreOriginalCode(m);
