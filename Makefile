@@ -11,13 +11,13 @@ example-events:
 	rm -rf ./.perturb
 	rm -rf ./built
 	./node_modules/.bin/tsc
-	node ./run.js events
+	node ./script/run.js events
 
 dogfood:
 	rm -rf ./.perturb
 	rm -rf ./built
 	./node_modules/.bin/tsc
-	node ./run.js dogfood $(RUNNER)
+	node ./script/run.js dogfood $(RUNNER)
 
 build:
 	./node_modules/.bin/tsc --strictNullChecks

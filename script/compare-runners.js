@@ -1,41 +1,8 @@
-var silence = (function () {
-
-  var methods = {
-    log: console.log,
-    info: console.info,
-    warn: console.warn,
-    error: console.error,
-    dir: console.dir,
-    time: console.time,
-    timeEnd: console.timeEnd,
-    trace: console.trace,
-    assert: console.assert,
-  }
-
-  function noop () {}
-
-  return function silence () {
-
-    Object.keys(methods).forEach(function (k) {
-      console[k] = noop;
-    });
-
-    return function restore () {
-      Object.keys(methods).forEach(function (k) {
-        console[k] = methods[k];
-      });
-    }
-  };
-
-})();
-
-
 var assert = require("assert");
 
 var generateConfig = require("../lib/config");
 var runners = require("../lib/runners");
 var perturb = require("../lib");
-
 
 function compare (runnerA, runnerB) {
   var optionsA = generateConfig({runner: runnerA});

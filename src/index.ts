@@ -57,8 +57,6 @@ function perturb (_cfg: PerturbConfig) {
         throw new Error("No matched files!");
       }
 
-      console.log("MATCHES:", matches);
-
       start = Date.now();
 
       const mutants = R.chain(makeMutants, tested);

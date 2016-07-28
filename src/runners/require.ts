@@ -7,7 +7,7 @@ import {
 } from "../types";
 
 export = <RunnerPlugin>{
-  name: "node",
+  name: "require",
   setup (m: Mutant) {
     runnerUtils.clearRequireCache();
     runnerUtils.writeMutatedCode(m);
@@ -15,10 +15,7 @@ export = <RunnerPlugin>{
   },
   run (m: Mutant) {
     try {
-      m.testFiles.map(f => {
-        console.log("about to require", f);
-        require(f) 
-      });
+      m.testFiles.forEach(f => require(f));
     } catch (error) {
       return Promise.resolve(Object.assign({}, m, { error }));
     }

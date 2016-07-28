@@ -3,12 +3,10 @@ const path = require("path");
 function run (perturb, which, runner) {
   let config;
 
-  console.log("WHICH", which);
-
   switch (which.trim()) {
     case "dogfood":
       config = {
-        projectRoot: path.join(__dirname, ".."),
+        projectRoot: path.join(__dirname, "../"),
         sourceDir: "built",
         runner: runner || "mocha",
         reporter: "name",
@@ -18,15 +16,15 @@ function run (perturb, which, runner) {
 
     case "events":
       config = {
-        testCmd: `node ${path.join(__dirname, "./examples/event-emitter/test.js")}`,
+        testCmd: `node ${path.join(__dirname, "../examples/event-emitter/test.js")}`,
         matcher: {
           type: "comparative",
           makeMatcher: () => () => true,
         },
-        projectRoot: path.join(__dirname, "./examples/event-emitter"),
+        projectRoot: path.join(__dirname, "../examples/event-emitter"),
         sourceDir: "lib",
         testDir: "test",
-        runner: "node",
+        runner: "require",
       }
       break;
 
@@ -46,7 +44,7 @@ function run (perturb, which, runner) {
 }
 
 if (!module.parent) {
-  run(require("./built"), process.argv[2], process.argv[3]);
+  run(require("../built"), process.argv[2], process.argv[3]);
 }
 
 module.exports = run;
