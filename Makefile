@@ -7,7 +7,7 @@ test-bail: lint
 lint:
 	./node_modules/.bin/eslint ./src/**/*.js
 
-events:
+example-events:
 	rm -rf ./.perturb
 	rm -rf ./built
 	./node_modules/.bin/tsc
