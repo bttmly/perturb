@@ -9,7 +9,7 @@ function run (perturb, which, runner) {
         projectRoot: path.join(__dirname, "../"),
         sourceDir: "built",
         runner: runner || "mocha",
-        reporter: "name",
+        reporter: "names",
         testCmd: "make test-bail",
       };
       break;

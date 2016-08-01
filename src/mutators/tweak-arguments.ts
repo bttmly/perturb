@@ -1,15 +1,12 @@
-const R = require("ramda");
-const { Syntax } = require("estraverse");
-
-const dropItem = require("../util/drop-item");
-
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
+import S = require("./_syntax");
+import dropItem = require("../util/drop-item");
 
 export = <MutatorPlugin>{
   // drops the first declared element in an array literal
   // `['a', 'b']` => `['a']`
   name: "tweak-arguments",
-  nodeTypes: [Syntax.CallExpression],
+  nodeTypes: [S.CallExpression],
   filter: function (node) {
     return R.path(["arguments", "length"], node) !== 0;
   },

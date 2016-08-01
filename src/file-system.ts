@@ -1,9 +1,8 @@
-///<reference path="perturb.d.ts" />
+import path = require("path");
+import fs = require("fs-extra");
+import R = require("ramda");
 
-const path = require("path");
 const glob = require("glob");
-const fs = require("fs-extra");
-const R = require("ramda");
 
 const shouldSymlink = new Set([
   "node_modules"

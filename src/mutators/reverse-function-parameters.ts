@@ -1,5 +1,3 @@
-///<reference path="../perturb.d.ts" />
-
 import R = require("ramda");
 import S = require("./_syntax");
 import voidNode = require("./_void-node");

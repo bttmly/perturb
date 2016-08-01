@@ -1,5 +1,3 @@
-///<reference path="../perturb.d.ts" />
-
 import mochaRunner = require("./mocha");
 import requireRunner = require("./require");
 import forkRunner = require("./fork");

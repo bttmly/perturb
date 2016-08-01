@@ -1,5 +1,3 @@
-///<reference path="../perturb.d.ts" />
-
 import runnerUtils = require("./utils");
 
 export = <RunnerPlugin>{

@@ -1,5 +1,3 @@
-///<reference path="../perturb.d.ts" />
-
 import path = require("path");
 
 // matches: 

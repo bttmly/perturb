@@ -1,5 +1,4 @@
 ///<reference path="./mocha.d.ts"/>
-///<reference path="../perturb.d.ts" />
 
 import R = require("ramda");
 import Mocha = require("mocha");

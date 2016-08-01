@@ -1,5 +1,3 @@
-///<reference path="../perturb.d.ts" />
-
 import S = require("./_syntax");
 
 // throw new Error(); => new Error();

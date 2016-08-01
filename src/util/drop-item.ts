@@ -22,8 +22,6 @@ function dropRandom (arr: any[]) {
   return R.remove(getRandomIndex(arr), 1, arr);
 }
 
-function dropItemOfKey (node: ESTree.Node, key: string, strategy: DropStrategy) {
+export = function dropItemOfKey (node: ESTree.Node, key: string, strategy: DropStrategy) {
   return strategyMap[strategy](node, key);
 }
-
-module.exports = dropItemOfKey;

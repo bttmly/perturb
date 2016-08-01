@@ -1,5 +1,3 @@
-///<reference path="../perturb.d.ts" />
-
 import R = require("ramda");
 import S = require("./_syntax");
 import voidNode = require("./_void-node");
@@ -7,9 +5,6 @@ import voidNode = require("./_void-node");
 const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
 const NODE_TYPES = require("../constants/node-types");
 const NODE_ATTRS = require("../constants/node-attrs");
-const { Syntax } = require("estraverse");
-
-import { MutatorPlugin } from "../types";
 
 const NO_SWAP = {
   instanceof: "instanceof",
@@ -23,7 +18,7 @@ const NO_SWAP = {
 // `var area = w * h;` => `var area = w / h;`
 export = <MutatorPlugin>{
   name: "swap-binary-operators",
-  nodeTypes: [Syntax.BinaryExpression],
+  nodeTypes: [S.BinaryExpression],
   filter: function (node) {
     const op = <string>R.prop("operator", node);
     return !R.has(op, NO_SWAP);

@@ -1,13 +1,5 @@
 import * as R from "ramda";
 
-import {
-  PerturbConfig,
-  MatcherPlugin,
-  ComparativeMatcher,
-  GenerativeMatcher,
-  Match
-} from "../types";
-
 import baseGenerative = require("./base-generative");
 import baseComparative = require("./base-comparative");
 import containsComparative = require("./contains-comparative");

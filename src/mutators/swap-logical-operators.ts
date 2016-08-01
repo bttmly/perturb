@@ -1,7 +1,5 @@
-const { Syntax } = require("estraverse");
-const R = require("ramda");
-
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
+import S = require("./_syntax");
 
 const AND = "&&";
 const OR = "||";
@@ -11,7 +9,7 @@ const OR = "||";
 // `while (f() || g())` => `while(f() && g())`
 export = <MutatorPlugin>{
   name: "swap-logical-operators",
-  nodeTypes: [Syntax.LogicalExpression],
+  nodeTypes: [S.LogicalExpression],
   mutator: function (node) {
     const prevOp = <string>R.prop("operator", node);
     const newOp = (prevOp === AND ? OR : AND);

@@ -1,5 +1,3 @@
-/// <reference path="../perturb.d.ts" />
-
 const debug = require("debug")("runner:fork");
 import fs = require("fs");
 import path = require("path");

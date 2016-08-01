@@ -1,7 +1,5 @@
-const { Syntax } = require("estraverse");
-const R = require("ramda");
-
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
+import S = require("./_syntax");
 
 interface NumberLiteral extends ESTree.Literal {
   value: number;
@@ -12,7 +10,7 @@ export = <MutatorPlugin>{
   // `var num = 735;` => `var num = 736;`
   // `var num = 1;` => `var num = 0;`
   name: "tweak-number-literal",
-  nodeTypes: [Syntax.Literal],
+  nodeTypes: [S.Literal],
   filter: function (node) {
     const {value} = (<ESTree.Literal>node);
     return typeof value === "number";

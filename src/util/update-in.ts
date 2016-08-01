@@ -35,6 +35,6 @@ function assocPath(path: Prop[], val: any, target: Target): Target {
   }
 }
 
-module.exports = R.curry(assocPath);
+export = R.curry(assocPath);
 
 

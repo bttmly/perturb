@@ -1,15 +1,12 @@
-const { Syntax } = require("estraverse");
-const R = require("ramda");
-
-const dropItem = require("../util/drop-item");
-
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
+import S = require("./_syntax");
+import dropItem = require("../util/drop-item");
 
 export = <MutatorPlugin>{
   // drops the first declared property in an object literal
   // `{prop1: "val1", prop2: "val2"}` => `{prop2: "val2"}`
   name: "tweak-object-literal",
-  nodeTypes: [Syntax.ObjectExpression],
+  nodeTypes: [S.ObjectExpression],
   filter: function (node) {
     return R.path(["properties", "length"], node) !== 0;
   },

@@ -1,5 +1,3 @@
-///<reference path="../perturb.d.ts" />
-
 import R = require("ramda");
 
 const coreMutators: MutatorPlugin[] = [

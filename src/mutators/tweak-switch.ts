@@ -1,13 +1,10 @@
-const { Syntax } = require("estraverse");
-const R = require("ramda");
-
-const dropItem = require("../util/drop-item");
-
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
+import S = require("./_syntax");
+import dropItem = require("../util/drop-item");
 
 export = <MutatorPlugin>{
   name: "tweak-switch",
-  nodeTypes: [Syntax.SwitchStatement],
+  nodeTypes: [S.SwitchStatement],
   filter: function (node) {
     return R.path(["cases", "length"], node) !== 0;
   },

@@ -1,5 +1,3 @@
-///<reference path="perturb.d.ts" />
-
 import R = require("ramda");
 import Bluebird = require("bluebird");
 import { spawn } from "child_process";
@@ -11,6 +9,7 @@ import getMatcher = require("./matchers");
 import makeMutants = require("./make-mutants");
 import makeConfig = require("./make-config");
 import fileSystem = require("./file-system");
+import runMutant = require("./util/run-mutant");
 
 function hasTests (m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));

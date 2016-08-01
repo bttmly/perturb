@@ -1,12 +1,10 @@
-const { Syntax } = require("estraverse");
-const R = require("ramda");
-
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
+import S = require("./_syntax");
 
 // `var isOk = true` => `var isOk = false`
 export = <MutatorPlugin>{
   name: "tweak-boolean-literal",
-  nodeTypes: [Syntax.Literal],
+  nodeTypes: [S.Literal],
   filter: function (node) {
     const {value} = (<ESTree.Literal>node);
     return value === true || value === false;
