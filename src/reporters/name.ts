@@ -1,7 +1,7 @@
+///<reference path="../perturb.d.ts" />
+
 import path = require("path");
 import fs = require("fs");
-
-import { ReporterPlugin, RunnerResult } from "../types";
 
 export = <ReporterPlugin>{
   name: "names",

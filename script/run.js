@@ -24,7 +24,7 @@ function run (perturb, which, runner) {
         projectRoot: path.join(__dirname, "../examples/event-emitter"),
         sourceDir: "lib",
         testDir: "test",
-        runner: "require",
+        runner: "fork",
       }
       break;
 

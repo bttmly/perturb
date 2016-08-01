@@ -1,7 +1,12 @@
+///<reference path="../perturb.d.ts" />
+
+import R = require("ramda");
+import S = require("./_syntax");
+import voidNode = require("./_void-node");
+
 const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
 const NODE_TYPES = require("../constants/node-types");
 const NODE_ATTRS = require("../constants/node-attrs");
-const R = require("ramda");
 const { Syntax } = require("estraverse");
 
 import { MutatorPlugin } from "../types";
@@ -25,7 +30,7 @@ export = <MutatorPlugin>{
   },
   mutator: function (node) {
     const prevOp = R.prop("operator", node);
-    const newOp = BINARY_OPERATOR_SWAPS[prevOp];
+    const newOp = BINARY_OPERATOR_SWAPS[<string>prevOp];
     return R.assoc("operator", newOp, node);
   },
 };

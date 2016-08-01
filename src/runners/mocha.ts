@@ -1,14 +1,9 @@
 ///<reference path="./mocha.d.ts"/>
+///<reference path="../perturb.d.ts" />
 
 import R = require("ramda");
 import Mocha = require("mocha");
 import runnerUtils = require("./utils");
-
-import {
-  RunnerPlugin,
-  Mutant,
-  RunnerResult
-} from "../types";
 
 export = <RunnerPlugin>{
   name: "mocha",

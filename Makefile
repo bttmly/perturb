@@ -7,10 +7,12 @@ test-bail: lint
 lint:
 	./node_modules/.bin/eslint ./src/**/*.js
 
-example-events:
-	rm -rf ./.perturb
+compile:
 	rm -rf ./built
 	./node_modules/.bin/tsc
+
+example-events: compile
+	rm -rf ./.perturb
 	node ./script/run.js events
 
 dogfood:

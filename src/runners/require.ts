@@ -1,10 +1,6 @@
-import runnerUtils = require("./utils");
+///<reference path="../perturb.d.ts" />
 
-import {
-  RunnerPlugin,
-  Mutant,
-  RunnerResult
-} from "../types";
+import runnerUtils = require("./utils");
 
 export = <RunnerPlugin>{
   name: "require",
@@ -15,8 +11,12 @@ export = <RunnerPlugin>{
   },
   run (m: Mutant) {
     try {
-      m.testFiles.forEach(f => require(f));
+      m.testFiles.forEach(f => {
+        console.log("requiring", f, "...");
+        require(f)
+      });
     } catch (error) {
+      console.log(error.message);
       return Promise.resolve(Object.assign({}, m, { error }));
     }
     return Promise.resolve(Object.assign({}, m, { error: null }));

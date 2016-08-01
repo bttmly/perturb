@@ -1,10 +1,6 @@
-const path = require("path");
+///<reference path="../perturb.d.ts" />
 
-import {
-  GenerativeMatcherPlugin,
-  GenerativeMatcher,
-  PerturbConfig,
-} from "../types";
+import path = require("path");
 
 // input: project/lib/dir/car.js
 // output: project/test/dir/car.js

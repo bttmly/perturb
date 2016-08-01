@@ -1,3 +1,5 @@
+///<reference path="perturb.d.ts" />
+
 const R = require("ramda");
 const fs = require("fs-extra");
 const esprima = require("esprima");
@@ -7,12 +9,6 @@ const estraverse = require("estraverse");
 const shouldSkip = require("./skippers");
 const updateIn = require("./util/update-in");
 const { getMutatorsForNode, hasAvailableMutations } = require("./mutators");
-
-import {
-  Mutant,
-  Match,
-  MutatorPlugin
-} from "./types";
 
 const ESPRIMA_SETTINGS = {
   loc: true,

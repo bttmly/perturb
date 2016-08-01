@@ -1,3 +1,4 @@
+///<reference path="perturb.d.ts" />
 
 import R = require("ramda");
 import Bluebird = require("bluebird");
@@ -10,16 +11,6 @@ import getMatcher = require("./matchers");
 import makeMutants = require("./make-mutants");
 import makeConfig = require("./make-config");
 import fileSystem = require("./file-system");
-
-import {
-  PerturbConfig,
-  MatcherPlugin,
-  ReporterPlugin,
-  RunnerPlugin,
-  RunnerResult,
-  Mutant,
-  Match,
-} from "./types";
 
 function hasTests (m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
@@ -59,11 +50,7 @@ function perturb (_cfg: PerturbConfig) {
 
       start = Date.now();
 
-      const mutants = R.chain(makeMutants, tested);
-
-      sanityCheckAndSideEffects(mutants);
-
-      return mutants;
+      return R.chain(makeMutants, tested);
     })
     .then(sanityCheckAndSideEffects)
     // run the mutatnts and gather the results
@@ -94,24 +81,10 @@ function perturb (_cfg: PerturbConfig) {
 }
 
 function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
-  return function handler (m: Mutant): Promise<RunnerResult> {
-    let _result, _before;
-
-    return runner.setup(m)
-      .then(before => {
-        _before = before;
-        return runner.run(m)
-      })
-      .then(result => {
-        _result = result;
-        return runner.cleanup(m, _before);
-      })
-      .then(() => {
-        if (reporter.onResult) {
-          reporter.onResult(_result);
-        }
-        return _result;
-      })
+  return async function handler (mutant: Mutant): Promise<RunnerResult> {
+    const result = await runMutant(runner, mutant);
+    reporter.onResult && reporter.onResult(result);
+    return result;
   }
 }
 
@@ -119,8 +92,8 @@ function runTest (cfg: PerturbConfig) {
   return new Promise(function (resolve, reject) {
     const [cmd, ...rest] = cfg.testCmd.split(/\s+/);
     const child = spawn(cmd, rest);
-    child.stdout.pipe(process.stdout);
-    child.stderr.pipe(process.stderr);
+    // child.stdout.pipe(process.stdout);
+    // child.stderr.pipe(process.stderr);
     child.on("close", function (code) {
       code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
     });

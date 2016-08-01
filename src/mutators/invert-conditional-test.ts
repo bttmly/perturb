@@ -1,7 +1,8 @@
-const R = require("ramda");
-const S = require("estraverse").Syntax;
+///<reference path="../perturb.d.ts" />
 
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
+import S = require("./_syntax");
+import voidNode = require("./_void-node");
 
 interface TestNode extends ESTree.Node {
   test: ESTree.Node

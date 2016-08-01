@@ -1,6 +1,6 @@
-import fs = require("fs");
+///<reference path="../perturb.d.ts" />
 
-import { Mutant } from "../types";
+import fs = require("fs");
 
 export = {
   writeMutatedCode (m: Mutant) {

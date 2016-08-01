@@ -3,13 +3,13 @@ import R = require("ramda");
 type DropStrategy = "first" | "last" | "random"
 
 const strategyMap = {
-  first: function(node: ESTree.Node, key: string) {
+  first (node: ESTree.Node, key: string) {
     return R.assoc(key, node[key].slice(1), node);
   },
-  last: function(node: ESTree.Node, key: string) {
+  last (node: ESTree.Node, key: string) {
     return R.assoc(key, node[key].slice(0, -1), node);
   },
-  random: function(node: ESTree.Node, key: string) {
+  random (node: ESTree.Node, key: string) {
     return R.assoc(key, dropRandom(node[key]), node);
   },
 }

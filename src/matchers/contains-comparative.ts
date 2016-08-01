@@ -1,10 +1,6 @@
-import path = require("path");
+///<reference path="../perturb.d.ts" />
 
-import {
-  ComparativeMatcherPlugin,
-  ComparativeMatcher,
-  PerturbConfig,
-} from "../types";
+import path = require("path");
 
 // matches: 
 //   source: project/lib/dir/car.js

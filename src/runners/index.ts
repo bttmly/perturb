@@ -1,14 +1,14 @@
-import { RunnerPlugin } from "../types";
+///<reference path="../perturb.d.ts" />
 
-const plugins = new Map<string, RunnerPlugin>()
+import mochaRunner = require("./mocha");
+import requireRunner = require("./require");
+import forkRunner = require("./fork");
 
-;[
-  require("./mocha"),
-  require("./mocha-fork"),
-  require("./require"),
-].forEach(function (runner) {
-  plugins.set(runner.name, runner);
-});
+const plugins = new Map<string, RunnerPlugin>([
+  [ mochaRunner.name, mochaRunner ],
+  [ requireRunner.name, requireRunner ],
+  [ forkRunner.name, forkRunner ],
+]);
 
 function injectPlugins (names) {
   names.forEach(function (name) {

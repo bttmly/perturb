@@ -1,7 +1,7 @@
+///<reference path="perturb.d.ts" />
+
 const assign = require("object-assign");
 const fs = require("fs");
-
-import { PerturbConfig } from "./types";
 
 const CONFIG_FILE_NAME = ".perturbrc";
 

@@ -1,6 +1,6 @@
-const { Syntax } = require("estraverse");
+///<reference path="../perturb.d.ts" />
 
-import { MutatorPlugin } from "../types";
+import S = require("./_syntax");
 
 // throw new Error(); => new Error();
 // delete obj.x; => obj.x;
@@ -14,8 +14,8 @@ interface ArgumentedNode extends ESTree.Node {
 export = <MutatorPlugin>{
   name: "drop-operator",
   nodeTypes: [
-    Syntax.ThrowStatement,
-    Syntax.UnaryExpression,
+    S.ThrowStatement,
+    S.UnaryExpression,
   ],
   mutator: function (node) {
     return (<ArgumentedNode>node).argument;

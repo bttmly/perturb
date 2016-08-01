@@ -1,9 +1,9 @@
+///<reference path="perturb.d.ts" />
+
 const path = require("path");
 const glob = require("glob");
 const fs = require("fs-extra");
 const R = require("ramda");
-
-import { PerturbConfig } from "./types";
 
 const shouldSymlink = new Set([
   "node_modules"

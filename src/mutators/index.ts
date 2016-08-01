@@ -1,6 +1,6 @@
-const R = require("ramda");
+///<reference path="../perturb.d.ts" />
 
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
 
 const coreMutators: MutatorPlugin[] = [
   require("./drop-member-assignment"),
@@ -21,7 +21,9 @@ const coreMutators: MutatorPlugin[] = [
   require("./tweak-switch"),
 ];
 
-let mutatorIndex = {}
+type MutatorIndex = { [key: string]: MutatorPlugin[] };
+
+let index: MutatorIndex = {};
 let activeMutators: MutatorPlugin[] = [];
 
 // temporary stub -- this function will return false for disabled mutators (based on config)
@@ -32,15 +34,14 @@ function isMutatorEnabled (m: MutatorPlugin): boolean {
 // creating the internal state of this module should happen in the exported function
 // so we can pass in config, which is necessary for filtering out disabled mutators
 
-function makeMutatorIndex (names: string[]) {
+function makeMutatorIndex (names: string[]): MutatorIndex {
   const additionalMutators = locateMutatorPlugins(names);
   
   activeMutators = coreMutators.concat(additionalMutators)
     .filter(m => Object.keys(m).length > 0) // HACK :!
     .filter(isMutatorEnabled);
 
-  // const index : { string: MutatorPlugin[] } = {};
-  const index = {};
+  const index: MutatorIndex = {};
   activeMutators.forEach(function (m: MutatorPlugin) {
 
     // if (process.env.ENFORCE_INVARIANTS) {
@@ -72,22 +73,22 @@ function locateMutatorPlugins (names: string[]): MutatorPlugin[] {
   });
 }
 
-exports.injectPlugins = function (names: string[]) {
-  mutatorIndex = locateMutatorPlugins(names);
-}
+// exports.injectPlugins = function (names: string[]) {
+//   index = locateMutatorPlugins(names);
+// }
 
 exports.hasAvailableMutations = function (node: ESTree.Node): boolean {
   if (node == null || node.type == null) return false;
-  return R.has(node.type, mutatorIndex);
+  return R.has(node.type, index);
 }
 
 exports.getMutatorsForNode = function (node: ESTree.Node): MutatorPlugin[] {
   if (node == null || node.type == null) return [];
-  return R.propOr([], node.type, mutatorIndex);
+  return <MutatorPlugin[]>R.propOr([], node.type, index);
 }
 
 exports.getMutatorByName = function (name: string): MutatorPlugin | undefined {
   return activeMutators.find(m => m.name === name);
 }
 
-mutatorIndex = makeMutatorIndex([]);
+index = makeMutatorIndex([]);

@@ -1,7 +1,7 @@
+///<reference path="../perturb.d.ts" />
+
 const R = require("ramda");
 const { Syntax } = require("estraverse");
-
-import { Skipper } from "../types";
 
 function skipRequire (node: ESTree.Node): boolean {
   const funcNode = <ESTree.CallExpression>node;

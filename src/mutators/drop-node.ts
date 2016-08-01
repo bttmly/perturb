@@ -1,13 +1,14 @@
-const { Syntax } = require("estraverse");
-const voidNode = require("./_void-node");
+///<reference path="../perturb.d.ts" />
 
-import { MutatorPlugin } from "../types";
+import R = require("ramda");
+import S = require("./_syntax");
+import voidNode = require("./_void-node");
 
 export = <MutatorPlugin>{
   name: "drop-node",
   nodeTypes: [
-    Syntax.ContinueStatement,
-    Syntax.BreakStatement,
+    S.ContinueStatement,
+    S.BreakStatement,
   ],
-  mutator: function () { return voidNode },
+  mutator: () => voidNode,
 };

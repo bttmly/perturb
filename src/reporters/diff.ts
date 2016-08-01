@@ -1,9 +1,10 @@
+///<reference path="../perturb.d.ts" />
+
+import R = require("ramda");
+
 const chalk = require("chalk");
 const { diffLines } = require("diff");
 const changeCase = require("change-case");
-const R = require("ramda");
-
-import { ReporterPlugin, RunnerResult } from "../types";
 
 export = <ReporterPlugin>{
   name: "diff",

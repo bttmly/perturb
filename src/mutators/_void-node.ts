@@ -1,6 +1,6 @@
-var S = require("estraverse").Syntax;
+import S = require("./_syntax");
 
-module.exports = <ESTree.UnaryExpression>{
+export = <ESTree.UnaryExpression>{
   type: S.UnaryExpression,
   operator: "void",
   prefix: true,

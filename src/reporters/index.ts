@@ -1,11 +1,11 @@
-import { ReporterPlugin } from "../types";
+///<reference path="../perturb.d.ts" />
 
 import diffReporter = require("./diff");
 import nameReporter = require("./name");
 
 const plugins = new Map<string, ReporterPlugin>([
-  [ "diff", diffReporter ],
-  [ "name", nameReporter ],
+  [ diffReporter.name, diffReporter ],
+  [ nameReporter.name, nameReporter ],
 ]);
 
 function locateReporterPlugins (names) {
