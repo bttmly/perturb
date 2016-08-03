@@ -16,12 +16,12 @@ function run (perturb, which, runner) {
 
     case "events":
       config = {
-        testCmd: `node ${path.join(__dirname, "../examples/event-emitter/test.js")}`,
+        testCmd: `node ${path.join(__dirname, "../examples/node-events/test.js")}`,
         matcher: {
           type: "comparative",
           makeMatcher: () => () => true,
         },
-        projectRoot: path.join(__dirname, "../examples/event-emitter"),
+        projectRoot: path.join(__dirname, "../examples/node-events"),
         sourceDir: "lib",
         testDir: "test",
         runner: "fork",

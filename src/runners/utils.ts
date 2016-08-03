@@ -4,12 +4,15 @@ export = {
   writeMutatedCode (m: Mutant) {
     fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
   },
+
   restoreOriginalCode (m: Mutant) {
     fs.writeFileSync(m.sourceFile, m.originalSourceCode);
   },
+
   clearRequireCache () {
     Object.keys(require.cache).forEach(k => delete require.cache[k]);
   },
+
   makeErrorSerializable (err?: Error) {
     if (err == null) {
       return undefined;

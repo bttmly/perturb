@@ -24,11 +24,13 @@ program
   .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
   .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
   .option("-c, --testCmd <testCmd>", "test command")
-  .option("-i, --interception", "use interception strategy (no disk I/O)")
-  .option("-v, --verbose", "lots of logging")
+  // .option("-i, --interception", "use interception strategy (no disk I/O)")
+  // .option("-v, --verbose", "lots of logging")
   .option("-k, --killRate", "minimum kill rate to exit with code 0")
-  .option("-p, --parallel", "run mutants in parallel (careful!)")
+  // .option("-p, --parallel", "run mutants in parallel (careful!)")
   .option("-u, --runner <runner>", "name of runner or runner plugin")
+  .option("-b, --bail", "")
+  // .option("--version")
   .parse(process.argv);
 
 if (program.rootDir && program.rootDir[0] !== "/") {

@@ -8,6 +8,13 @@ const shouldSymlink = new Set([
   "node_modules"
 ]);
 
+// hack...
+// remove this if at all possible
+// otherwise, make configurable
+const shouldSkip = new Set([
+  ".perturb"
+]);
+
 function setupPerturbDirectory (config: PerturbConfig): void {
 
   const {projectRoot, sourceDir, testDir, perturbDir} = config;
@@ -19,7 +26,7 @@ function setupPerturbDirectory (config: PerturbConfig): void {
   const pSourceAbs = path.join(pAbs, sourceDir);
   const pTestAbs = path.join(pAbs, testDir);
 
-  console.log({ projectRoot, sourceAbs, testAbs, pAbs, pSourceAbs, pTestAbs })
+  // console.log({ projectRoot, sourceAbs, testAbs, pAbs, pSourceAbs, pTestAbs });
 
   // maybe remove this? if it exists it means there is a bug with cleanup
   try {
@@ -29,12 +36,21 @@ function setupPerturbDirectory (config: PerturbConfig): void {
   }
 
   fs.mkdirSync(pAbs);
-  fs.copySync(sourceAbs, pSourceAbs);
-  fs.copySync(testAbs, pTestAbs);
+  // fs.copySync(sourceAbs, pSourceAbs);
+  // fs.copySync(testAbs, pTestAbs);
 
   fs.readdirSync(projectRoot)
+    .filter(f => f !== config.perturbDir)
+    .filter(f => !shouldSymlink.has(f))
+    .map(f => [path.join(projectRoot, f), path.join(pAbs, f)])
+    .forEach(function ([src, dest]) {
+      fs.copySync(src, dest);
+    });
+
+  fs.readdirSync(projectRoot)
+    .filter(f => f !== config.perturbDir)
     .filter(f => shouldSymlink.has(f))
-    .map(item => [path.join(projectRoot, item), path.join(pAbs, item)])
+    .map(f => [path.join(projectRoot, f), path.join(pAbs, f)])
     .forEach(R.apply(fs.symlinkSync))
 }
 

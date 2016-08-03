@@ -3,8 +3,6 @@ import S = require("./_syntax");
 import voidNode = require("./_void-node");
 
 const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
-const NODE_TYPES = require("../constants/node-types");
-const NODE_ATTRS = require("../constants/node-attrs");
 
 const NO_SWAP = {
   instanceof: "instanceof",

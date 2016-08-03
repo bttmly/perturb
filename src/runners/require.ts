@@ -9,10 +9,7 @@ export = <RunnerPlugin>{
   },
   run (m: Mutant) {
     try {
-      m.testFiles.forEach(f => {
-        console.log("requiring", f, "...");
-        require(f)
-      });
+      m.testFiles.forEach(f => require(f));
     } catch (error) {
       console.log(error.message);
       return Promise.resolve(Object.assign({}, m, { error }));

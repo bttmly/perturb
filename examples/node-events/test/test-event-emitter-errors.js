@@ -1,4 +1,5 @@
 'use strict';
+require('../common');
 var EventEmitter = require('../lib/events');
 var assert = require('assert');
 
