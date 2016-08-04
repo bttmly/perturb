@@ -4,7 +4,7 @@ const { nodeFromCode, applyMutation } = require("../helpers");
 
 describe("tweak-object-literal", function () {
   it("removes the first property of an object literal", function () {
-    const node = nodeFromCode("x = {a: 1, b: 2, c: 3}").expression.right;
+    const node = nodeFromCode("({a: 1, b: 2, c: 3})").expression;
     expect(node.type).toEqual("ObjectExpression");
     const nodes = applyMutation(node, "tweak-object-literal");
 

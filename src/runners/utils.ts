@@ -9,6 +9,9 @@ export = {
     fs.writeFileSync(m.sourceFile, m.originalSourceCode);
   },
 
+  // TODO: we can optimize this in various ways, if it seems to be a bottleneck.
+  // Obviously it only really matters for in-process runners, but anecdotally a
+  // full cache flush seems to slow down those runners by 20-30%
   clearRequireCache () {
     Object.keys(require.cache).forEach(k => delete require.cache[k]);
   },

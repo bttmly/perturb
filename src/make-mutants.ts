@@ -9,9 +9,13 @@ import shouldSkip = require("./skippers");
 import updateIn = require("./util/update-in");
 const { getMutatorsForNode, hasAvailableMutations } = require("./mutators");
 
+const PERTURB_ENABLE = "perturb-enable:";
+const PERTURB_DISABLE = "perturb-disable:";
+
 const ESPRIMA_SETTINGS = {
   loc: true,
   comment: true,
+  attachComment: true,
 };
 
 const FS_SETTINGS = {
@@ -21,7 +25,7 @@ const FS_SETTINGS = {
 function makeMutants (match: Match): Mutant[] {
   const { source, tests } = match;
   const { ast, code } = parse(source);
-  const paths: Path[] = getMutationPaths(ast).map(p => p.map(String));
+  const paths: Path[] = getMutationPaths(ast);
 
   // we regenerate the source code here to make it easy for diffing
   const originalSourceCode = escodegen.generate(ast);
@@ -59,6 +63,7 @@ function makeMutants (match: Match): Mutant[] {
 }
 
 type Path = string[];
+
 
 function getMutationPaths (ast: ESTree.Node) {
   const mutationPaths: Path[] = [];
@@ -98,6 +103,7 @@ function parse (source: string) {
   }
 }
 
+const last = arr => arr[arr.length - 1];
 const toArray = x => Array.isArray(x) ? x : [x];
 
 export = makeMutants;

@@ -4,6 +4,7 @@ import path = require("path");
 import os = require("os");
 import cp = require("child_process");
 
+import runMutant = require("../util/run-mutant");
 import runnerUtils = require("./utils");
 
 // TODO -- make configurable
@@ -65,10 +66,7 @@ async function childRunner (name) {
 
   const mutant: Mutant = require(process.argv[2])
   const runner: RunnerPlugin = require("./")(name);
-
-  const before = await runner.setup(mutant);
-  const result: RunnerResult = await runner.run(mutant);
-  await runner.cleanup(mutant, before);
+  const result = await runMutant(runner, mutant);
 
   process.send(JSON.stringify({
     error: runnerUtils.makeErrorSerializable(result.error)

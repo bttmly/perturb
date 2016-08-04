@@ -1,8 +1,8 @@
 test: lint
-	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/**/*.js
+	NODE_ENV=testing ./node_modules/.bin/_mocha ./test --recursive
 
 test-bail: lint
-	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/**/*.js --bail
+	NODE_ENV=testing ./node_modules/.bin/_mocha ./test --bail --recursive
 
 lint:
 	./node_modules/.bin/eslint ./src/**/*.js
