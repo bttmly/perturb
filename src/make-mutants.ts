@@ -32,27 +32,27 @@ function makeMutants (match: Match): Mutant[] {
     return R.pipe(
       R.filter(mutatorFilterFromNode(node)),
       R.chain(function (m: MutatorPlugin) {
-        // this can be done more elegantly with Ramda lenses, probably
-        const newNode = m.mutator(node);
+        
+        return toArray(m.mutator(node)).map(function (newNode) {
+          const updatedAst = updateIn(path, newNode, ast);
+          const mutatedSourceCode = escodegen.generate(updatedAst);
 
-        const updatedAst = updateIn(path, newNode, ast);
-        const mutatedSourceCode = escodegen.generate(updatedAst);
+          // both the original source and the mutated source are present here
+          // to avoid unnecessary extra code generation in mutator prep/teardown,
+          // and also in reporters
 
-        // both the original source and the mutated source are present here
-        // to avoid unnecessary extra code generation in mutator prep/teardown,
-        // and also in reporters
-
-        return <Mutant>{
-          sourceFile: source,
-          testFiles: tests,
-          path: path,
-          mutatorName: m.name,
-          astAfter: updatedAst,
-          astBefore: ast,
-          loc: node.loc,
-          originalSourceCode: originalSourceCode,
-          mutatedSourceCode: mutatedSourceCode,
-        };
+          return <Mutant>{
+            sourceFile: source,
+            testFiles: tests,
+            path: path,
+            mutatorName: m.name,
+            astAfter: updatedAst,
+            astBefore: ast,
+            loc: node.loc,
+            originalSourceCode: originalSourceCode,
+            mutatedSourceCode: mutatedSourceCode,
+          };
+        });
       })
      )(getMutatorsForNode(node));
   }
@@ -97,5 +97,7 @@ function parse (source: string) {
     throw err;
   }
 }
+
+const toArray = x => Array.isArray(x) ? x : [x];
 
 export = makeMutants;

@@ -1,23 +1,20 @@
-///<reference path="../perturb.d.ts" />
-
-const R = require("ramda");
-const { Syntax } = require("estraverse");
+import R = require("ramda");
+import S = require("../mutators/_syntax");
 
 function skipRequire (node: ESTree.Node): boolean {
-  const funcNode = <ESTree.CallExpression>node;
   return (
-    R.prop("type", node) === Syntax.CallExpression &&
+    R.prop("type", node) === S.CallExpression &&
     R.path(["callee", "name"], node) === "require" &&
     R.path(["arguments", "length"], node) === 1 &&
-    R.path(["arguments", 0, "type"], node) === Syntax.Literal &&
-    typeof R.path(["arguments", 0, "type"], node) === "string"
+    R.path(["arguments", "0", "type"], node) === S.Literal &&
+    typeof R.path(["arguments", "0", "type"], node) === "string"
   );
 }
 
 function skipUseStrict (node: ESTree.Node): boolean {
   const exprNode = <ESTree.ExpressionStatement>node;
   return (
-    exprNode.type === Syntax.ExpressionStatement &&
+    exprNode.type === S.ExpressionStatement &&
     R.path(["expression", "value"], exprNode) === "use strict"
   );
 }
@@ -32,7 +29,7 @@ function injectPlugins (names) {
       skippers.push(plugin);
     } catch (err) {
       // any way to recover? other locate strategy?
-      console.log(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);
+      console.log(`unable to locate -SKIPPER- plugin "${name}" -- fatal error, exiting`);
       throw err;
     }
   });

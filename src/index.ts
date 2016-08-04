@@ -72,10 +72,6 @@ function perturb (_cfg: PerturbConfig) {
       }
       return rs;
     })
-    .catch(err => {
-      console.log("ERROR IN PERTURB MAIN CHAIN", err);
-      throw err;
-    })
     .finally(teardown)
 }
 

@@ -1,31 +1,31 @@
 // reporter function types
-interface ResultReporter {
+interface _ResultReporter {
   (r: RunnerResult): void;
 }
 
-interface AggregateReporter {
+interface _AggregateReporter {
   (rs: RunnerResult[], m?: PerturbMetadata): void;
 }
 
 // runner plugin function types
-interface Runner {
+interface _Runner {
   (m: Mutant): Promise<RunnerResult>;
 }
 
-interface SetupRun {
+interface _SetupRun {
   (m: Mutant): Promise<any>;
 }
 
-interface CleanupRun {
+interface _CleanupRun {
   (m: Mutant, before?: any): Promise<void>;
 }
 
 // mutator plugin function types
-interface P_NodeMutator {
-  (n: ESTree.Node): ESTree.Node;
+interface _NodeMutator {
+  (n: ESTree.Node): ESTree.Node | ESTree.Node[];
 }
 
-interface P_NodeFilter {
+interface _NodeFilter {
   (n: ESTree.Node): boolean;
 }
 
@@ -44,33 +44,33 @@ interface GenerativeMatcher {
 }
 
 // plugin interfaces
-interface P_Plugin {
+interface _Plugin {
   name: string;
 }
 
-interface ReporterPlugin extends P_Plugin {
-  onResult: ResultReporter;
-  onFinish: AggregateReporter;
+interface ReporterPlugin extends _Plugin {
+  onResult: _ResultReporter;
+  onFinish: _AggregateReporter;
 }
 
-interface MutatorPlugin extends P_Plugin {
+interface MutatorPlugin extends _Plugin {
   nodeTypes: string[];
-  filter?: P_NodeFilter;
-  mutator: P_NodeMutator;
+  filter?: _NodeFilter;
+  mutator: _NodeMutator;
 }
 
-interface RunnerPlugin extends P_Plugin {
+interface RunnerPlugin extends _Plugin {
   setup: (mutant: Mutant) => Promise<any>
   run: (mutant: Mutant) => Promise<RunnerResult>
   cleanup: (mutant: Mutant, before: any) => Promise<void>
 }
 
-interface SkipperPlugin extends P_Plugin {
+interface SkipperPlugin extends _Plugin {
   skipper: Skipper;
 }
 
 // plugins
-interface MatcherPlugin extends P_Plugin {
+interface MatcherPlugin extends _Plugin {
   type: "generative" | "comparative";
   makeMatcher: (c: PerturbConfig) => GenerativeMatcher | ComparativeMatcher;
 }

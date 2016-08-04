@@ -1,6 +1,6 @@
 import R = require("ramda");
 import S = require("./_syntax");
-import dropItem = require("../util/drop-item");
+import dropEachOfProp = require("../util/drop-each-of-prop");
 
 export = <MutatorPlugin>{
   // drops the first declared element in an array literal
@@ -11,6 +11,6 @@ export = <MutatorPlugin>{
     return R.path(["elements", "length"], node) !== 0;
   },
   mutator: function (node) {
-    return dropItem(<ESTree.ArrayExpression>node, "elements", "first");
+    return dropEachOfProp("elements", node);
   },
 };
