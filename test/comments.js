@@ -1,6 +1,6 @@
 const expect = require("expect");
 const esprima = require("esprima");
-const applyNodeComments = require("../built/comments");
+const CommentManager = require("../built/comments");
 
 const helpers = require("./helpers");
 
@@ -15,8 +15,9 @@ function createTest (obj) {
     const node = helpers.nodeFromCode(obj.code);
     const set = obj.set || new Set();
     const expected = obj.expected;
-    applyNodeComments(node, set);
-    expect([...set]).toEqual(expected);
+    const manager = new CommentManager(set);
+    manager.applyNode(node);
+    expect([...manager]).toEqual(expected);
   });
 }
 

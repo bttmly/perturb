@@ -1,47 +1,20 @@
 // reporter function types
-interface _ResultReporter {
-  (r: RunnerResult): void;
-}
+type _ResultReporter = (r: RunnerResult) => void;
+type _AggregateReporter = (rs: RunnerResult[], m?: PerturbMetadata) => void
 
-interface _AggregateReporter {
-  (rs: RunnerResult[], m?: PerturbMetadata): void;
-}
+type _Runer = (m: Mutant) => Promise<RunnerResult>;
+type _SetupRun = (m: Mutant) => Promise<any>;
+type _CleanupRun = (m: Mutant, before?: any) => Promise<void>;
 
-// runner plugin function types
-interface _Runner {
-  (m: Mutant): Promise<RunnerResult>;
-}
+type _NodeMutator = (n: ESTree.Node) => ESTree.Node | ESTree.Node[];
+type _NodeFilter = (n: ESTree.Node) => boolean;
 
-interface _SetupRun {
-  (m: Mutant): Promise<any>;
-}
+type Skipper = (node: ESTree.Node, path: string[]) => boolean;
 
-interface _CleanupRun {
-  (m: Mutant, before?: any): Promise<void>;
-}
+type ComparativeMatcher = (sourceFile: string, testFile: string) => boolean;
+type GenerativeMatcher = (sourceFile: string) => string;
 
-// mutator plugin function types
-interface _NodeMutator {
-  (n: ESTree.Node): ESTree.Node | ESTree.Node[];
-}
-
-interface _NodeFilter {
-  (n: ESTree.Node): boolean;
-}
-
-// skipper plugin function types
-interface Skipper {
-  (node: ESTree.Node, path: string[]): boolean;
-}
-
-// matcher plugin function types
-interface ComparativeMatcher {
-  (sourceFile: string, testFile: string): boolean;
-}
-
-interface GenerativeMatcher {
-  (sourceFile: string): string;
-}
+type MutatorFinder = (n: ESTree.Node) => MutatorPlugin[];
 
 // plugin interfaces
 interface _Plugin {
@@ -129,5 +102,11 @@ interface RunnerResult extends Mutant {
 interface Match {
   source: string;
   tests: string[];
+  sourceCode: string;
 }
 
+interface MutantLocation {
+  mutator: MutatorPlugin;
+  path: string[];
+  node: ESTree.Node;
+}

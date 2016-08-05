@@ -6,7 +6,7 @@ test-bail: compile
 
 compile:
 	rm -rf ./built
-	./node_modules/.bin/tsc
+	./node_modules/.bin/tsc --strictNullChecks
 
 example-events: compile
 	rm -rf ./.perturb

@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import * as R from "ramda";
 
 import baseGenerative = require("./base-generative");
@@ -39,7 +40,12 @@ function getMatcher (c: PerturbConfig) {
   return function findMatches (sources: string[], tests: string[]): Match[] {
     const runMatch: runMatcher = type === "generative" ? runGenerative : runComparative;
     return sources.map(source => ({
-      source, tests: runMatch(matcher, source, tests),
+      source,
+      tests: runMatch(matcher, source, tests),
+      // TODO - right now I'm just shuffling this piece of I/O around to make something else
+      // easier to test. Will have to put it somewhere permanent eventually, but this seems
+      // best for right now
+      sourceCode: fs.readFileSync(source).toString(),
     }));
   }
 }

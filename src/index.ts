@@ -1,6 +1,7 @@
 import R = require("ramda");
 import Bluebird = require("bluebird");
 import { spawn } from "child_process";
+import fs = require("fs");
 import assert = require("assert");
 
 import getRunner = require("./runners");
@@ -10,6 +11,8 @@ import makeMutants = require("./make-mutants");
 import makeConfig = require("./make-config");
 import fileSystem = require("./file-system");
 import runMutant = require("./util/run-mutant");
+import astPaths = require("./ast-paths");
+import mutators = require("./mutators");
 
 function hasTests (m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
@@ -23,10 +26,10 @@ function perturb (_cfg: PerturbConfig) {
   const { setup, teardown, paths } = fileSystem(cfg);
 
   const matcher = getMatcher(cfg);
-  // const runner: RunnerPlugin = getRunner(cfg.runner);
-  const Runner: RunnerPlugin = getRunner(cfg.runner);
-  const reporter: ReporterPlugin = getReporter(cfg.reporter);
-  const handler = makeMutantHandler(Runner, reporter);
+  const runner = getRunner(cfg.runner);
+  const reporter = getReporter(cfg.reporter);
+  
+  const handler = makeMutantHandler(runner, reporter);
   
   let start;
 
@@ -41,7 +44,9 @@ function perturb (_cfg: PerturbConfig) {
       const matches = matcher(sources, tests);
 
       const [tested, untested] = R.partition(hasTests, matches);
+
       // TODO -- surface untested file names somehow
+      console.log("untested files:", untested.map(m => m.source).join("\n"));
 
       if (tested.length === 0) {
         throw new Error("No matched files!");
@@ -49,7 +54,8 @@ function perturb (_cfg: PerturbConfig) {
 
       start = Date.now();
 
-      return R.chain(makeMutants, tested);
+      const finder = astPaths(mutators.getMutatorsForNode)
+      return R.chain(makeMutants(finder), tested);
     })
     .then(sanityCheckAndSideEffects)
     // run the mutatnts and gather the results
