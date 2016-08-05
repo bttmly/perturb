@@ -1,11 +1,8 @@
-test: lint
-	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/**/*.js
+test: compile
+	NODE_ENV=testing ./node_modules/.bin/_mocha ./test --recursive
 
-test-bail: lint
-	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/**/*.js --bail
-
-lint:
-	./node_modules/.bin/eslint ./src/**/*.js
+test-bail: compile
+	NODE_ENV=testing ./node_modules/.bin/_mocha ./test --bail --recursive
 
 compile:
 	rm -rf ./built
@@ -15,10 +12,8 @@ example-events: compile
 	rm -rf ./.perturb
 	node ./script/run.js events
 
-dogfood:
+dogfood: compile
 	rm -rf ./.perturb
-	rm -rf ./built
-	./node_modules/.bin/tsc
 	node ./script/run.js dogfood $(RUNNER)
 
 build:

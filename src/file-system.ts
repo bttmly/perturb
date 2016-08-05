@@ -51,7 +51,11 @@ function setupPerturbDirectory (config: PerturbConfig): void {
     .filter(f => f !== config.perturbDir)
     .filter(f => shouldSymlink.has(f))
     .map(f => [path.join(projectRoot, f), path.join(pAbs, f)])
-    .forEach(R.apply(fs.symlinkSync))
+    // .forEach(R.apply(fs.symlinkSync))
+    .forEach(function (paths: string[]) {
+      const [src, dest] = paths;
+      fs.symlinkSync(src, dest);
+    })
 }
 
 function teardownPerturbDirectory (config): void {

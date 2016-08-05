@@ -1,6 +1,12 @@
 const esprima = require("esprima");
 const R = require("ramda");
 
+const ESPRIMA_OPTIONS = {
+  attachComment: true,
+  comments: true,
+  loc: true,
+};
+
 const { getMutatorByName } = require("../built/mutators");
 const { Syntax } = require("estraverse");
 
@@ -21,7 +27,7 @@ function makeNodeOfType (type, props = {}) {
 }
 
 function nodeFromCode (code) {
-  const ast = esprima.parse(code);
+  const ast = esprima.parse(code, ESPRIMA_OPTIONS);
   if (ast.body.length !== 1) {
     throw new Error("Rendered AST did not have exactly one node");
   }
