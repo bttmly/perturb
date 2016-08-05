@@ -5,9 +5,10 @@ import esprima = require("esprima");
 import escodegen = require("escodegen");
 import estraverse = require("estraverse");
 
+import applyNodeComments = require("./comments");
+import mutators = require("./mutators");
 import shouldSkip = require("./skippers");
 import updateIn = require("./util/update-in");
-const { getMutatorsForNode, hasAvailableMutations } = require("./mutators");
 
 const PERTURB_ENABLE = "perturb-enable:";
 const PERTURB_DISABLE = "perturb-disable:";
@@ -22,6 +23,9 @@ const FS_SETTINGS = {
   encoding: "utf8",
 };
 
+// TODO: make this take the mutator plugins (index? finding func?) as an argument
+// TODO: this function should not do the file reads, perhaps Match type needs the
+// source code. 
 function makeMutants (match: Match): Mutant[] {
   const { source, tests } = match;
   const { ast, code } = parse(source);
@@ -58,15 +62,18 @@ function makeMutants (match: Match): Mutant[] {
           };
         });
       })
-     )(getMutatorsForNode(node));
+     )(mutators.getMutatorsForNode(node));
   }
 }
 
 type Path = string[];
 
-
+// TODO: break this into it's own module
+// and have it take the plugin index as an argument
 function getMutationPaths (ast: ESTree.Node) {
   const mutationPaths: Path[] = [];
+  const disabledMutations = new Set<string>();
+
   estraverse.traverse(ast, {
     enter: function (node: ESTree.Node) {
       const path = <Path>this.path();
@@ -74,7 +81,17 @@ function getMutationPaths (ast: ESTree.Node) {
         return this.skip();
       }
 
-      if (hasAvailableMutations(node)) {
+      applyNodeComments(node, disabledMutations);
+
+      const plugins = mutators.getMutatorsForNode(node)
+      const active = plugins.filter(m => !disabledMutations.has(m.name))
+
+      // if (plugins.length !== active.length) {
+      //   console.log("some are disabled, what we have is", [...active]);
+      //   console.log(escodegen.generate(node));
+      // }
+
+      if (active.length) {
         mutationPaths.push(path)
       }
     },

@@ -1,6 +1,6 @@
 const expect = require("expect");
 const esprima = require("esprima");
-const comments = require("../built/comments");
+const applyNodeComments = require("../built/comments");
 
 const helpers = require("./helpers");
 
@@ -15,15 +15,14 @@ function createTest (obj) {
     const node = helpers.nodeFromCode(obj.code);
     const set = obj.set || new Set();
     const expected = obj.expected;
-    comments.applyNodeComments(node, set);
+    applyNodeComments(node, set);
     expect([...set]).toEqual(expected);
   });
 }
 
-
 describe("comments", function () {
 
-  describe("comments", function () {
+  describe("applyNodeComments", function () {
     
     createTest({
       title: "enable: works for leading line comments",
@@ -54,10 +53,12 @@ describe("comments", function () {
     });
 
     createTest({
-      title: "disable: works for leading and trailing comments",
+      title: "interleaved enable/disable works",
       expected: ["b"],
       code: `
-        // perturb-enable: a,b
+        // perturb-enable: a,b,,c
+        // perturb-disable: c,b
+        // perturb-enable: b
         const x = 1;
         // perturb-disable: a
       `,

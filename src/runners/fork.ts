@@ -68,9 +68,12 @@ async function childRunner (name) {
   const runner: RunnerPlugin = require("./")(name);
   const result = await runMutant(runner, mutant);
 
-  process.send(JSON.stringify({
-    error: runnerUtils.makeErrorSerializable(result.error)
-  }));
+  const message = result.error == null ?
+    {} : { error: runnerUtils.makeErrorSerializable(result.error) }
+
+  if (process.send != null) {
+    process.send(JSON.stringify(message));  
+  }
   
   return null;
 }

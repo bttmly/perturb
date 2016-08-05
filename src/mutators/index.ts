@@ -75,18 +75,20 @@ function locateMutatorPlugins (names: string[]): MutatorPlugin[] {
 //   index = locateMutatorPlugins(names);
 // }
 
-exports.hasAvailableMutations = function (node: ESTree.Node): boolean {
-  if (node == null || node.type == null) return false;
-  return R.has(node.type, index);
-}
+// exports.hasAvailableMutations = function (node: ESTree.Node): boolean {
+//   if (node == null || node.type == null) return false;
+//   return R.has(node.type, index);
+// }
 
-exports.getMutatorsForNode = function (node: ESTree.Node): MutatorPlugin[] {
+function getMutatorsForNode (node: ESTree.Node): MutatorPlugin[] {
   if (node == null || node.type == null) return [];
   return <MutatorPlugin[]>R.propOr([], node.type, index);
 }
 
-exports.getMutatorByName = function (name: string): MutatorPlugin | undefined {
+function getMutatorByName (name: string): MutatorPlugin | undefined {
   return activeMutators.find(m => m.name === name);
 }
 
 index = makeMutatorIndex([]);
+
+export = { getMutatorsForNode, getMutatorByName };
