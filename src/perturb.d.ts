@@ -2,8 +2,8 @@
 type _ResultReporter = (r: RunnerResult) => void;
 type _AggregateReporter = (rs: RunnerResult[], m?: PerturbMetadata) => void
 
-type _Runer = (m: Mutant) => Promise<RunnerResult>;
 type _SetupRun = (m: Mutant) => Promise<any>;
+type _Run = (m: Mutant) => Promise<RunnerResult>;
 type _CleanupRun = (m: Mutant, before?: any) => Promise<void>;
 
 type _NodeMutator = (n: ESTree.Node) => ESTree.Node | ESTree.Node[];
@@ -15,6 +15,8 @@ type ComparativeMatcher = (sourceFile: string, testFile: string) => boolean;
 type GenerativeMatcher = (sourceFile: string) => string;
 
 type MutatorFinder = (n: ESTree.Node) => MutatorPlugin[];
+
+type PluginLocator<T extends _Plugin> = (name: string) => T;
 
 // plugin interfaces
 interface _Plugin {
@@ -28,21 +30,20 @@ interface ReporterPlugin extends _Plugin {
 
 interface MutatorPlugin extends _Plugin {
   nodeTypes: string[];
-  filter?: _NodeFilter;
   mutator: _NodeMutator;
+  filter?: _NodeFilter;
 }
 
 interface RunnerPlugin extends _Plugin {
-  setup: (mutant: Mutant) => Promise<any>
-  run: (mutant: Mutant) => Promise<RunnerResult>
-  cleanup: (mutant: Mutant, before: any) => Promise<void>
+  setup: _SetupRun;
+  run: _Run;
+  cleanup: _CleanupRun;
 }
 
 interface SkipperPlugin extends _Plugin {
   skipper: Skipper;
 }
 
-// plugins
 interface MatcherPlugin extends _Plugin {
   type: "generative" | "comparative";
   makeMatcher: (c: PerturbConfig) => GenerativeMatcher | ComparativeMatcher;
@@ -79,10 +80,6 @@ interface PerturbConfig {
   testGlob: string;
 }
 
-interface PerturbMetadata {
-  duration: number;
-}
-
 interface Mutant {
   mutatorName: string; // name of mutator plugin
   sourceFile: string;
@@ -109,4 +106,8 @@ interface MutantLocation {
   mutator: MutatorPlugin;
   path: string[];
   node: ESTree.Node;
+}
+
+interface PerturbMetadata {
+  duration: number;
 }

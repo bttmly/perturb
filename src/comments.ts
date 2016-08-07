@@ -19,11 +19,6 @@ interface CommentedNode extends ESTree.Node {
   trailingComments?: Comment[];
 }
 
-interface DisableManger {
-  apply: (n: ESTree.Node) => void;
-  has: (name: string) => boolean;
-}
-
 // a little class to encapsulate how mutators get enabled/disabled
 class CommentManager {
   _set: Set<string>;
@@ -45,7 +40,7 @@ class CommentManager {
   }
 
   [Symbol.iterator] () {
-    return [...this._set][Symbol.iterator]();
+    return this._set[Symbol.iterator]();
   }
 }
 
@@ -65,8 +60,7 @@ const applyOperator = R.curry(function (set: Set<string>, op: Operator) {
 });
 
 function getComments (node: CommentedNode): Comment[] {
-  const out: Comment[] = [];
-  return out.concat(
+  return (new Array<Comment>()).concat(
     node.leadingComments || [],
     node.trailingComments || []
   );

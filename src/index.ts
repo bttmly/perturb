@@ -18,6 +18,8 @@ function hasTests (m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
 }
 
+const mapSeriesP = R.curry(R.flip(Bluebird.mapSeries));
+
 function perturb (_cfg: PerturbConfig) {
   const cfg = makeConfig(_cfg);
 
@@ -28,7 +30,6 @@ function perturb (_cfg: PerturbConfig) {
   const matcher = getMatcher(cfg);
   const runner = getRunner(cfg.runner);
   const reporter = getReporter(cfg.reporter);
-  
   const handler = makeMutantHandler(runner, reporter);
   
   let start;
@@ -41,6 +42,8 @@ function perturb (_cfg: PerturbConfig) {
     .then(() => paths())
     // use the matcher function to group {sourceFile, testFiles}
     .then(function ({ sources, tests }) {
+      // TODO -- this section has become a catch-all for various crap that
+      // is actually orthogonal (tested/untested, start time, logging)
       const matches = matcher(sources, tests);
 
       const [tested, untested] = R.partition(hasTests, matches);
@@ -54,14 +57,12 @@ function perturb (_cfg: PerturbConfig) {
 
       start = Date.now();
 
-      const finder = astPaths(mutators.getMutatorsForNode)
+      const finder = astPaths(mutators.getMutatorsForNode);
       return R.chain(makeMutants(finder), tested);
     })
     .then(sanityCheckAndSideEffects)
     // run the mutatnts and gather the results
-    .then(function (ms: Mutant[]) {
-      return Bluebird.mapSeries(ms, handler);
-    })
+    .then(mapSeriesP(handler))
     // run the final results handler, if supplied, then pass the results back
     // to the caller
     .then(function (rs: RunnerResult[]) {
