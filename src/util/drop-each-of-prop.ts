@@ -4,8 +4,8 @@ import R = require("ramda");
 // copies of that object, each copy having one of the array's
 // elements removed
 
-// input: {key: [1, 2, 3]}
-// output: [ {key: [2, 3]}, {key: [1, 3]}, {key: [1, 2]} ]
+// dropEachOfProp("key", {key: [1, 2, 3]})
+// => [ {key: [2, 3]}, {key: [1, 3]}, {key: [1, 2]} ]
 
 // will be helpful in testing removing each item from an object's property
 
