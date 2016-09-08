@@ -102,6 +102,12 @@ interface Match {
   sourceCode: string;
 }
 
+interface ParsedMatch extends Match {
+  ast: ESTree.Node;
+  code: string; // TODO rename this. This is rengenerated source code from AST.
+  locations: MutantLocation[];
+}
+
 interface MutantLocation {
   mutator: MutatorPlugin;
   path: string[];

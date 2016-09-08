@@ -14,38 +14,38 @@ function createTest (obj) {
   it(obj.title, function () {
     const manager = new CommentManager(obj.set || new Set());
     manager.applyNode(helpers.nodeFromCode(obj.code));
-    expect([...manager]).toEqual(obj.expected);
+    expect(manager.toArray()).toEqual(obj.expected);
   });
 }
 
 describe("CommentManager", function () {
 
   createTest({
-    title: "enable: works for leading line comments",
+    title: "disable: works for leading line comments",
     expected: "abc".split(""),
     code: `
-      // perturb-enable: a,,b,c
+      // perturb-disable: a,,b,c
       const x = 1;
     `,
   });
 
   createTest({
-    title: "enable: works for trailing line comments",
+    title: "disable: works for trailing line comments",
     expected: "abc".split(""),
     code: `
       const x = 1;
-      // perturb-enable: a,,b,c
+      // perturb-disable: a,,b,c
     `,
   });
 
   createTest({
-    title: "enable: works for leading and trailing comments",
+    title: "disable: works for leading and trailing comments",
     expected: "abcd".split(""),
     code: `
-      // perturb-enable: a,,b
-      // perturb-enable:c
+      // perturb-disable: a,,b
+      // perturb-disable:c
       const x = 1;
-      // perturb-enable: d
+      // perturb-disable: d
     `,
   });
 
@@ -53,11 +53,11 @@ describe("CommentManager", function () {
     title: "interleaved enable/disable works",
     expected: ["b"],
     code: `
-      // perturb-enable: a,b,,c
-      // perturb-disable: c,b
-      // perturb-enable: b
+      // perturb-disable: a,b,,c
+      // perturb-enable: c,b
+      // perturb-disable: b
       const x = 1;
-      // perturb-disable: a
+      // perturb-enable: a
     `,
   });
 

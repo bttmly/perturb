@@ -8,20 +8,18 @@ const plugins = new Map<string, RunnerPlugin>([
   [ forkRunner.name, forkRunner ],
 ]);
 
-function injectPlugins (names) {
-  names.forEach(function (name) {
-    let plugin: RunnerPlugin;
-    try {
-      plugin = require(`perturb-plugin-runner-${name}`);
-      plugins.set(name, plugin);
-      return;
-    } catch (err) {
-      // any way to recover? other locate strategy?
-      console.log(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);
-      throw err;
-    }
-  });
-}
+// function injectPlugin (name) {
+//   let plugin: RunnerPlugin;
+//   try {
+//     plugin = require(`perturb-plugin-runner-${name}`);
+//     plugins.set(name, plugin);
+//     return;
+//   } catch (err) {
+//     // any way to recover? other locate strategy?
+//     console.log(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);
+//     throw err;
+//   }
+// }
 
 export = function get (input: string | RunnerPlugin): RunnerPlugin {
   if (typeof input === "string") {

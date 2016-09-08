@@ -21,19 +21,17 @@ function skipUseStrict (node: ESTree.Node): boolean {
 
 const skippers: Skipper[] = [ skipRequire, skipUseStrict ];
 
-function injectPlugins (names) {
-  names.forEach(function (name) {
-    let plugin: Skipper;
-    try {
-      plugin = require(`perturb-plugin-skipper-${name}`);
-      skippers.push(plugin);
-    } catch (err) {
-      // any way to recover? other locate strategy?
-      console.log(`unable to locate -SKIPPER- plugin "${name}" -- fatal error, exiting`);
-      throw err;
-    }
-  });
-}
+// function injectPlugins (name) {
+//   let plugin: Skipper;
+//   try {
+//     plugin = require(`perturb-plugin-skipper-${name}`);
+//     skippers.push(plugin);
+//   } catch (err) {
+//     // any way to recover? other locate strategy?
+//     console.log(`unable to locate -SKIPPER- plugin "${name}" -- fatal error, exiting`);
+//     throw err;
+//   }
+// }
 
 export = function shouldSkip (node: ESTree.Node, path: string[]): boolean {
   return skippers.some(f => f(node, path));

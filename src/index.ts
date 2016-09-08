@@ -7,12 +7,14 @@ import assert = require("assert");
 import getRunner = require("./runners");
 import getReporter = require("./reporters");
 import getMatcher = require("./matchers");
+import locationFilter = require("./filters");
 import makeMutants = require("./make-mutants");
 import makeConfig = require("./make-config");
 import fileSystem = require("./file-system");
 import runMutant = require("./util/run-mutant");
 import astPaths = require("./ast-paths");
 import mutators = require("./mutators");
+import parseMatch = require("./parse-match");
 
 function hasTests (m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
@@ -20,7 +22,7 @@ function hasTests (m: Match): boolean {
 
 const mapSeriesP = R.curry(R.flip(Bluebird.mapSeries));
 
-function perturb (_cfg: PerturbConfig) {
+async function perturb (_cfg: PerturbConfig) {
   const cfg = makeConfig(_cfg);
 
   console.log("init with config\n", cfg);
@@ -31,7 +33,8 @@ function perturb (_cfg: PerturbConfig) {
   const runner = getRunner(cfg.runner);
   const reporter = getReporter(cfg.reporter);
   const handler = makeMutantHandler(runner, reporter);
-  
+  const locator = astPaths(mutators.getMutatorsForNode);
+
   let start;
 
   // first run the tests, otherwise why bother at all?
@@ -55,10 +58,15 @@ function perturb (_cfg: PerturbConfig) {
         throw new Error("No matched files!");
       }
 
-      start = Date.now();
+      const parsedMatches = tested.map(parseMatch(locator));
+      const parsedMatchesAfterFilter = parsedMatches.map(_pm => {
+        const pm = Object.assign({}, _pm);
+        pm.locations = pm.locations.filter(locationFilter);
+        return pm;
+      });
 
-      const finder = astPaths(mutators.getMutatorsForNode);
-      return R.chain(makeMutants(finder), tested);
+      start = Date.now();
+      return R.chain(makeMutants, parsedMatchesAfterFilter);
     })
     .then(sanityCheckAndSideEffects)
     // run the mutatnts and gather the results
@@ -79,7 +87,7 @@ function perturb (_cfg: PerturbConfig) {
       }
       return rs;
     })
-    .finally(teardown)
+    // .finally(teardown)
 }
 
 function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
@@ -90,16 +98,20 @@ function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
   }
 }
 
-function runTest (cfg: PerturbConfig) {
-  return new Promise(function (resolve, reject) {
-    const [cmd, ...rest] = cfg.testCmd.split(/\s+/);
-    const child = spawn(cmd, rest);
-    // child.stdout.pipe(process.stdout);
-    // child.stderr.pipe(process.stderr);
-    child.on("close", function (code) {
-      code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
-    });
-  });
+// function runTest (cfg: PerturbConfig) {
+//   return new Promise(function (resolve, reject) {
+//     const [cmd, ...rest] = cfg.testCmd.split(/\s+/);
+//     const child = spawn(cmd, rest);
+//     // child.stdout.pipe(process.stdout);
+//     // child.stderr.pipe(process.stderr);
+//     child.on("close", function (code) {
+//       code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
+//     });
+//   });
+// }
+
+async function runTest (cfg: PerturbConfig) {
+  return await spawnP(cfg.testCmd);
 }
 
 // TODO -- what else? Any reason might want to serialize mutants here?
@@ -115,6 +127,18 @@ Promise.prototype.finally = function (cb) {
     value => this.constructor.resolve(cb()).then(() => value),
     reason => this.constructor.resolve(cb()).then(() => { throw reason; })
   );
+}
+
+function spawnP (fullCommand: string) {
+  return new Promise(function (resolve, reject) {
+    const [cmd, ...rest] = fullCommand.split(/\s+/);
+    const child = spawn(cmd, rest);
+    // child.stdout.pipe(process.stdout);
+    // child.stderr.pipe(process.stderr);
+    child.on("close", function (code) {
+      code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
+    });
+  });
 }
 
 export = perturb;
