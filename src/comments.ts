@@ -45,6 +45,7 @@ function getComments (node: CommentedNode) {
   );
 }
 
+
 // a little class to encapsulate how mutators get enabled/disabled
 class CommentManager {
   _disabled: Set<string>;
@@ -53,12 +54,17 @@ class CommentManager {
     this._disabled = set || new Set<string>();
   }
 
-  applyNode = (_node: ESTree.Node) => {
-    R.pipe(
-      getComments,
-      R.chain(extractOperators),
-      R.forEach(this._applyOperator),
-    )(<CommentedNode>_node);
+  applyLeading (node: CommentedNode) {
+    return this._applyComments(node.leadingComments || []);
+  }
+
+  applyTrailing (node: CommentedNode) {
+    return this._applyComments(node.trailingComments || []);
+  }
+
+  _applyComments (cs: Comment[]) {
+    return R.chain(extractOperators, cs)
+      .forEach(this._applyOperator)
   }
 
   _applyOperator = (op: Operator) => {

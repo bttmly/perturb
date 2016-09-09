@@ -11,8 +11,12 @@ function getMutantLocations (finder: MutatorFinder, ast: ESTree.Node): MutantLoc
 
   estraverse.traverse(ast, {
     enter (node: ESTree.Node) {
+      manager.applyLeading(node);
       mutantLocations.push(...applyVisitor(node, this, manager, finder));
     },
+    leave (node: ESTree.Node) {
+      manager.applyTrailing(node);
+    }
   });
   return mutantLocations;
 }
@@ -20,8 +24,6 @@ function getMutantLocations (finder: MutatorFinder, ast: ESTree.Node): MutantLoc
 // No typings for estraverse.Controller :/
 function applyVisitor (node: ESTree.Node, controller: any, manager: CommentManager, finder: MutatorFinder): MutantLocation[] {
   const path : string[] = controller.path();
-
-  manager.applyNode(node);
   return finder(node)
     .filter(plugin => manager.isEnabled(plugin.name))
     .filter(plugin => plugin.filter == null || plugin.filter(node))

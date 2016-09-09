@@ -1,30 +1,29 @@
 import R = require("ramda");
 import S = require("../mutators/_syntax");
 
-function filterSimpleRequire (m: MutantLocation): boolean {
-  return !(
-    R.prop("type", m.node) === S.CallExpression &&
-    R.path(["callee", "name"], m.node) === "require" &&
-    R.path(["arguments", "length"], m.node) === 1 &&
-    R.path(["arguments", "0", "type"], m.node) === S.Literal &&
-    typeof R.path(["arguments", "0", "type"], m.node) === "string"
-  );
-}
+type LocationFilter = (m: MutantLocation) => boolean;
 
-function filterUseStrict (m: MutantLocation): boolean {
-  const exprNode = <ESTree.ExpressionStatement>m.node;
-  return !(
-    exprNode.type === S.ExpressionStatement &&
-    R.path(["expression", "value"], exprNode) === "use strict"
-  );
-}
+const isStringRequire = R.allPass([
+  R.propEq("type", S.CallExpression),
+  R.pathEq(["callee", "name"], "require"),
+  R.pathEq(["arguments", "length"], 1),
+  R.pathEq(["arguments", "0", "type"], S.Literal),
+  // Ramda typings don't have R.pathSatisfies, but when they do:
+  // R.pathSatisfies(R.is(String), ["arguments", "0", "type"])
+  n => R.path(["arguments", "0", "type"], n) === "string"
+]);
 
-type LocationFilter = (n: MutantLocation) => boolean;
-const filters: LocationFilter[] = [ filterSimpleRequire, filterUseStrict ];
+const isUseStrict = R.allPass([
+  R.propEq("type", S.ExpressionStatement),
+  R.pathEq(["expression", "value"], "use strict"),
+]);
 
-export = function filter (m: MutantLocation) {
-  return filters.every(f => f(m));
-}
+const filters: LocationFilter [] = [
+  (m: MutantLocation) => !isUseStrict(m.node),
+  (m: MutantLocation) => !isStringRequire(m.node),
+];
+
+export = R.allPass(filters);
 
 // export function inject (name) {
 //   let plugin: LocationFilter;

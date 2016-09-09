@@ -12,8 +12,10 @@ const ESPRIMA_OPTIONS = {
 
 function createTest (obj) {
   it(obj.title, function () {
-    const manager = new CommentManager(obj.set || new Set());
-    manager.applyNode(helpers.nodeFromCode(obj.code));
+    const manager = new CommentManager(obj.set);
+    const node = helpers.nodeFromCode(obj.code);
+    manager.applyLeading(node);
+    manager.applyTrailing(node);
     expect(manager.toArray()).toEqual(obj.expected);
   });
 }

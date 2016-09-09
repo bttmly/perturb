@@ -37,8 +37,10 @@ async function perturb (_cfg: PerturbConfig) {
 
   let start;
 
+  const testRun: Promise<void> = process.env.SKIP_TEST ? Promise.resolve() : runTest(cfg);
+
   // first run the tests, otherwise why bother at all?
-  return runTest(cfg)
+  return testRun
     // then, set up the "shadow" file system that we'll work against
     .then(() => setup())
     // read those "shadow" directories and find the source and test files
@@ -52,7 +54,7 @@ async function perturb (_cfg: PerturbConfig) {
       const [tested, untested] = R.partition(hasTests, matches);
 
       // TODO -- surface untested file names somehow
-      console.log("untested files:", untested.map(m => m.source).join("\n"));
+      // console.log("untested files:", untested.map(m => m.source).join("\n"));
 
       if (tested.length === 0) {
         throw new Error("No matched files!");
@@ -70,7 +72,14 @@ async function perturb (_cfg: PerturbConfig) {
     })
     .then(sanityCheckAndSideEffects)
     // run the mutatnts and gather the results
-    .then(mapSeriesP(handler))
+    .then(function (ms: Mutant[]) {
+      if (process.env.SKIP_RUN) {
+        console.log("SKIP RUN:", ms.length)
+        return [];
+      }
+
+      return mapSeriesP(handler, ms);
+    })
     // run the final results handler, if supplied, then pass the results back
     // to the caller
     .then(function (rs: RunnerResult[]) {
@@ -98,18 +107,6 @@ function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
   }
 }
 
-// function runTest (cfg: PerturbConfig) {
-//   return new Promise(function (resolve, reject) {
-//     const [cmd, ...rest] = cfg.testCmd.split(/\s+/);
-//     const child = spawn(cmd, rest);
-//     // child.stdout.pipe(process.stdout);
-//     // child.stderr.pipe(process.stderr);
-//     child.on("close", function (code) {
-//       code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
-//     });
-//   });
-// }
-
 async function runTest (cfg: PerturbConfig) {
   return await spawnP(cfg.testCmd);
 }
@@ -122,15 +119,8 @@ function sanityCheckAndSideEffects (ms: Mutant[]): Promise<Mutant[]> {
   return Promise.resolve(ms);
 }
 
-Promise.prototype.finally = function (cb) {
-  return this.then(
-    value => this.constructor.resolve(cb()).then(() => value),
-    reason => this.constructor.resolve(cb()).then(() => { throw reason; })
-  );
-}
-
-function spawnP (fullCommand: string) {
-  return new Promise(function (resolve, reject) {
+function spawnP (fullCommand: string): Promise<void> {
+  return new Promise<void>(function (resolve, reject) {
     const [cmd, ...rest] = fullCommand.split(/\s+/);
     const child = spawn(cmd, rest);
     // child.stdout.pipe(process.stdout);
@@ -139,6 +129,13 @@ function spawnP (fullCommand: string) {
       code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
     });
   });
+}
+
+Promise.prototype.finally = function (cb) {
+  return this.then(
+    value => this.constructor.resolve(cb()).then(() => value),
+    reason => this.constructor.resolve(cb()).then(() => { throw reason; })
+  );
 }
 
 export = perturb;
