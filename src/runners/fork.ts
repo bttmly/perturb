@@ -73,12 +73,9 @@ async function childRunner (name) {
  
   const mutant: Mutant = require(process.argv[2])
   const runner: RunnerPlugin = require("./")(name);
-  try {
-    const result = await runMutant(runner, mutant);
-    sendError(result.error);
-  } catch (e) {
-    sendError(e);
-  }
+  const result = await runMutant(runner, mutant);
+  sendError(result.error);
+
   return null;
 }
 
@@ -100,11 +97,4 @@ function sendError (err) {
 function tempFileLocation () {
   const id = Math.random().toString(16).slice(2);
   return path.join(os.tmpdir(), `perturb-fork-mutant-${id}.json`); 
-}
-
-Promise.prototype.finally = function (cb) {
-  return this.then(
-    value => this.constructor.resolve(cb()).then(() => value),
-    reason => this.constructor.resolve(cb()).then(() => { throw reason; })
-  );
 }

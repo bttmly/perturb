@@ -1,16 +1,9 @@
-export = function runMutant (runner: RunnerPlugin, mutant: Mutant) {
-  return runner.setup(mutant)
-    .then(function (before) {
-      return runner.run(mutant)
-        .finally(() => runner.cleanup(mutant, before))
-    });
+export = async function runMutant (runner: RunnerPlugin, mutant: Mutant) {
+  let before, result;
+  try {
+    before = await runner.setup(mutant);
+    return await runner.run(mutant);
+  } finally {
+    await runner.cleanup(mutant, before);
+  }
 }
-
-// async function runMutant (runner: RunnerPlugin, mutant: Mutant) {
-//   const before = await runner.setup(mutant);
-//   try {
-//     await runner.run(mutant);
-//   } finally {
-//     await runner.cleanup(mutant, before);
-//   }
-// }
