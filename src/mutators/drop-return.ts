@@ -16,10 +16,16 @@ export = <MutatorPlugin>{
   nodeTypes: [S.ReturnStatement],
   mutator: function (node: MaybeArgumentedNode) {
     if (node.argument == null) return voidNode;
-    return <ESTree.ExpressionStatement>{
+    // return <ESTree.ExpressionStatement>{
+    //   type: S.ExpressionStatement,
+    //   expression: node.argument,
+    // }
+    const newNode = {
       type: S.ExpressionStatement,
       expression: node.argument,
     }
+
+    return newNode;
   },
 };
 

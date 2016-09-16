@@ -12,7 +12,7 @@ import makeMutants = require("./make-mutants");
 import makeConfig = require("./make-config");
 import fileSystem = require("./file-system");
 import runMutant = require("./util/run-mutant");
-import astPaths = require("./ast-paths");
+import locateMutants = require("./locate-mutants");
 import mutators = require("./mutators");
 import parseMatch = require("./parse-match");
 
@@ -33,7 +33,7 @@ async function perturb (_cfg: PerturbConfig) {
   const runner = getRunner(cfg.runner);
   const reporter = getReporter(cfg.reporter);
   const handler = makeMutantHandler(runner, reporter);
-  const locator = astPaths(mutators.getMutatorsForNode);
+  const locator = locateMutants(mutators.getMutatorsForNode);
 
   let start;
 
@@ -60,15 +60,15 @@ async function perturb (_cfg: PerturbConfig) {
         throw new Error("No matched files!");
       }
 
-      const parsedMatches = tested.map(parseMatch(locator));
-      const parsedMatchesAfterFilter = parsedMatches.map(_pm => {
-        const pm = Object.assign({}, _pm);
-        pm.locations = pm.locations.filter(locationFilter);
-        return pm;
-      });
+      const parsedMatches = tested
+        .map(parseMatch(locator))
+        .map(pm => {
+          pm.locations = pm.locations.filter(locationFilter);
+          return pm;
+        });
 
       start = Date.now();
-      return R.chain(makeMutants, parsedMatchesAfterFilter);
+      return R.chain(makeMutants, parsedMatches);
     })
     .then(sanityCheckAndSideEffects)
     // run the mutatnts and gather the results
@@ -96,7 +96,7 @@ async function perturb (_cfg: PerturbConfig) {
       }
       return rs;
     })
-    // .finally(teardown)
+    .finally(teardown)
 }
 
 function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {

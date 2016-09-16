@@ -1,18 +1,18 @@
-const expect = require("expect");
-const { nodeFromCode, applyMutation } = require("../helpers");
+const {testPlugin} = require("../helpers");
 
-describe("reverse-function-parameters", function () {
-  it("reverses the order of a function's declaration's arguments", function () {
-    const node = nodeFromCode("function func (a, b, c, d) {}");
-    const mutated = applyMutation(node, "reverse-function-parameters");
-    const paramNames = mutated.params.map(p => p.name);
-    expect(paramNames).toEqual(["d", "c", "b", "a"]);
-  });
+const PLUGIN_NAME = "reverse-function-parameters";
 
-  it("reverses the order of a function's expression's arguments", function () {
-    const node = nodeFromCode("(function (a, b, c) {})").expression
-    const mutated = applyMutation(node, "reverse-function-parameters");
-    const paramNames = mutated.params.map(p => p.name);
-    expect(paramNames).toEqual(["c", "b", "a"]);
-  });
-});
+const cases = [
+  {
+    descr: "reverses arguments for function expression",
+    before: "(function(a,b,c){});",
+    after: "(function(c,b,a){});",
+  },
+  {
+    descr: "reverses arguments for function declaration",
+    before: "function x(a,b,c){}",
+    after: "function x(c,b,a){}",
+  },
+];
+
+describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));

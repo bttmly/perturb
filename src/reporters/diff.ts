@@ -1,4 +1,5 @@
 import R = require("ramda");
+import delta = require("./delta");
 
 const chalk = require("chalk");
 const { diffLines } = require("diff");
@@ -15,6 +16,7 @@ export = <ReporterPlugin>{
     const killCount = killed.length;
     const killRate = Number((killCount / total).toFixed(4)) * 100;
     console.log(`Total: ${total}. Killed: ${killCount}. Rate: ${killRate}%`);
+    delta(rs);
   },
 };
 

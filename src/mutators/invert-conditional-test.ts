@@ -8,11 +8,13 @@ interface TestNode extends ESTree.Node {
 
 const BANG = "!";
 
+// leaving out while, do-while, and for because inverting them usually(?) 
+// makes an infinite loop
 const TEST_NODES = [
   S.IfStatement,
-  S.WhileStatement,
-  S.DoWhileStatement,
-  S.ForStatement,
+  // S.WhileStatement,
+  // S.DoWhileStatement,
+  // S.ForStatement,
   S.ConditionalExpression,
   S.SwitchCase,
 ];
@@ -23,7 +25,7 @@ const TEST_NODES = [
 // `for (; i < 10; i++) {}` => `for(; (!(i < 10)); i++)`
 export = <MutatorPlugin>{
   name: "invert-conditional-test",
-  nodeTypes: Object.keys(TEST_NODES),
+  nodeTypes: TEST_NODES,
   filter: function (node) {
     // using prop() over has() ensures it isn't null (switch case `default`!)
     return Boolean(R.prop("test", node));

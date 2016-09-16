@@ -1,16 +1,23 @@
-const expect = require("expect");
-const helpers = require("../helpers");
-const mutatorByName = helpers.mutatorByName;
-const makeNodeOfType = helpers.makeNodeOfType;
+const {testPlugin} = require("../helpers");
 
-describe("invert-conditional-test", function () {
-  it("inverts the test property of the node", function () {
-    const arg = "someIdentifier";
-    const node = makeNodeOfType("IfStatement", {test: arg});
-    const m = mutatorByName("invert-conditional-test");
-    const test = m.mutator(node).test
-    expect(test.type).toEqual("UnaryExpression");
-    expect(test.operator).toEqual("!");
-    expect(test.argument).toEqual(arg);
-  });
-});
+const PLUGIN_NAME = "invert-conditional-test";
+
+const cases = [
+  {
+    descr: "inverts an if clause",
+    before: "if(x){y();}",
+    after: "if(!x){y();}",
+  },
+  {
+    descr: "inverts an inverted if clause",
+    before: "if(!x){y();}",
+    after: "if(!!x){y();}",
+  },
+  {
+    descr: "it inverts a ternary",
+    before: "x?y:z;",
+    after: "!x?y:z;",
+  },
+];
+
+describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));

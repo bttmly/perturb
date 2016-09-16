@@ -1,15 +1,18 @@
+const {testPlugin} = require("../helpers");
 
-const expect = require("expect");
-const R = require("expect");
-const { nodeFromCode, applyMutation } = require("../helpers")
+const PLUGIN_NAME = "tweak-boolean-literal";
 
-// describe("tweak-boolean-literal", function () {
-//   it("changes true to false", function () {
-//     const node = nodeFromCode("var bool = true");
-//     const literal = node.declarations[0].init;
-//   });
+const cases = [
+  {
+    descr: "changes `false` to `true`",
+    before: "false;",
+    after: "true;",
+  },
+  {
+    descr: "changes `true` to `false`",
+    before: "true;",
+    after: "false;",
+  },
+];
 
-//   it("changes false to true", function () {
-//     const node = nodeFromCode("var bool = false");
-//   });
-// });
+describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));

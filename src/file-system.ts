@@ -15,7 +15,7 @@ const shouldSkip = new Set([
   ".perturb"
 ]);
 
-function setupPerturbDirectory (config: PerturbConfig): void {
+function setupPerturbDirectory (config: PerturbConfig) {
 
   const {projectRoot, sourceDir, testDir, perturbDir} = config;
 
@@ -36,65 +36,44 @@ function setupPerturbDirectory (config: PerturbConfig): void {
   }
 
   fs.mkdirSync(pAbs);
-  // fs.copySync(sourceAbs, pSourceAbs);
-  // fs.copySync(testAbs, pTestAbs);
 
-  fs.readdirSync(projectRoot)
+  const dirContents = fs.readdirSync(projectRoot)
+
+  dirContents
     .filter(f => f !== config.perturbDir)
     .filter(f => !shouldSymlink.has(f))
     .map(f => [path.join(projectRoot, f), path.join(pAbs, f)])
-    .forEach(function ([src, dest]) {
-      fs.copySync(src, dest);
-    });
+    .forEach(([src, dest]) => fs.copySync(src, dest));
 
-  fs.readdirSync(projectRoot)
+  dirContents
     .filter(f => f !== config.perturbDir)
     .filter(f => shouldSymlink.has(f))
     .map(f => [path.join(projectRoot, f), path.join(pAbs, f)])
-    // .forEach(R.apply(fs.symlinkSync))
-    .forEach(function (paths: string[]) {
-      const [src, dest] = paths;
-      fs.symlinkSync(src, dest);
-    })
+    .forEach(([src, dest]) => fs.symlinkSync(src, dest))
 }
 
-function teardownPerturbDirectory (config): void {
+function teardownPerturbDirectory (config: PerturbConfig) {
   const {projectRoot, sourceDir, testDir, perturbDir} = config;
   const pAbs = path.join(projectRoot, perturbDir);
   fs.removeSync(pAbs);
 }
 
-type FilePathResult = { sources: string[], tests: string[] };
-
-interface FsHelper {
-  setup(): void;
-  teardown(): void;
-  paths(): FilePathResult;
-}
-
-function getFilePaths (config: PerturbConfig): FilePathResult {
+function getFilePaths (config: PerturbConfig) {
   const {projectRoot, sourceDir, testDir, perturbDir} = config;
   const pAbs = path.join(projectRoot, perturbDir);
   const pSourceAbs = path.join(pAbs, sourceDir);
   const pTestAbs = path.join(pAbs, testDir);
 
-  return {
-    sources: glob.sync(pSourceAbs + config.sourceGlob),
-    tests: glob.sync(pTestAbs + config.testGlob),
-  };
+  const sources: string[] = glob.sync(pSourceAbs + config.sourceGlob);
+  const tests: string[] = glob.sync(pTestAbs + config.testGlob);
+  return {sources, tests}
 }
 
 function createFsHelpers (c: PerturbConfig) {
-  return <FsHelper>{
-    setup () {
-      setupPerturbDirectory(c);
-    },
-    teardown () {
-      teardownPerturbDirectory(c);
-    },
-    paths () {
-      return getFilePaths(c);
-    },
+  return {
+    setup: () => setupPerturbDirectory(c),
+    teardown: () => teardownPerturbDirectory(c),
+    paths: () => getFilePaths(c),
   };
 }
 

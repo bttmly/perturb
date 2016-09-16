@@ -3,6 +3,9 @@ import S = require("../mutators/_syntax");
 
 type LocationFilter = (m: MutantLocation) => boolean;
 
+// TODO -- this isn't properly filtering out require calls yet
+// we still see `var thing = require()` which we shouldn't
+// ... although they can only "fail" in modules with no tests at all
 const isStringRequire = R.allPass([
   R.propEq("type", S.CallExpression),
   R.pathEq(["callee", "name"], "require"),

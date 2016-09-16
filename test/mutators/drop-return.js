@@ -3,27 +3,24 @@ const helpers = require("../helpers");
 const mutatorByName = helpers.mutatorByName;
 const nodeFromCode = helpers.nodeFromCode;
 
-describe("drop-return", function () {
-  it("removes a return statement, leaving the argument", function () {
-    const node = nodeFromCode("function id (x) { return x; }").body.body[0];
-    expect(node.type).toEqual("ReturnStatement");
-    const m = mutatorByName("drop-return");
-    expect(node.argument).toExist();
-    const mutated = m.mutator(node);
-    expect(mutated.expression.type).toEqual("Identifier");
-    expect(mutated.expression.name).toEqual("x");
-  });
+const {testPlugin} = require("../helpers");
 
-  it("removes a return statement without an argument, replacing it with `void 0;`", function () {
-    const node = nodeFromCode("function id (x) { return; }").body.body[0];
-    expect(node.type).toEqual("ReturnStatement");
-    const m = mutatorByName("drop-return");
-    expect(node.argument).toNotExist();
-    const mutated = m.mutator(node);
-    expect(mutated.type).toEqual("UnaryExpression");
-    expect(mutated.operator).toEqual("void");
-    expect(mutated.argument.type).toEqual("Literal");
-    expect(mutated.argument.value).toEqual(0);
-    expect(mutated.prefix).toEqual(true);
-  });
-});
+const PLUGIN_NAME = "drop-return"
+
+const cases = [
+  {
+    descr: "removes a return statement, leaving the argument",
+    before: "function id(x){return f();}",
+    after: "function id(x){f();}",
+    // log: true,
+  },
+  {
+    descr: "removes a return statement, leaving the argument",
+    before: "function id(x){return;}",
+    after: "function id(x){(void 0)}",
+    // log: true,
+  },
+]
+
+describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)))
+

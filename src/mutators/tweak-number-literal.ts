@@ -17,7 +17,8 @@ export = <MutatorPlugin>{
   },
   mutator: function (node) {
     const {value} = <NumberLiteral>node;
-    return R.assoc("value", (value === 1 ? 0 : value + 1), node);
+    const newVal = value === 1 ? 0 : value + 1;
+    return R.merge(node, { value: newVal, raw: String(newVal) });
   },
 };
 

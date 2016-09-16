@@ -1,10 +1,13 @@
 import R = require("ramda");
 
-const PERTURB_ENABLE = "perturb-enable:";
-const PERTURB_DISABLE = "perturb-disable:";
+const ENABLING_COMMENT = "perturb-enable:";
+const DISABLING_COMMENT = "perturb-disable:";
+
+const ENABLE = Symbol("ENABLE");
+const DISABLE = Symbol("DISABLE");
 
 interface Operator {
-  type: string;
+  type: symbol;
   name: string;
 }
 
@@ -22,9 +25,9 @@ interface CommentedNode extends ESTree.Node {
 function extractOperators (c: Comment) {
   const value = c.value.trim();
 
-  const type = value.startsWith(PERTURB_ENABLE) ?
-    "enable" : value.startsWith(PERTURB_DISABLE) ?
-    "disable" : null;
+  const type = value.startsWith(ENABLING_COMMENT) ?
+    ENABLE : value.startsWith(DISABLING_COMMENT) ?
+    DISABLE : null;
 
   if (type == null) return [];
 
@@ -45,7 +48,6 @@ function getComments (node: CommentedNode) {
   );
 }
 
-
 // a little class to encapsulate how mutators get enabled/disabled
 class CommentManager {
   _disabled: Set<string>;
@@ -54,42 +56,33 @@ class CommentManager {
     this._disabled = set || new Set<string>();
   }
 
-  applyLeading (node: CommentedNode) {
-    return this._applyComments(node.leadingComments || []);
+  applyLeading = (node: CommentedNode) => {
+    this._applyComments(node.leadingComments || []);
   }
 
-  applyTrailing (node: CommentedNode) {
-    return this._applyComments(node.trailingComments || []);
+  applyTrailing = (node: CommentedNode) => {
+    this._applyComments(node.trailingComments || []);
   }
+
+  isDisabled = (name: string) => this._disabled.has(name);
+
+  isEnabled = (name: string) => !this.isDisabled(name);
+
+  toArray = () => [...this._disabled];
 
   _applyComments (cs: Comment[]) {
-    return R.chain(extractOperators, cs)
-      .forEach(this._applyOperator)
+    R.chain(extractOperators, cs).forEach(op => this._applyOperator(op))
   }
 
-  _applyOperator = (op: Operator) => {
+  _applyOperator (op: Operator) {
     switch (op.type) {
-      case "enable": {
-        this._disabled.delete(op.name);
-        return;
+      case ENABLE: {
+        this._disabled.delete(op.name); break;
       }
-      case "disable": {
-        this._disabled.add(op.name);
-        return;
+      case DISABLE: {
+        this._disabled.add(op.name); break;
       }
     }
-  }
-
-  isEnabled = (name: string) => {
-    return !this._disabled.has(name);
-  }
-
-  isDisabled = (name: string) => {
-    return this._disabled.has(name);
-  }
-
-  toArray () {
-    return [...this._disabled];
   }
 }
 

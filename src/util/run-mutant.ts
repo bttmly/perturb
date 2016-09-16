@@ -5,3 +5,12 @@ export = function runMutant (runner: RunnerPlugin, mutant: Mutant) {
         .finally(() => runner.cleanup(mutant, before))
     });
 }
+
+// async function runMutant (runner: RunnerPlugin, mutant: Mutant) {
+//   const before = await runner.setup(mutant);
+//   try {
+//     await runner.run(mutant);
+//   } finally {
+//     await runner.cleanup(mutant, before);
+//   }
+// }

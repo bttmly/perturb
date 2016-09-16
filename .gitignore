@@ -36,3 +36,4 @@ typings
 lib
 built
 logs
+run-record.json
