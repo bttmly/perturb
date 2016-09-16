@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
-"use strict";
-
-Error.stackTraceLimit = Infinity;
+throw new Error("The CLI is currently out of sync with the library :( -- use the library directly");
 
 var exec = require("child_process").exec;
 var path = require("path");
@@ -15,6 +13,8 @@ var omitUndefined = require("../lib/util/omit-undefined");
 var MESSAGES = require("../lib/constant/messages");
 
 var pkg = require("../package.json");
+
+
 
 program
   .version(pkg.version)

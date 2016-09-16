@@ -30,11 +30,9 @@ _Within a project for programmatic use or for `package.json` scripts_
 > "Mutation testing is used to design new software tests and evaluate the quality of existing software tests. Mutation testing involves modifying a program in small ways." 
 [Source](http://en.wikipedia.org/wiki/Mutation_testing)
 
-Perturb takes your source code, parses the [AST](http://en.wikipedia.org/wiki/Abstract_syntax_tree), generates mutations, and runs your test suite against them. If all your tests pass when run against a mutant, you probably missed a test. It is currently optimized for projects in which there is a 1:1 correlation between source and test files.
+Perturb takes your source code, parses the [AST](http://en.wikipedia.org/wiki/Abstract_syntax_tree), generates mutations, and runs your test suite against them. If all your tests pass when run against a mutant, you probably missed a test.
 
 Mutation testing is different from and generally more comprehensive than code coverage metrics. Unit tests are one way way of specifying the behavior of software. If a mutation is not covered by a unit test, then that aspect of the program is unspecified. 
 
 ## Stability Disclaimer
-This project is in very early development, and should be considered _experimental_. It "works", but there are a ton of issues to address and core features to add. The configuration API (the only public interface to `perturb`) is subject to breaking changes. Any and all ideas, suggestions, contributions welcome. Just open an [issue](https://github.com/nickb1080/perturb/issues) or a [pull request](https://github.com/nickb1080/perturb/pulls).
-
-
+This project is in rapid development, and should be considered _experimental_. It "works" -- sort of.

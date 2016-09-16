@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+throw new Error("The CLI is currently out of sync with the library :( -- use the library directly");
+
 // shamelessly appropriated from mocha
 
 "use strict";

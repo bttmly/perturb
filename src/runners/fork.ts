@@ -20,11 +20,17 @@ export = <RunnerPlugin>{
     const args = [ fileLocation ];
     const opts = {
       silent: true,
-      env: { PERTURB_FORK_RUNNER: "require" },
+      // silent: false,
+      env: {
+        // TODO -- configurable!
+        PERTURB_FORK_RUNNER: "require",
+        DEBUG: process.env.DEBUG,
+      },
     };
     
-    // using a temp file otherwise often hit E2BIG trying to pass
-    // in an entire mutant object as a command line argument
+    // can't pass the serialzed mutant as a command line argument,
+    // it's wayyy too big, so write it to disk and the child will
+    // pick it up from there
     fs.writeFileSync(fileLocation, JSON.stringify(m));
 
     const child = cp.fork(__filename, args, opts);
@@ -63,18 +69,16 @@ export = <RunnerPlugin>{
 
 async function childRunner (name) {
   debug("looking for mutant json file at", process.argv[2], "...");
-
+  debug("getting mutator", name);
+ 
   const mutant: Mutant = require(process.argv[2])
   const runner: RunnerPlugin = require("./")(name);
-  const result = await runMutant(runner, mutant);
-
-  const message = result.error == null ?
-    {} : { error: runnerUtils.makeErrorSerializable(result.error) }
-
-  if (process.send != null) {
-    process.send(JSON.stringify(message));  
+  try {
+    const result = await runMutant(runner, mutant);
+    sendError(result.error);
+  } catch (e) {
+    sendError(e);
   }
-  
   return null;
 }
 
@@ -82,6 +86,25 @@ if (process.env.PERTURB_FORK_RUNNER) {
   childRunner(process.env.PERTURB_FORK_RUNNER);
 }
 
+function sendError (err) {
+  const message = err == null ?
+    {} : { error: runnerUtils.makeErrorSerializable(err) }
+
+  if (process.send == null) {
+    throw new Error("Tried to call process.send() not in child!");
+  }
+
+  process.send(JSON.stringify(message));
+}
+
 function tempFileLocation () {
-  return path.join(os.tmpdir(), "perturb-fork-mutant.json"); 
+  const id = Math.random().toString(16).slice(2);
+  return path.join(os.tmpdir(), `perturb-fork-mutant-${id}.json`); 
+}
+
+Promise.prototype.finally = function (cb) {
+  return this.then(
+    value => this.constructor.resolve(cb()).then(() => value),
+    reason => this.constructor.resolve(cb()).then(() => { throw reason; })
+  );
 }

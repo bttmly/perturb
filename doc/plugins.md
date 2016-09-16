@@ -60,7 +60,7 @@ interface RunnerPlugin {
 A runner plugin describes how to run a single mutation. As such, it needs to understand how to work with the test harness used by the project. A runner plugin has the following properties:
 
 - `name`: a unique string name
-- `setup`: a function which sets up the run. In nearly every case, this function should write out the mutated source code to a file (unless you're doing something [exotic]()), but it can also do all kinds of other stuff, such as working with the `require` cache if the run is done in-process. It returns a promise, the result of which will be threaded back into the `cleanup` method.
+- `setup`: a function which sets up the run. In nearly every case, this function should write out the mutated source code to a file (unless you're doing something [exotic](https://github.com/nickb1080/intercept-require)), but it can also do all kinds of other stuff, such as working with the `require` cache if the runner is operating in-process. It returns a promise, the result of which will be threaded back into the `cleanup` method.
 - `run`: a function which actually executes the tests over the given mutated source file. It returns a "RunnerResult", which is essentially a Mutant with an optional `error` field.
 - `cleanup`: a function which cleans up whatever side effects the `setup` and `run` functions had. Often this involves rewriting the source file to its original value. It might also operate on the `require` cache or do other sorts of housekeeping.
 

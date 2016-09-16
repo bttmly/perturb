@@ -131,6 +131,7 @@ function spawnP (fullCommand: string): Promise<void> {
   });
 }
 
+// TODO -- remove this, use Bluebird or something
 Promise.prototype.finally = function (cb) {
   return this.then(
     value => this.constructor.resolve(cb()).then(() => value),
