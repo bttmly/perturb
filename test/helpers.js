@@ -113,7 +113,7 @@ function mutateAndCompare ({before, after, name, log}) {
   }
 
   before = String(before);
-  after = String(after);
+  if (!Array.isArray(after)) after = String(after);
 
   const ast = nodeFromCode(before);
   const paths = [];
@@ -146,7 +146,24 @@ function mutateAndCompare ({before, after, name, log}) {
   const mut = plugin.mutator(node)
 
   if (Array.isArray(mut)) {
-    throw new Error(`mutator plugin testing helper does not support multiple return mutators (yet)`)
+    if (!Array.isArray(after)) {
+      throw new Error("if mutator returns multiple, after must be an array" + after);
+    }
+
+    const uniqued = [...new Set(after)];
+    if (uniqued.length !== after.length) {
+      throw new Error("Passed duplicate strings in `after` array");
+    }
+
+    const newCodes = new Array(mut.length)
+      .fill(ast)
+      .map((ast, i) => path === EMPTY_PATH ? mut[i] :  updateIn(path, mut[i], ast))
+      .map(newAst => escodegen.generate(newAst, GEN_OPTS));
+
+    after.every(function (single) {
+      expect(newCodes).toContain(single);
+    });
+    return;
   }
 
   if (log) {

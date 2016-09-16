@@ -3,17 +3,12 @@ import S = require("../mutators/_syntax");
 
 type LocationFilter = (m: MutantLocation) => boolean;
 
-// TODO -- this isn't properly filtering out require calls yet
-// we still see `var thing = require()` which we shouldn't
-// ... although they can only "fail" in modules with no tests at all
 const isStringRequire = R.allPass([
   R.propEq("type", S.CallExpression),
   R.pathEq(["callee", "name"], "require"),
   R.pathEq(["arguments", "length"], 1),
   R.pathEq(["arguments", "0", "type"], S.Literal),
-  // Ramda typings don't have R.pathSatisfies, but when they do:
-  // R.pathSatisfies(R.is(String), ["arguments", "0", "type"])
-  n => R.path(["arguments", "0", "type"], n) === "string"
+  n => typeof R.path(["arguments", "0", "value"], n) === "string"
 ]);
 
 const isUseStrict = R.allPass([
@@ -28,15 +23,16 @@ const filters: LocationFilter [] = [
 
 export = R.allPass(filters);
 
-// export function inject (name) {
-//   let plugin: LocationFilter;
-//   try {
-//     plugin = require(`perturb-plugin-skipper-${name}`);
-//     filters.push(plugin);
-//   } catch (err) {
-//     // any way to recover? other locate strategy?
-//     console.log(`unable to locate -FILTER- plugin "${name}" -- fatal error, exiting`);
-//     throw err;
-//   }
-// }
+// TODO -- how to expose this?
+function inject (name) {
+  let plugin: LocationFilter;
+  try {
+    plugin = require(`perturb-plugin-skipper-${name}`);
+    filters.push(plugin);
+  } catch (err) {
+    // any way to recover? other locate strategy?
+    console.log(`unable to locate -FILTER- plugin "${name}" -- fatal error, exiting`);
+    throw err;
+  }
+}
 

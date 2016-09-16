@@ -1,15 +1,15 @@
 const {testPlugin} = require("../helpers");
 
-const PLUGIN_NAME = "tweak-object-literal";
+const PLUGIN_NAME = "tweak-arguments";
 
 const cases = [
   {
     descr: "drops each member of an object",
-    before: "({a:1,b:2,c:3})",
+    before: "f(a,b,c);",
     after: [
-      "({b:2,c:3});",
-      "({a:1,c:3});",
-      "({a:1,b:2});",
+      "f(b,c);",
+      "f(a,c);",
+      "f(a,b);",
     ],
   },
 ];
