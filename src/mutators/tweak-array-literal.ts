@@ -7,9 +7,6 @@ export = <MutatorPlugin>{
   // `['a', 'b']` => `['a']`
   name: "tweak-array-literal",
   nodeTypes: [S.ArrayExpression],
-  filter: function (node) {
-    return R.path(["elements", "length"], node) !== 0;
-  },
   mutator: function (node) {
     return dropEachOfProp("elements", node);
   },

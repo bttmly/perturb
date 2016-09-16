@@ -2,7 +2,6 @@ const expect = require("expect");
 
 const updateIn = require("../../built/util/update-in");
 
-// path val target
 describe("updateIn", () => {
 
   const other = {};
@@ -22,4 +21,16 @@ describe("updateIn", () => {
     expect(updated.d).toEqual(other);
   });
 
+  it("returns the object unchanged when path length is zero", () => {
+    const target = {};
+    const updated = updateIn([], null, target);
+    expect(target).toBe(updated);
+  });
+
+  it("does the path length 1 case properly", () => {
+    const target = {a: 1, b: other};
+    const updated = updateIn(["a"], 2, target);
+    expect(updated.a).toBe(2);
+    expect(updated.b).toBe(other);
+  });
 });

@@ -12,6 +12,11 @@ const cases = [
       "switch(x){case 1:break;case 2:break;}",
     ],
   },
+    {
+    descr: "noop on empty switch",
+    before: "switch(x){}",
+    after: [],
+  },
 ];
 
 describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));

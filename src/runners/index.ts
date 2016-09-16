@@ -8,29 +8,20 @@ const plugins = new Map<string, RunnerPlugin>([
   [ forkRunner.name, forkRunner ],
 ]);
 
-// TODO -- how to expose this?
-function injectPlugin (name) {
-  let plugin: RunnerPlugin;
-  try {
-    plugin = require(`perturb-plugin-runner-${name}`);
-    plugins.set(name, plugin);
-    return;
-  } catch (err) {
-    // any way to recover? other locate strategy?
-    console.log(`unable to locate -RUNNER- plugin "${name}" -- fatal error, exiting`);
-    throw err;
-  }
-}
-
+// since we only accept a single runner plugin, there's no compelling reason to provide
+// a hook for injecting them at runtime. If you want to use a custom one, pass it directly.
 export = function get (input: string | RunnerPlugin): RunnerPlugin {
-  if (typeof input === "string") {
-    const runner = plugins.get(input);
-    if (runner == null) {
-      throw new Error(`unable to locate -RUNNER- plugin "${input}" -- fatal error, exiting`);
-    }
-    return runner;
-  } else {
+  if (typeof input !== "string") {
     return input;
+  }
+
+  const str = <string>input;
+  if (plugins.has(str)) return <RunnerPlugin>plugins.get(str);
+
+  try {
+    return require(`perturb-plugin-runner-${str}`);
+  } catch (e) {
+    throw new Error(`unable to locate -RUNNER- plugin "${str}" -- fatal error, exiting`);
   }
 }
 

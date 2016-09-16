@@ -37,10 +37,10 @@ async function perturb (_cfg: PerturbConfig) {
 
   let start;
 
-  const testRun: Promise<void> = process.env.SKIP_TEST ? Promise.resolve() : runTest(cfg);
+  // const testRun: Promise<void> = process.env.SKIP_TEST ? Promise.resolve() : runTest(cfg);
 
   // first run the tests, otherwise why bother at all?
-  return testRun
+  return spawnP(cfg.testCmd)
     // then, set up the "shadow" file system that we'll work against
     .then(() => setup())
     // read those "shadow" directories and find the source and test files
@@ -105,10 +105,6 @@ function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
     reporter.onResult && reporter.onResult(result);
     return result;
   }
-}
-
-async function runTest (cfg: PerturbConfig) {
-  return await spawnP(cfg.testCmd);
 }
 
 // TODO -- what else? Any reason might want to serialize mutants here?

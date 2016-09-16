@@ -17,9 +17,6 @@ const FUNC_NODES = [
 export = <MutatorPlugin>{
   name: "reverse-function-parameters",
   nodeTypes: FUNC_NODES,
-  filter: function (node) {
-    return R.path(["params", "length"], node) > 1;
-  },
   mutator: function (node) {
     const params = (<FunctionNode>node).params.slice().reverse();
     return R.assoc("params", params, node);
