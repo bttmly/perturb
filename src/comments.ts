@@ -1,4 +1,5 @@
 import R = require("ramda");
+const debug = require("debug")("comments");
 
 const ENABLING_COMMENT = "perturb-enable:";
 const DISABLING_COMMENT = "perturb-disable:";
@@ -77,9 +78,11 @@ class CommentManager {
   _applyOperator (op: Operator) {
     switch (op.type) {
       case ENABLE: {
+        debug("enabling", op.name);
         this._disabled.delete(op.name); break;
       }
       case DISABLE: {
+        debug("disabling", op.name);
         this._disabled.add(op.name); break;
       }
     }

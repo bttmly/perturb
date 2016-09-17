@@ -7,6 +7,9 @@ export = <MutatorPlugin>{
   // `{prop1: "val1", prop2: "val2"}` => `{prop2: "val2"}`
   name: "tweak-object-literal",
   nodeTypes: [S.ObjectExpression],
+  filter: function (node) {
+    return R.path(["properties", "length"], node) !== 0;
+  },
   mutator: function (node): ESTree.Node[] {
     return dropEachOfProp("properties", node);
   },
