@@ -14,7 +14,7 @@ function locateMutants (mutatorsForNode: PluginService, ast: ESTree.Node): Mutan
 
   estraverse.traverse(ast, {
     enter (node: ESTree.Node) {
-      // debug("enter", node.type);
+      debug("enter", node.type);
       manager.applyLeading(node);
       const path: string[] = this.path();
       const locations = mutatorsForNode(node)

@@ -54,10 +54,10 @@ const withComments = esprima.parse(`
 
   if (x) {}
 
-  // perturb-disable: noop-mutator
+  // perturb-disable: mock-mutator
   if (y) { if (z) {} }
 
-  // perturb-enable: noop-mutator
+  // perturb-enable: mock-mutator
 
   if (z) {}
 `, ESPRIMA_SETTINGS);

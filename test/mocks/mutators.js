@@ -1,12 +1,17 @@
 function createNoopMutator (nodeTypes, filter) {
+  return createMutator(nodeTypes, x => x, filter);
+}
+
+function createMutator (nodeTypes, mutator, filter) {
   return {
-    name: "noop-mutator",
+    name: "mock-mutator",
     nodeTypes,
     filter,
-    mutator (node) { return node; },
+    mutator,
   }
 }
 
+// this is a bad name
 function createMutatorLocator (mutators) {
   const index = {};
   mutators.forEach(m => {
@@ -17,8 +22,17 @@ function createMutatorLocator (mutators) {
   });
 
   return function (node) {
-    return index[node.type] || [];
+    var result = index[node.type] || [];
+    console.log("locator:", node.type, result);
+    return result;
   }
 }
 
-module.exports = { createNoopMutator, createMutatorLocator }
+const createPluginService = createMutatorLocator;
+
+module.exports = {
+  createNoopMutator,
+  createMutator,
+  createMutatorLocator,
+  createPluginService,
+}
