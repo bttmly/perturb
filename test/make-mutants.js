@@ -30,6 +30,16 @@ describe("makeMutants", function () {
     expect(withNotY.length).toBe(1);
     withNotZ = mutants.filter(m => m.mutatedSourceCode.includes("!z"))
     expect(withNotZ.length).toBe(2);
+
+    expect(mutants[0].sourceFile).toEqual("")
+    expect(mutants[0].testFiles).toEqual([""])
+    expect(mutants[0].path).toEqual(["body", 1])
+    expect(mutants[0].mutatorName).toEqual("invert-conditional-test");
+    expect(mutants[0].astAfter).toBeA(Object);
+    expect(mutants[0].astBefore).toBeA(Object);
+    expect(mutants[0].loc).toBeA(Object);
+    expect(mutants[0].originalSourceCode).toBeA("string");
+    expect(mutants[0].mutatedSourceCode).toBeA("string");
   });
 
 });

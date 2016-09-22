@@ -16,9 +16,15 @@ const isUseStrict = R.allPass([
   R.pathEq(["expression", "value"], "use strict"),
 ]);
 
+// const isCallOfName = (name: string) => R.allPass([
+//   R.pathEq(["expression", "callee", "type"], "Identifier"),
+//   R.pathEq(["expression", "callee", "name"], name),
+// ]);
+
 const filters: LocationFilter [] = [
   (m: MutantLocation) => !isUseStrict(m.node),
   (m: MutantLocation) => !isStringRequire(m.node),
+  // (m: MutantLocation) => !isCallOfName("debug")(m.node),
 ];
 
 export = R.allPass(filters);

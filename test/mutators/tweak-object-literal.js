@@ -12,6 +12,11 @@ const cases = [
       "({a:1,b:2});",
     ],
   },
+  // {
+  //   descr: "drops each member of an object",
+  //   before: "({})",
+  //   after: "({});",
+  // },
 ];
 
 describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));

@@ -8,17 +8,11 @@ import voidNode = require("./_void-node");
 export = <MutatorPlugin>{
   name: "drop-void-call",
   nodeTypes: [S.ExpressionStatement],
-  filter (node) {
-    if (R.path(["expression", "type"], node) !== S.CallExpression) {
-      return false;
-    }
-
-    // skip method calls of objects since often called for side effects on `this`
-    if (R.path(["expression", "callee", "type"], node) !== S.Identifier) {
-      return false;
-    }
-
-    return true;
-  },
-  mutator: function () { return voidNode },
+  filter: R.both(
+    R.pathEq(["expression", "type"], S.CallExpression),
+    R.pathEq(["expression", "callee", "type"], S.Identifier)
+  ),
+  mutator: R.always(voidNode),
 };
+
+

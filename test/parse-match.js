@@ -3,6 +3,7 @@ const esprima = require("esprima");
 const escodegen = require("escodegen");
 const expect = require("expect");
 
+
 const mocks = require("./mocks/mutators");
 const invertMutator = require("../built/mutators/invert-conditional-test");
 const parseMatch = require("../built/parse-match");
@@ -20,15 +21,20 @@ describe("parseMatch", function () {
       sourceCode: source,
     };
     const parsedMatch = parseMatch(locator, match);
-    expect(parsedMatch.locations.length).toBe(4);
+    expect(match).toNotBe(parsedMatch); // no mutation
+    expect(parsedMatch.source).toBe(match.source);
+    expect(parsedMatch.tests).toBe(match.tests);
+    expect(parsedMatch.sourceCode).toBe(match.sourceCode);
+    expect(parsedMatch.locations.length).toBe(2);
+    expect(parsedMatch.ast).toBeA(Object);
+    expect(parsedMatch.code).toBeA("string");
+    expect(parsedMatch.locations[0].node.loc).toBeA(Object);
   });
 
 });
 
-
 const ESPRIMA_SETTINGS = {
   loc: true,
-  comment: true,
   attachComment: true,
 };
 
@@ -37,7 +43,9 @@ const source = `
 
   if (x) {}
 
+  // perturb-disable: invert-conditional-test
   if (y) { if (z) {} }
+  // perturb-enable: invert-conditional-test
 
   if (z) {}
 `;

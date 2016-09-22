@@ -1,5 +1,6 @@
 import R = require("ramda");
 import S = require("./_syntax");
+import util = require("./util");
 
 const AND = "&&";
 const OR = "||";
@@ -10,9 +11,5 @@ const OR = "||";
 export = <MutatorPlugin>{
   name: "swap-logical-operators",
   nodeTypes: [S.LogicalExpression],
-  mutator: function (node) {
-    const prevOp = <string>R.prop("operator", node);
-    const newOp = (prevOp === AND ? OR : AND);
-    return R.assoc("operator", newOp, node);
-  },
+  mutator: util.update("operator", op => op === AND ? OR : AND)
 };

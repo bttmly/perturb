@@ -9,8 +9,9 @@ import R = require("ramda");
 
 // will be helpful in testing removing each item from an object's property
 
-export = function dropEachOfProp (key, obj) {
+export = R.curry(function dropEachOfProp (key: any, obj) {
   return obj[key].map(function (_, i) {
     return R.assoc(key, R.remove(i, 1, obj[key]), obj);
   });
-}
+});
+

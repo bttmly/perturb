@@ -1,6 +1,7 @@
 import R = require("ramda");
 import S = require("./_syntax");
 import voidNode = require("./_void-node");
+import util = require("./util");
 
 interface TestNode extends ESTree.Node {
   test: ESTree.Node
@@ -26,16 +27,12 @@ const TEST_NODES = [
 export = <MutatorPlugin>{
   name: "invert-conditional-test",
   nodeTypes: TEST_NODES,
-  filter: function (node) {
-    // using prop() over has() ensures it isn't null (switch case `default`!)
-    return Boolean(R.prop("test", node));
-  },
-  mutator: function (node) {
-    const testNode = <TestNode>node;
-    return R.assoc("test", <ESTree.UnaryExpression>{
+  filter: R.pipe(R.prop("test"), Boolean),
+  mutator: util.update(
+    "test", test => ({
       type: S.UnaryExpression,
       operator: BANG,
-      argument: testNode.test,
-    }, testNode);
-  },
+      argument: test
+    })
+  )
 };

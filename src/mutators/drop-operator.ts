@@ -1,3 +1,4 @@
+import R = require("ramda");
 import S = require("./_syntax");
 
 // throw new Error(); => new Error();
@@ -15,7 +16,5 @@ export = <MutatorPlugin>{
     S.ThrowStatement,
     S.UnaryExpression,
   ],
-  mutator: function (node) {
-    return (<ArgumentedNode>node).argument;
-  },
+  mutator: R.prop("argument"),
 };

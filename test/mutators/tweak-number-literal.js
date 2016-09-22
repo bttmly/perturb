@@ -13,6 +13,7 @@ const beforeToAfter = [
   [-1, "-0;"],
   [-99, "-100;"],
   [99, "100;"],
+  ["'str';", "'str';"],
 ];
 
 function makeCasesFromArray (arr) {

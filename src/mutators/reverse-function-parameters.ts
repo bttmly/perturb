@@ -1,6 +1,7 @@
 import R = require("ramda");
 import S = require("./_syntax");
 import voidNode = require("./_void-node");
+import util = require("./util");
 
 interface FunctionNode extends ESTree.Node {
   params: ESTree.Identifier[];
@@ -17,8 +18,8 @@ const FUNC_NODES = [
 export = <MutatorPlugin>{
   name: "reverse-function-parameters",
   nodeTypes: FUNC_NODES,
-  mutator: function (node) {
-    const params = (<FunctionNode>node).params.slice().reverse();
-    return R.assoc("params", params, node);
-  },
+  filter: R.pipe(R.path(["params", "length"]), R.flip(R.gt)(1)),
+  mutator: util.update("params", ps => ps.slice().reverse()),
 };
+
+

@@ -11,10 +11,7 @@ export = <MutatorPlugin>{
   // `var num = 1;` => `var num = 0;`
   name: "tweak-number-literal",
   nodeTypes: [S.Literal],
-  filter: function (node) {
-    const {value} = (<ESTree.Literal>node);
-    return typeof value === "number";
-  },
+  filter: R.pipe(R.prop("value"), R.is(Number)),
   mutator: function (node) {
     const {value} = <NumberLiteral>node;
     const newVal = value === 1 ? 0 : value + 1;

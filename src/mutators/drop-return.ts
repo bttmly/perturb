@@ -14,18 +14,14 @@ interface MaybeArgumentedNode extends ESTree.Node {
 export = <MutatorPlugin>{
   name: "drop-return",
   nodeTypes: [S.ReturnStatement],
-  mutator: function (node: MaybeArgumentedNode) {
-    if (node.argument == null) return voidNode;
-    // return <ESTree.ExpressionStatement>{
-    //   type: S.ExpressionStatement,
-    //   expression: node.argument,
-    // }
-    const newNode = {
+  mutator: R.ifElse(
+    node => node.argument == null,
+    () => voidNode,
+    node => ({
       type: S.ExpressionStatement,
       expression: node.argument,
-    }
-
-    return newNode;
-  },
+    })
+  ),
 };
+
 

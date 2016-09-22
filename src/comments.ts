@@ -42,13 +42,6 @@ function extractOperators (c: Comment) {
   )(value);
 }
 
-function getComments (node: CommentedNode) {
-  return (new Array<Comment>()).concat(
-    node.leadingComments || [],
-    node.trailingComments || []
-  );
-}
-
 // a little class to encapsulate how mutators get enabled/disabled
 class CommentManager {
   _disabled: Set<string>;

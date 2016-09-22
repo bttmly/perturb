@@ -13,6 +13,11 @@ const cases = [
     before: "true;",
     after: "false;",
   },
+  {
+    descr: "doesn't change strings",
+    before: "'str';",
+    after: "'str';",
+  },
 ];
 
 describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));

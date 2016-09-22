@@ -6,10 +6,6 @@ import S = require("./_syntax");
 export = <MutatorPlugin>{
   name: "drop-member-assignment",
   nodeTypes: [S.AssignmentExpression],
-  filter: function (node) {
-    return R.path(["left", "type"], node) === S.MemberExpression
-  },
-  mutator: function (node) {
-    return (<ESTree.AssignmentExpression>node).left;
-  },
+  filter: R.pathEq(["left", "type"], S.MemberExpression),
+  mutator: R.prop("left"),
 };

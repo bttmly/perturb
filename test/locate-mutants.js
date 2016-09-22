@@ -13,6 +13,7 @@ describe("locateMutants", function () {
     const locations = locateMutants(locator, simple);
     expect(locations.length).toBe(4);
     locations.every(l => expect(l.node.type).toBe(S.IfStatement));
+    locations.every(l => expect(l.mutator).toBeA(Object));
   });
 
   it("applies the filter if present", function () {
@@ -22,6 +23,7 @@ describe("locateMutants", function () {
     const locations = locateMutants(locator, simple);
     expect(locations.length).toBe(2); // two nodes filtered out
     locations.every(l => expect(l.node.type).toBe(S.IfStatement));
+    locations.every(l => expect(l.mutator).toBeA(Object));
   });
 
   it("honors enable/disable comments", function () {
@@ -30,6 +32,7 @@ describe("locateMutants", function () {
     const locations = locateMutants(locator, withComments);
     expect(locations.length).toBe(2);
     locations.every(l => expect(l.node.type).toBe(S.IfStatement));
+    locations.every(l => expect(l.mutator).toBeA(Object));
   });
 });
 

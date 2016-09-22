@@ -5,7 +5,6 @@ import * as escodegen from "escodegen";
 
 const ESPRIMA_SETTINGS = {
   loc: true,
-  comment: true,
   attachComment: true,
 };
 

@@ -63,4 +63,15 @@ describe("CommentManager", function () {
     `,
   });
 
+  createTest({
+    title: "other comments are ok",
+    expected: ["b", "c"],
+    code: `
+      // perturb-disable: a,b,,c
+      // a red herring: a,b,,c
+      const x = 1;
+      // perturb-enable: a
+    `,
+  });
+
 });

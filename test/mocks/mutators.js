@@ -23,7 +23,7 @@ function createMutatorLocator (mutators) {
 
   return function (node) {
     var result = index[node.type] || [];
-    console.log("locator:", node.type, result);
+    // console.log("locator:", node.type, result);
     return result;
   }
 }
