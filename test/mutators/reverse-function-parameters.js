@@ -1,5 +1,3 @@
-const {testPlugin} = require("../helpers");
-
 const PLUGIN_NAME = "reverse-function-parameters";
 
 const cases = [
@@ -19,10 +17,15 @@ const cases = [
     after: "const x=(c,b,a)=>{};",
   },
   {
+    descr: "doesn't do anything to a unary function",
+    before: "function x(a){}",
+    noMatch: true,
+  },
+  {
     descr: "doesn't do anything to a nullary function",
     before: "function x(){}",
-    after: "function x(){}",
+    noMatch: true,
   },
 ];
 
-describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));
+testMutator(PLUGIN_NAME, cases);

@@ -30,14 +30,13 @@ function assocPath(path: Prop[], val: any, target: Target): Target {
     case 1:
       return assoc(path[0], val, target);
     default:
+      const [first, ...rest] = path;
       return assoc(
-        path[0],
-        assocPath(path.slice(1), val, target[path[0]]),
+        first,
+        assocPath(rest, val, target[first]),
         target
       );
   }
 }
 
 export = R.curry(assocPath);
-
-

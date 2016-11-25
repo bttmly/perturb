@@ -1,9 +1,10 @@
 import R = require("ramda");
 import S = require("./_syntax");
+import util = require("./util");
 
-interface NumberLiteral extends ESTree.Literal {
-  value: number;
-}
+// interface NumberLiteral extends ESTree.Literal {
+//   value: number;
+// }
 
 export = <MutatorPlugin>{
   // adds 1 to any number literal OR replaces 1 with 0
@@ -12,10 +13,17 @@ export = <MutatorPlugin>{
   name: "tweak-number-literal",
   nodeTypes: [S.Literal],
   filter: R.pipe(R.prop("value"), R.is(Number)),
-  mutator: function (node) {
-    const {value} = <NumberLiteral>node;
-    const newVal = value === 1 ? 0 : value + 1;
-    return R.merge(node, { value: newVal, raw: String(newVal) });
-  },
+  mutator (node) {
+    const value = <number>R.prop("value", node);
+
+    if (value === 1) {
+      return [
+        R.assoc("value", 0, node),
+        R.assoc("value", 2, node),
+      ];
+    }
+
+    return R.assoc("value", value + 1, node);
+  }
 };
 

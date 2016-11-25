@@ -1,10 +1,3 @@
-const expect = require("expect");
-const helpers = require("../helpers");
-const mutatorByName = helpers.mutatorByName;
-const nodeFromCode = helpers.nodeFromCode;
-
-const {testPlugin} = require("../helpers");
-
 const PLUGIN_NAME = "drop-return"
 
 const cases = [
@@ -20,7 +13,6 @@ const cases = [
     after: "function id(x){(void 0)}",
     // log: true,
   },
-]
+];
 
-describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)))
-
+testMutator(PLUGIN_NAME, cases);

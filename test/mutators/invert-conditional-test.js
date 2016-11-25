@@ -1,5 +1,3 @@
-const {testPlugin} = require("../helpers");
-
 const PLUGIN_NAME = "invert-conditional-test";
 
 const cases = [
@@ -18,6 +16,16 @@ const cases = [
     before: "x?y:z;",
     after: "!x?y:z;",
   },
+  {
+    descr: "inverts switch cases",
+    before: "switch(x){case true:break;}",
+    after: "switch(x){case!true:break;}",
+  },
+  {
+    descr: "doesn't match a `default` case",
+    before: "switch(x){default:break;}",
+    noMatch: true,
+  },
 ];
 
-describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));
+testMutator(PLUGIN_NAME, cases);

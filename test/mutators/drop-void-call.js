@@ -1,5 +1,3 @@
-const {testPlugin} = require("../helpers");
-
 const PLUGIN_NAME = "drop-void-call";
 
 const voidNode = "void 0"
@@ -15,12 +13,12 @@ const cases = [
   }, {
     descr: "does not remove function call with assignment",
     before: withAssignment,
-    after: withAssignment,
+    noMatch: true,
   }, {
     descr: "does not remove method call",
     before: methodCall,
-    after: methodCall,
+    noMatch: true,
   },
 ];
 
-describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));
+testMutator(PLUGIN_NAME, cases);

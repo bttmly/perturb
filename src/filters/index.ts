@@ -41,4 +41,3 @@ function inject (name) {
     throw err;
   }
 }
-

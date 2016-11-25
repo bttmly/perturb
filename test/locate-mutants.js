@@ -21,7 +21,7 @@ describe("locateMutants", function () {
     const mutator = mocks.createNoopMutator([S.IfStatement], filter);
     const locator = mocks.createMutatorLocator([mutator]);
     const locations = locateMutants(locator, simple);
-    expect(locations.length).toBe(2); // two nodes filtered out
+    expect(locations.length).toBe(2); // two `if (z)` nodes filtered out
     locations.every(l => expect(l.node.type).toBe(S.IfStatement));
     locations.every(l => expect(l.mutator).toBeA(Object));
   });
@@ -30,7 +30,7 @@ describe("locateMutants", function () {
     const mutator = mocks.createNoopMutator([S.IfStatement]);
     const locator = mocks.createMutatorLocator([mutator]);
     const locations = locateMutants(locator, withComments);
-    expect(locations.length).toBe(2);
+    expect(locations.length).toBe(2); // two `if`s are in the disabled block
     locations.every(l => expect(l.node.type).toBe(S.IfStatement));
     locations.every(l => expect(l.mutator).toBeA(Object));
   });
@@ -59,7 +59,6 @@ const withComments = esprima.parse(`
 
   // perturb-disable: mock-mutator
   if (y) { if (z) {} }
-
   // perturb-enable: mock-mutator
 
   if (z) {}

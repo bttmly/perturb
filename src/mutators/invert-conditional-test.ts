@@ -27,7 +27,7 @@ const TEST_NODES = [
 export = <MutatorPlugin>{
   name: "invert-conditional-test",
   nodeTypes: TEST_NODES,
-  filter: R.pipe(R.prop("test"), Boolean),
+  filter: R.prop("test"),
   mutator: util.update(
     "test", test => ({
       type: S.UnaryExpression,

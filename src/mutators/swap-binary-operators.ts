@@ -5,9 +5,6 @@ import voidNode = require("./_void-node");
 
 const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
 
-// can we use a lens here?
-
-
 // swaps [+, -] and [*, /]
 // `age = age + 1;` => `age = age - 1;`
 // `var since = new Date() - start;` => `var since = new Date() + start;`
@@ -22,4 +19,3 @@ export = <MutatorPlugin>{
   ),
   mutator: util.update("operator", op => BINARY_OPERATOR_SWAPS[op])
 };
-

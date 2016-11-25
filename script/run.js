@@ -10,7 +10,7 @@ function run (perturb, which, runner) {
         sourceDir: "built",
         runner: runner || "mocha",
         reporter: "diff",
-        testCmd: "make test-bail",
+        testCmd: "make test",
       };
       break;
 
@@ -46,7 +46,7 @@ if (!module.parent) {
 
 // rethrowing it or exiting immediately seems to close the process before
 // the entire error stack gets printed. So let's ease it up a bit.
-process.on("unhandledRejection", err => { 
+process.on("unhandledRejection", err => {
   console.log(err);
   setTimeout(() => process.exit(1), 100);
 });

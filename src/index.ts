@@ -16,10 +16,6 @@ import locateMutants = require("./locate-mutants");
 import mutators = require("./mutators");
 import parseMatch = require("./parse-match");
 
-function hasTests (m: Match): boolean {
-  return Boolean(R.path(["tests", "length"], m));
-}
-
 const mapSeriesP = R.curry(R.flip(Bluebird.mapSeries));
 
 async function perturb (_cfg: PerturbConfig) {
@@ -35,68 +31,71 @@ async function perturb (_cfg: PerturbConfig) {
   const handler = makeMutantHandler(runner, reporter);
   const locator = locateMutants(mutators.getMutatorsForNode);
 
-  let start;
-
   // const testRun: Promise<void> = process.env.SKIP_TEST ? Promise.resolve() : runTest(cfg);
 
   // first run the tests, otherwise why bother at all?
-  return spawnP(cfg.testCmd)
+  await spawnP(cfg.testCmd);
+
+  try {
     // then, set up the "shadow" file system that we'll work against
-    .then(() => setup())
+    await setup();
+
     // read those "shadow" directories and find the source and test files
-    .then(() => paths())
+    const { sources, tests } = await paths();
+
     // use the matcher function to group {sourceFile, testFiles}
-    .then(function ({ sources, tests }) {
-      // TODO -- this section has become a catch-all for various crap that
-      // is actually orthogonal (tested/untested, start time, logging)
-      const matches = matcher(sources, tests);
+    // TODO -- this section has become a catch-all for various crap that
+    // is actually orthogonal (tested/untested, start time, logging)
+    const matches = matcher(sources, tests);
 
-      const [tested, untested] = R.partition(hasTests, matches);
+    const [ tested, untested ] = R.partition(hasTests, matches);
 
-      // TODO -- surface untested file names somehow
-      // console.log("untested files:", untested.map(m => m.source).join("\n"));
+    // TODO -- surface untested file names somehow
+    // console.log("untested files:", untested.map(m => m.source).join("\n"));
+    if (tested.length === 0) {
+      throw new Error("No matched files!");
+    }
 
-      if (tested.length === 0) {
-        throw new Error("No matched files!");
-      }
+    const parsedMatches = tested
+    .map(parseMatch(locator))
+    .map(pm => {
+      pm.locations = pm.locations.filter(locationFilter);
+      return pm;
+    });
 
-      const parsedMatches = tested
-        .map(parseMatch(locator))
-        .map(pm => {
-          pm.locations = pm.locations.filter(locationFilter);
-          return pm;
-        });
+    const start = Date.now();
 
-      start = Date.now();
-      return R.chain(makeMutants, parsedMatches);
-    })
-    .then(sanityCheckAndSideEffects)
+    // create the mutant objects from the matched files
+    let mutants = await R.chain(makeMutants, parsedMatches);
+
+    // let's just check if everything is okay...
+    await sanityCheckAndSideEffects(mutants)
+
+    if (process.env.SKIP_RUN) {
+      console.log("SKIP RUN:", mutants.length)
+      mutants = [];
+    }
+
     // run the mutatnts and gather the results
-    .then(function (ms: Mutant[]) {
-      if (process.env.SKIP_RUN) {
-        console.log("SKIP RUN:", ms.length)
-        return [];
-      }
+    const results: RunnerResult[] = await mapSeriesP(handler, mutants);
 
-      return mapSeriesP(handler, ms);
-    })
-    // run the final results handler, if supplied, then pass the results back
-    // to the caller
-    .then(function (rs: RunnerResult[]) {
-      // some run metadata here:
-      // duration: number
-      // runner: string
-      // sourceCount: number
+    const duration = (Date.now() - start) / 1000;
+    console.log("duration:", duration, "rate:", (results.length / duration), "/s");
 
-      const duration = (Date.now() - start) / 1000;
-      console.log("duration:", duration, "rate:", (rs.length / duration), "/s");
+    if (reporter.onFinish) {
+      reporter.onFinish(results);
+    }
 
-      if (reporter.onFinish) {
-        reporter.onFinish(rs);
-      }
-      return rs;
-    })
-    .finally(teardown)
+    // TODO -- provide some run metadata here:
+    // duration: number
+    // runner: string
+    // sourceCount: number
+
+    return results;
+
+  } finally {
+    await teardown();
+  }
 }
 
 function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
@@ -125,6 +124,10 @@ function spawnP (fullCommand: string): Promise<void> {
       code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
     });
   });
+}
+
+function hasTests (m: Match): boolean {
+  return Boolean(R.path(["tests", "length"], m));
 }
 
 // TODO -- remove this, use Bluebird or something

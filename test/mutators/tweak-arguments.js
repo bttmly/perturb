@@ -1,5 +1,3 @@
-const {testPlugin} = require("../helpers");
-
 const PLUGIN_NAME = "tweak-arguments";
 
 const cases = [
@@ -20,8 +18,8 @@ const cases = [
   {
     descr: "doesn't affect a nullary call",
     before: "f();",
-    after: "f();",
+    noMatch: true,
   },
 ];
 
-describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));
+testMutator(PLUGIN_NAME, cases);

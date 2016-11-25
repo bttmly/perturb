@@ -1,5 +1,3 @@
-const {testPlugin} = require("../helpers");
-
 const PLUGIN_NAME = "drop-member-assignment";
 
 const cases = [
@@ -11,8 +9,8 @@ const cases = [
   {
     descr: "regular assignments are ok",
     before: "x=z;",
-    after: "x=z;",
+    noMatch: true,
   },
 ];
 
-describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));
+testMutator(PLUGIN_NAME, cases);

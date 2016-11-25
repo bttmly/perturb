@@ -10,12 +10,12 @@ const coreMutators: MutatorPlugin[] = [
   require("./reverse-function-parameters"),
   require("./swap-binary-operators"),
   require("./swap-logical-operators"),
+  require("./tweak-arguments"),
   require("./tweak-array-literal"),
-  require("./tweak-object-literal"),
   require("./tweak-boolean-literal"),
   require("./tweak-number-literal"),
+  require("./tweak-object-literal"),
   // require("./tweak-string-literal"),
-  require("./tweak-arguments"),
   require("./tweak-switch"),
 ];
 
@@ -34,7 +34,7 @@ function isMutatorEnabled (m: MutatorPlugin): boolean {
 
 function makeMutatorIndex (names: string[]): MutatorIndex {
   const additionalMutators = locateMutatorPlugins(names);
-  
+
   activeMutators = coreMutators.concat(additionalMutators)
     .filter(m => Object.keys(m).length > 0) // HACK :!
     .filter(isMutatorEnabled);

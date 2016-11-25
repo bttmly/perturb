@@ -24,22 +24,27 @@ describe("makeMutants", function () {
     };
     const mutants = makeMutants(parsedMatch);
     expect(mutants.length).toBe(4);
-    withNotX = mutants.filter(m => m.mutatedSourceCode.includes("!x"))
+    const withNotX = mutants.filter(m => m.mutatedSourceCode.includes("!x"))
     expect(withNotX.length).toBe(1);
-    withNotY = mutants.filter(m => m.mutatedSourceCode.includes("!y"))
+    const withNotY = mutants.filter(m => m.mutatedSourceCode.includes("!y"))
     expect(withNotY.length).toBe(1);
-    withNotZ = mutants.filter(m => m.mutatedSourceCode.includes("!z"))
+    const withNotZ = mutants.filter(m => m.mutatedSourceCode.includes("!z"))
     expect(withNotZ.length).toBe(2);
 
-    expect(mutants[0].sourceFile).toEqual("")
-    expect(mutants[0].testFiles).toEqual([""])
-    expect(mutants[0].path).toEqual(["body", 1])
-    expect(mutants[0].mutatorName).toEqual("invert-conditional-test");
-    expect(mutants[0].astAfter).toBeA(Object);
-    expect(mutants[0].astBefore).toBeA(Object);
-    expect(mutants[0].loc).toBeA(Object);
-    expect(mutants[0].originalSourceCode).toBeA("string");
-    expect(mutants[0].mutatedSourceCode).toBeA("string");
+    // verify mutants are well formed
+    mutants.forEach(function (mutant) {
+      expect(mutant.sourceFile).toEqual("");
+      expect(mutant.testFiles).toEqual([""]);
+      expect(mutant.path[0]).toEqual("body");
+      // console.log(mutant.path);
+      expect(mutant.mutatorName).toEqual("invert-conditional-test");
+      expect(mutant.astAfter).toBeA(Object);
+      expect(mutant.astBefore).toBeA(Object);
+      expect(mutant.loc).toBeA(Object);
+      expect(mutant.originalSourceCode).toBeA("string");
+      expect(mutant.mutatedSourceCode).toBeA("string");
+    });
+
   });
 
 });
@@ -62,4 +67,3 @@ const source = `
 `;
 
 const ast = esprima.parse(source, ESPRIMA_SETTINGS);
-

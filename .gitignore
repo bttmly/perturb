@@ -30,7 +30,7 @@ node_modules
 .lock-wscript
 
 .perturb
-example/.DS_Store
+.DS_Store
 example/.perturb
 typings
 lib

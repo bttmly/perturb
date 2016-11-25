@@ -6,8 +6,8 @@ const { makeConfig } = require("../helpers");
 const plugin = require("../../built/matchers/contains-comparative");
 
 let config, matcher, perturbDir;
-describe("base-comparative matcher", function () {
-  
+describe("contains-comparative matcher", function () {
+
   beforeEach(function () {
     config = makeConfig();
     matcher = plugin.makeMatcher(config);

@@ -1,5 +1,3 @@
-const {testPlugin} = require("../helpers");
-
 const PLUGIN_NAME = "drop-operator";
 
 const cases = [
@@ -14,9 +12,19 @@ const cases = [
     after: "x();",
   },
   {
+    descr: "does not drop binary +",
+    before: "x+y",
+    noMatch: true,
+  },
+  {
     descr: "drops a unary -",
     before: "var x=-1;",
     after: "var x=1;",
+  },
+  {
+    descr: "does not drop binary -",
+    before: "x-y",
+    noMatch: true,
   },
   {
     descr: "drops a `delete`",
@@ -35,4 +43,4 @@ const cases = [
   },
 ];
 
-describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));
+testMutator(PLUGIN_NAME, cases);

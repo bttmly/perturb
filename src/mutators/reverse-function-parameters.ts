@@ -3,10 +3,6 @@ import S = require("./_syntax");
 import voidNode = require("./_void-node");
 import util = require("./util");
 
-interface FunctionNode extends ESTree.Node {
-  params: ESTree.Identifier[];
-}
-
 const FUNC_NODES = [
   S.FunctionDeclaration,
   S.FunctionExpression,
@@ -18,8 +14,6 @@ const FUNC_NODES = [
 export = <MutatorPlugin>{
   name: "reverse-function-parameters",
   nodeTypes: FUNC_NODES,
-  filter: R.pipe(R.path(["params", "length"]), R.flip(R.gt)(1)),
+  filter: util.lengthAtPropGreaterThan("params", 1),
   mutator: util.update("params", ps => ps.slice().reverse()),
 };
-
-

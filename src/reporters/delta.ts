@@ -15,7 +15,7 @@ function calcStats (rs: RunnerResult[]): Stats {
   const total = rs.length;
   const killCount: number = killed.length;
   const killRate = Number((killCount / total).toFixed(4)) * 100;
-  return {killRate, killCount, total};
+  return { killRate, killCount, total };
 }
 
 function writeResult (s: Stats) {

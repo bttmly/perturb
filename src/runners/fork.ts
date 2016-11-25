@@ -2,7 +2,7 @@ const debug = require("debug")("runner:fork");
 import fs = require("fs");
 import path = require("path");
 import os = require("os");
-import cp = require("child_process");
+import { fork } from "child_process";
 
 import runMutant = require("../util/run-mutant");
 import runnerUtils = require("./utils");
@@ -20,20 +20,19 @@ export = <RunnerPlugin>{
     const args = [ fileLocation ];
     const opts = {
       silent: true,
-      // silent: false,
       env: {
         // TODO -- configurable!
         PERTURB_FORK_RUNNER: "require",
         DEBUG: process.env.DEBUG,
       },
     };
-    
+
     // can't pass the serialzed mutant as a command line argument,
     // it's wayyy too big, so write it to disk and the child will
     // pick it up from there
     fs.writeFileSync(fileLocation, JSON.stringify(m));
 
-    const child = cp.fork(__filename, args, opts);
+    const child = fork(__filename, args, opts);
 
     const timeout = setTimeout(() => {
       debug("timeout exceeded, terminating runner");
@@ -70,7 +69,7 @@ export = <RunnerPlugin>{
 async function childRunner (name) {
   debug("looking for mutant json file at", process.argv[2], "...");
   debug("getting mutator", name);
- 
+
   const mutant: Mutant = require(process.argv[2])
   const runner: RunnerPlugin = require("./")(name);
   const result = await runMutant(runner, mutant);
@@ -96,5 +95,5 @@ function sendError (err) {
 
 function tempFileLocation () {
   const id = Math.random().toString(16).slice(2);
-  return path.join(os.tmpdir(), `perturb-fork-mutant-${id}.json`); 
+  return path.join(os.tmpdir(), `perturb-fork-mutant-${id}.json`);
 }

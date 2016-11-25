@@ -1,8 +1,8 @@
 test: compile
-	NODE_ENV=testing ./node_modules/.bin/_mocha ./test --recursive
+	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/setup ./test --recursive
 
 test-bail: compile
-	NODE_ENV=testing ./node_modules/.bin/_mocha ./test --bail --recursive
+	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/setup ./test --recursive --bail
 
 compile:
 	rm -rf ./built

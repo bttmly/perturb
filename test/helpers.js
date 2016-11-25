@@ -14,22 +14,6 @@ const ESPRIMA_OPTIONS = {
 const { getMutatorByName } = require("../built/mutators");
 const { Syntax } = require("estraverse");
 
-function isPrimitiveValue (value) {
-  return Object(value) !== value;
-}
-
-function objIsShallow (obj) {
-  if (isPrimitiveValue(obj)) return false;
-  return Object.keys(obj).every(function (key) {
-    return isPrimitiveValue(obj[key]);
-  });
-}
-
-function makeNodeOfType (type, props = {}) {
-  if (!(type in Syntax)) throw new Error("Invalid node type " + type);
-  return R.merge({type}, props);
-}
-
 function nodeFromCode (code) {
   const ast = esprima.parse(code, ESPRIMA_OPTIONS);
   if (ast.body.length !== 1) {
@@ -63,37 +47,19 @@ function mutatorByName (name) {
   return m;
 }
 
-function applyMutation (node, name) {
-  if (node == null) {
-    throw new Error("Passed a nil node");
-  }
-
-  const plugin = mutatorByName(name)
-
-  if (!plugin.nodeTypes.includes(node.type)) {
-    throw new Error(`Wrong node type - actual: ${node.type}, allowed: ${plugin.nodeTypes}`);
-  }
-
-  if (plugin.filter && !plugin.filter(node)) {
-    console.log("filter returned false!");
-    return node;
-  }
-  return plugin.mutator(node);
-}
-
 function nodeFilter (plugin, node) {
   if (plugin.filter == null) return true;
   return plugin.filter(node);
 }
 
-function testPlugin (name) {
-  return function ({xdescr, descr, before, after, log}) {
+function makeMutationTester (name) {
+  return function ({xdescr, descr, before, after, log, noMatch}) {
     if (xdescr) {
-      xit(xdescr, () => mutateAndCompare({before, after, name, log}));
+      xit(xdescr, () => mutateAndCompare({before, after, name, log, noMatch}));
       return;
     }
 
-    it(descr, () => mutateAndCompare({before, after, name, log}))
+    it(descr, () => mutateAndCompare({before, after, name, log, noMatch}))
   }
 }
 
@@ -103,13 +69,13 @@ const GEN_OPTS = {
     compact: true,
   },
 };
-function mutateAndCompare ({before, after, name, log}) {
+function mutateAndCompare ({before, after, name, log, noMatch}) {
   if (before == null) {
     throw new Error("Must provide before!");
   }
 
-  if (after == null) {
-    throw new Error("Must provide after!");
+  if (after == null && !noMatch) {
+    throw new Error("Must provide after, or specify :noMatch");
   }
 
   before = String(before);
@@ -128,7 +94,8 @@ function mutateAndCompare ({before, after, name, log}) {
   })
 
   if (paths.length === 0) {
-    if (before === after) {
+    if (noMatch) {
+      // console.log('expected no matches, ok!')
       return;
     }
     throw new Error(`No paths found for ${name} in ${before}`);
@@ -142,7 +109,6 @@ function mutateAndCompare ({before, after, name, log}) {
   const path = paths.shift() || EMPTY_PATH;
   const node = R.path(path, ast);
 
-  // TODO -- handle if this returns an array of mutations
   const mut = plugin.mutator(node)
 
   if (Array.isArray(mut)) {
@@ -160,9 +126,12 @@ function mutateAndCompare ({before, after, name, log}) {
       .map((ast, i) => path === EMPTY_PATH ? mut[i] :  updateIn(path, mut[i], ast))
       .map(newAst => escodegen.generate(newAst, GEN_OPTS));
 
+    expect(after.length).toEqual(newCodes.length);
+
     after.every(function (single) {
       expect(newCodes).toContain(single);
     });
+
     return;
   }
 
@@ -176,21 +145,10 @@ function mutateAndCompare ({before, after, name, log}) {
   expect(result).toEqual(after);
 }
 
-// function mutateAndCompare ({before, after, name, path, log}) {
-//   const ast = nodeFromCode(before);
-//   if (log) console.log(R.path(path, ast));
-//   const mut = applyMutation(R.path(path, ast), name);
-//   const result = escodegen.generate(R.assocPath(path, mut, ast))
-//   expect(result).toEqual(after);
-// }
-
 module.exports = {
   makeConfig,
-  objIsShallow,
-  makeNodeOfType,
   nodeFromCode,
   mutatorByName,
-  applyMutation,
   mutateAndCompare,
-  testPlugin,
+  makeMutationTester,
 };

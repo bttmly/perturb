@@ -7,7 +7,7 @@ export = <MutatorPlugin>{
   // `{prop1: "val1", prop2: "val2"}` => `{prop2: "val2"}`
   name: "tweak-object-literal",
   nodeTypes: [S.ObjectExpression],
-  filter: util.lengthAtPropGreaterThan("properties", 0),
+  // filter: util.lengthAtPropGreaterThan("properties", 0),
   mutator: util.dropEachOfProp("properties"),
 };
 

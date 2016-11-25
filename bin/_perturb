@@ -1,36 +1,23 @@
 #!/usr/bin/env node
 
-throw new Error("The CLI is currently out of sync with the library :( -- use the library directly");
-
-var exec = require("child_process").exec;
 var path = require("path");
-
 var program = require("commander");
-
-var perturb = require("../");
-var generateConfig = require("../lib/config");
-var omitUndefined = require("../lib/util/omit-undefined");
-var MESSAGES = require("../lib/constant/messages");
+var makeConfig = require("../built/make-config");
+var MESSAGES = require("../built/constants/messages");
 
 var pkg = require("../package.json");
-
-
+var perturb = require("../");
 
 program
   .version(pkg.version)
-  .option("-r, --rootDir <rootDir>", "root directory of the project")
+  .option("-r, --projectRoot <rootDir>", "root directory of the project")
   .option("-t, --testDir <testDir>", "test directory relative to root directory")
   .option("-s, --sourceDir <sourceDir>", "source directory relative to root directory")
   .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
   .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
   .option("-c, --testCmd <testCmd>", "test command")
-  // .option("-i, --interception", "use interception strategy (no disk I/O)")
-  // .option("-v, --verbose", "lots of logging")
   .option("-k, --killRate", "minimum kill rate to exit with code 0")
-  // .option("-p, --parallel", "run mutants in parallel (careful!)")
   .option("-u, --runner <runner>", "name of runner or runner plugin")
-  .option("-b, --bail", "")
-  // .option("--version")
   .parse(process.argv);
 
 if (program.rootDir && program.rootDir[0] !== "/") {
@@ -44,31 +31,7 @@ var userConfig = omitUndefined({
   testGlob: program.testGlob,
   sourceGlob: program.sourceGlob,
   testCmd: program.testCmd,
-  interception: program.interception,
   runner: program.runner,
-});
-
-// this will become the default reporter
-function reporter (err, data) {
-  if (err) throw err;
-  console.log("reporter...");
-  console.log(data.meta);
-}
-
-// figure out how exec handles command line args
-function runTests (settings, cb) {
-  var cmd = settings.testCmd || MESSAGES.DefaultTest;
-  console.log(MESSAGES.ExecutingTests, cmd);
-  exec(cmd, function (err) {
-    if (err) return cb(err);
-    console.log(MESSAGES.TestsPassed);
-    cb(null, settings);
-  });
-}
-
-runTests(generateConfig(userConfig), function (err, config) {
-  if (err) throw err;
-  perturb(config, reporter);
 });
 
 // sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
@@ -77,3 +40,20 @@ process.on("uncaughtException", function (err) {
   throw err;
 });
 
+// sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
+process.on("unhandledRejection", function (err) {
+  throw err;
+});
+
+// start!
+perturb(userConfig).then(function (results) {
+  console.log("DONE -- COUNT:", results.length);
+});
+
+function omitUndefined (obj) {
+  const ret = {};
+  for (key in obj) {
+    if (obj[key] != null) ret[key] = obj[key]
+  }
+  return ret;
+}

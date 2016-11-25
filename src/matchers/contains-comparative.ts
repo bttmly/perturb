@@ -1,13 +1,13 @@
 import path = require("path");
 
-// matches: 
-//   source: project/lib/dir/car.js
-//   test: project/test/dir/car-constructor.js
-//   test: project/test/dir/car-start.js
-//   test: project/test/dir/car-drive.js
+// matches:
+//   source: project/lib/xyz/car.js
+//   test: project/test/xyz/car-constructor.js
+//   test: project/test/xyz/car-start.js
+//   test: project/test/xyz/car-drive.js
 
-function withoutExt (file) {
-  return file.slice(0, -1 * path.extname(file).length);
+function withoutExt (fileName) {
+  return fileName.slice(0, -1 * path.extname(fileName).length);
 }
 
 export = <ComparativeMatcherPlugin>{

@@ -1,5 +1,3 @@
-const {testPlugin} = require("../helpers");
-
 const PLUGIN_NAME = "tweak-boolean-literal";
 
 const cases = [
@@ -16,8 +14,8 @@ const cases = [
   {
     descr: "doesn't change strings",
     before: "'str';",
-    after: "'str';",
+    noMatch: true,
   },
 ];
 
-describe(PLUGIN_NAME, () => cases.forEach(testPlugin(PLUGIN_NAME)));
+testMutator(PLUGIN_NAME, cases)
