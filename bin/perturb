@@ -1,85 +1,59 @@
 #!/usr/bin/env node
 
-throw new Error("The CLI is currently out of sync with the library :( -- use the library directly");
-
-// shamelessly appropriated from mocha
-
-"use strict";
-
 var path = require("path");
+var program = require("commander");
+var makeConfig = require("../built/make-config");
+var MESSAGES = require("../built/constants/messages");
 
-var spawn = require("child_process").spawn;
-var perturb = path.join(__dirname, "_perturb");
-var args = [perturb];
+var pkg = require("../package.json");
+var perturb = require("../");
 
-var bin = process.argv[0];
+program
+  .version(pkg.version)
+  .option("-r, --projectRoot <rootDir>", "root directory of the project")
+  .option("-t, --testDir <testDir>", "test directory relative to root directory")
+  .option("-s, --sourceDir <sourceDir>", "source directory relative to root directory")
+  .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
+  .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
+  .option("-c, --testCmd <testCmd>", "test command")
+  .option("-k, --killRate", "minimum kill rate to exit with code 0")
+  .option("-u, --runner <runner>", "name of runner or runner plugin")
+  .parse(process.argv);
 
-var timeout, ONE_MINUTE = 60 * 1000;
+if (program.rootDir && program.rootDir[0] !== "/") {
+  program.rootDir = path.join(process.cwd(), program.rootDir);
+}
 
-process.argv.slice(2).forEach(function (arg) {
-  var flag = arg.split("=")[0];
-  var val = arg.split("=")[1];
-
-  switch (flag) {
-
-  case "timeout":
-    timeout = Number(val);
-    if (isNaN(timeout)) throw new Error("Invalid timeout");
-    return;
-
-  case "--iojs":
-    bin = "iojs";
-    return;
-
-  case "--harmony":
-  case "--harmony-proxies":
-  case "--harmony-collections":
-  case "--harmony-generators":
-  case "--harmony_shipping":
-  case "--harmony_arrow_functions":
-  case "--harmony_proxies":
-    args.unshift(arg);
-    return;
-
-  default:
-    args.push(arg);
-    return;
-  }
-
+var userConfig = omitUndefined({
+  rootDir: program.rootDir,
+  testDir: program.testDir,
+  sourceDir: program.sourceDir,
+  testGlob: program.testGlob,
+  sourceGlob: program.sourceGlob,
+  testCmd: program.testCmd,
+  runner: program.runner,
 });
 
-
-timeout = timeout || ONE_MINUTE;
-
-console.log([bin].concat(args).join(" "));
-
-var child = spawn(bin, args, {
-  stdio: "inherit",
-});
-
-child.on("exit", function (code, signal) {
-  console.log("child exiting...", code);
-  if (signal) {
-    throw new Error("Child received signal " + signal);
-  }
-
-  if (code === 0) return;
-
-  throw new Error("Child exited with code " + code);
-});
-
-child.on("error", function (err) {
+// sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
+process.on("uncaughtException", function (err) {
+  console.log("uncaught error in perturb process", err);
   throw err;
 });
 
-// terminate children.
-process.on("SIGINT", function () {
-  child.kill("SIGINT"); // calls runner.abort()
-  child.kill("SIGTERM"); // if that didn"t work, we"re probably in an infinite loop, so make it die.
-  throw new Error("Main process received SIGINT");
+// sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
+process.on("unhandledRejection", function (err) {
+  throw err;
 });
 
-setTimeout(function () {
-  console.log("Timeout exceeded.");
-  child.kill("SIGINT");
-}, timeout).unref();
+// start!
+perturb(userConfig).then(function (results) {
+  console.log("DONE -- COUNT:", results.length);
+});
+
+function omitUndefined (obj) {
+  const ret = {};
+  for (key in obj) {
+    if (obj[key] != null) ret[key] = obj[key]
+  }
+  return ret;
+}

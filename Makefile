@@ -14,7 +14,7 @@ example-events: compile
 
 dogfood: compile
 	rm -rf ./.perturb
-	node ./script/run.js dogfood $(RUNNER)
+	node ./bin/perturb -s built
 
 build:
 	./node_modules/.bin/tsc --strictNullChecks

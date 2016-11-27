@@ -5,7 +5,6 @@
   "main": "built/index.js",
   "bin": {
     "perturb": "./bin/perturb",
-    "_perturb": "./bin/_perturb"
   },
   "repository": "git@github.com:nickb1080/perturb.git",
   "dependencies": {
