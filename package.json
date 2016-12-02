@@ -4,7 +4,7 @@
   "description": "",
   "main": "built/index.js",
   "bin": {
-    "perturb": "./bin/perturb",
+    "perturb": "./bin/perturb"
   },
   "repository": "git@github.com:nickb1080/perturb.git",
   "dependencies": {
