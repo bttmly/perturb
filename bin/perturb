@@ -3,7 +3,6 @@
 var path = require("path");
 var program = require("commander");
 var makeConfig = require("../built/make-config");
-var MESSAGES = require("../built/constants/messages");
 
 var pkg = require("../package.json");
 var perturb = require("../");
@@ -24,7 +23,7 @@ if (program.rootDir && program.rootDir[0] !== "/") {
   program.rootDir = path.join(process.cwd(), program.rootDir);
 }
 
-var userConfig = omitUndefined({
+var userConfig = omitNil({
   rootDir: program.rootDir,
   testDir: program.testDir,
   sourceDir: program.sourceDir,
@@ -50,7 +49,7 @@ perturb(userConfig).then(function (results) {
   console.log("DONE -- COUNT:", results.length);
 });
 
-function omitUndefined (obj) {
+function omitNil (obj) {
   const ret = {};
   for (key in obj) {
     if (obj[key] != null) ret[key] = obj[key]

@@ -1,6 +1,6 @@
 // reporter function types
 type _ResultReporter = (r: RunnerResult) => void;
-type _AggregateReporter = (rs: RunnerResult[], m?: PerturbMetadata) => void
+type _AggregateReporter = (rs: RunnerResult[], cfg?: PerturbConfig, m?: PerturbMetadata) => void
 
 type _SetupRun = (m: Mutant) => Promise<any>;
 type _Run = (m: Mutant) => Promise<RunnerResult>;

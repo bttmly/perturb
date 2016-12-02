@@ -18,19 +18,22 @@ function calcStats (rs: RunnerResult[]): Stats {
   return { killRate, killCount, total };
 }
 
-function writeResult (s: Stats) {
-  fs.writeFileSync(RECORD_FILE, JSON.stringify(s));
+function writeResult (last: any, s: Stats, root: string) {
+  last[root] = s;
+  fs.writeFileSync(RECORD_FILE, JSON.stringify(last));
 }
 
-function compare (rs: RunnerResult[]) {
+function compare (rs: RunnerResult[], cfg: PerturbConfig, m: PerturbMetadata) {
   const stats = calcStats(rs);
-  let last: Stats;
+  let record = {}
   try {
-    last = require(RECORD_FILE);
-    console.log("change in total:", stats.total - last.total);
-    console.log("change in killed:", stats.killCount - last.killCount);
+    record = require(RECORD_FILE);
+    if (record[cfg.projectRoot]) {
+      console.log("change in total:", stats.total - record[cfg.projectRoot].total);
+      console.log("change in killed:", stats.killCount - record[cfg.projectRoot].killCount);
+    }
   } finally {
-    writeResult(stats);
+    writeResult(record, stats, cfg.projectRoot);
   }
 }
 

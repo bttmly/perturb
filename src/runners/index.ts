@@ -24,4 +24,3 @@ export = function get (input: string | RunnerPlugin): RunnerPlugin {
     throw new Error(`unable to locate -RUNNER- plugin "${str}" -- fatal error, exiting`);
   }
 }
-

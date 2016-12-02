@@ -10,13 +10,13 @@ export = <ReporterPlugin>{
   onResult: function(r: RunnerResult) {
     console.log(generateReport(r));
   },
-  onFinish: function(rs: RunnerResult[]) {
+  onFinish: function(rs: RunnerResult[], cfg: PerturbConfig, m: PerturbMetadata) {
     const [killed, alive] = R.partition(r => r.error, rs);
     const total = rs.length;
     const killCount = killed.length;
     const killRate = Number((killCount / total).toFixed(4)) * 100;
     console.log(`Total: ${total}. Killed: ${killCount}. Rate: ${killRate}%`);
-    delta(rs);
+    delta(rs, cfg, m);
   },
 };
 
@@ -32,20 +32,19 @@ function generateReport (r: RunnerResult): string {
   //   return chalk.gray(id);
   // }
 
-  const title = r.error ? chalk.gray(dead + id) :
+  const title = r.error ?
+    chalk.gray(dead + id) :
     chalk.red.underline(alive + id);
-
-  const diff = generateDiff(r);
 
   return [
     title,
-    diff.map(function (entry) {
+    ...generateDiff(r).map(function (entry) {
       const color = r.error ? "gray" : entry.added ? "green" : "red";
       const sign = entry.added ? plus : minus;
       return chalk[color](
         entry.value.trim().split("\n").map(l => sign + l).join("\n")
        );
-    }).join("\n"),
+    }),
   ].join("\n");
 }
 

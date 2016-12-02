@@ -56,6 +56,8 @@ async function perturb (_cfg: PerturbConfig) {
       throw new Error("No matched files!");
     }
 
+    // console.log("matches:", tested.map(t => ({source: t.source, tests: t.tests})));
+
     const parsedMatches = tested
     .map(parseMatch(locator))
     .map(pm => {
@@ -82,8 +84,10 @@ async function perturb (_cfg: PerturbConfig) {
     const duration = (Date.now() - start) / 1000;
     console.log("duration:", duration, "rate:", (results.length / duration), "/s");
 
+    const metadata = { duration };
+
     if (reporter.onFinish) {
-      reporter.onFinish(results);
+      reporter.onFinish(results, cfg, metadata);
     }
 
     // TODO -- provide some run metadata here:
