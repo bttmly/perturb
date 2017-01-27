@@ -70,7 +70,8 @@
     "test-example": "make test-example",
     "dogfood": "make dogfood",
     "dogfood-i": "make dogfood-i",
-    "test": "make test"
+    "test": "make test",
+    "install": "make compile"
   },
   "author": "Nick Bottomley (github.com/nickb1080)",
   "license": "MIT"
