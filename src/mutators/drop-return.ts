@@ -1,6 +1,6 @@
 import R = require("ramda");
 import S = require("./_syntax");
-import voidNode = require("./_void-node");
+import {VOID_NODE} from "./_constant-nodes";
 
 // drop return w/o affecting the rest of the expression/statement
 // if return statement has no argument, instead transform it into `void 0;`
@@ -16,7 +16,7 @@ export = <MutatorPlugin>{
   nodeTypes: [S.ReturnStatement],
   mutator: R.ifElse(
     node => node.argument == null,
-    () => voidNode,
+    R.always(VOID_NODE),
     node => ({
       type: S.ExpressionStatement,
       expression: node.argument,

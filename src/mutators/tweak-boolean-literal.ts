@@ -7,5 +7,5 @@ export = <MutatorPlugin>{
   name: "tweak-boolean-literal",
   nodeTypes: [S.Literal],
   filter: R.pipe(R.prop("value"), R.is(Boolean)),
-  mutator: util.update("value", v => !v),
+  mutator: util.update("value", R.not),
 };

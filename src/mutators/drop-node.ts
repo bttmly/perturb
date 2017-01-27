@@ -1,6 +1,6 @@
 import R = require("ramda");
 import S = require("./_syntax");
-import voidNode = require("./_void-node");
+import {VOID_NODE} from "./_constant-nodes";
 
 export = <MutatorPlugin>{
   name: "drop-node",
@@ -8,5 +8,5 @@ export = <MutatorPlugin>{
     S.ContinueStatement,
     S.BreakStatement,
   ],
-  mutator: () => voidNode,
+  mutator: R.always(VOID_NODE),
 };

@@ -1,23 +1,44 @@
 import R = require("ramda");
 
+import conditionalTestAlways = require("./conditional-test-always");
+import conditionalTestInvert = require("./conditional-test-invert");
+import conditionalTestNever = require("./conditional-test-never")
+import dropMemberAssignment = require("./drop-member-assignment");
+import dropNode = require("./drop-node");
+import dropOperator = require("./drop-node");
+import dropReturn = require("./drop-return");
+import dropVoidCall = require("./drop-void-call");
+import reverseFunctionParameters = require("./reverse-function-parameters");
+import swapBinaryOperators = require("./swap-binary-operators");
+import swapLogicalOperators = require("./swap-logical-operators");
+import tweakArguments = require("./tweak-arguments");
+import tweakArrayLiteral = require("./tweak-array-literal");
+import tweakBooleanLitearl = require("./tweak-boolean-literal");
+import tweakNumberLiteral = require("./tweak-number-literal");
+import tweakObjectLiteral = require("./tweak-object-literal");
+// import tweakStringLiteral = require("./tweak-string-literal");
+import tweakSwitch = require("./tweak-switch");
+
 const coreMutators: MutatorPlugin[] = [
-  require("./drop-member-assignment"),
-  require("./drop-node"),
-  require("./drop-operator"),
-  require("./drop-return"),
-  require("./drop-void-call"),
-  require("./invert-conditional-test"),
-  require("./reverse-function-parameters"),
-  require("./swap-binary-operators"),
-  require("./swap-logical-operators"),
-  require("./tweak-arguments"),
-  require("./tweak-array-literal"),
-  require("./tweak-boolean-literal"),
-  require("./tweak-number-literal"),
-  require("./tweak-object-literal"),
-  // require("./tweak-string-literal"),
-  require("./tweak-switch"),
-];
+  conditionalTestAlways,
+  conditionalTestInvert,
+  conditionalTestNever,
+  dropMemberAssignment,
+  dropNode,
+  dropOperator,
+  dropReturn,
+  dropVoidCall,
+  reverseFunctionParameters,
+  swapBinaryOperators,
+  swapLogicalOperators,
+  tweakArguments,
+  tweakArrayLiteral,
+  tweakBooleanLitearl,
+  tweakNumberLiteral,
+  tweakObjectLiteral,
+  // tweakStringLiteral,
+  tweakSwitch,
+]
 
 type MutatorIndex = { [key: string]: MutatorPlugin[] };
 

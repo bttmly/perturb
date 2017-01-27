@@ -1,7 +1,6 @@
 import R = require("ramda");
 import S = require("./_syntax");
 import util = require("./util");
-import voidNode = require("./_void-node");
 
 const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
 

@@ -1,6 +1,5 @@
 import R = require("ramda");
 import S = require("./_syntax");
-import voidNode = require("./_void-node");
 import util = require("./util");
 
 const FUNC_NODES = [

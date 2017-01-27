@@ -1,6 +1,6 @@
 import R = require("ramda");
 import S = require("./_syntax");
-import voidNode = require("./_void-node");
+import {VOID_NODE} from "./_constant-nodes";
 
 // drops a function call made for side effects
 // (the return value isn't assigned to a variable)
@@ -12,7 +12,5 @@ export = <MutatorPlugin>{
     R.pathEq(["expression", "type"], S.CallExpression),
     R.pathEq(["expression", "callee", "type"], S.Identifier)
   ),
-  mutator: R.always(voidNode),
+  mutator: R.always(VOID_NODE),
 };
-
-

@@ -2,10 +2,6 @@ import R = require("ramda");
 import S = require("./_syntax");
 import util = require("./util");
 
-// interface NumberLiteral extends ESTree.Literal {
-//   value: number;
-// }
-
 export = <MutatorPlugin>{
   // adds 1 to any number literal OR replaces 1 with 0
   // `var num = 735;` => `var num = 736;`
@@ -26,4 +22,3 @@ export = <MutatorPlugin>{
     return R.assoc("value", value + 1, node);
   }
 };
-
