@@ -19,6 +19,12 @@ import parseMatch = require("./parse-match");
 const mapSeriesP = R.curry(R.flip(Bluebird.mapSeries));
 
 async function perturb (_cfg: PerturbConfig) {
+  console.log(
+    "*********************************************************\n",
+    " -- THIS IS PRE-ALPHA SOFTWARE - USE AT YOUR OWN RISK -- \n",
+    "*********************************************************\n"
+  );
+
   const cfg = makeConfig(_cfg);
 
   console.log("init with config\n", cfg);
@@ -54,6 +60,13 @@ async function perturb (_cfg: PerturbConfig) {
     // console.log("untested files:", untested.map(m => m.source).join("\n"));
     if (tested.length === 0) {
       throw new Error("No matched files!");
+    }
+
+    if (untested.length) {
+      console.log("*******************************************");
+      console.log("UNTESTED FILES");
+      untested.map(f => console.log(f.source));
+      console.log("*******************************************");
     }
 
     // console.log("matches:", tested.map(t => ({source: t.source, tests: t.tests})));

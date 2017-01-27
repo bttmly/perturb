@@ -37,3 +37,4 @@ lib
 built
 logs
 run-record.json
+.nyc_output
