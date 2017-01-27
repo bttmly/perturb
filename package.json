@@ -71,7 +71,7 @@
     "dogfood": "make dogfood",
     "dogfood-i": "make dogfood-i",
     "test": "make test",
-    "install": "make compile"
+    "prepublish": "make compile",
   },
   "author": "Nick Bottomley (github.com/nickb1080)",
   "license": "MIT"
