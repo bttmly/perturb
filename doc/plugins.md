@@ -16,12 +16,12 @@ A mutator plugin describes a mutation to be applied to an AST node. Multiple mut
 - `name`: a unique string name
 - `nodeTypes`: an array of [node types]() the mutator may be run on
 - `filter`: an optional predicate function that filters out nodes that matched one of the provided node types.
-- `mutator`: a function that returns a new AST node to replace the old one. Despite the name, it **must not** actually mutate the old node by changing, adding, or removing it's properties. 
+- `mutator`: a function that returns a new AST node to replace the old one. Despite the name, it **must not** actually mutate the old node by changing, adding, or removing it's properties.
 
 ## Matchers
 **One active**
 
-Matcher plugins come in two flavors, "generative" and "comparative". Comparative matchers are predicate functions which take a test file and a source file and return `true` when they match. 
+Matcher plugins come in two flavors, "generative" and "comparative". Comparative matchers are predicate functions which take a test file and a source file and return `true` when they match.
 
 An example of comparative matching case might be when test files have names resembling source files, but with some kind of prefix or suffix indicating what they test. The tests on the Node.js [core libraries](https://github.com/nodejs/node/tree/master/test/parallel) often fit this pattern.
 
@@ -60,7 +60,7 @@ interface RunnerPlugin {
 A runner plugin describes how to run a single mutation. As such, it needs to understand how to work with the test harness used by the project. A runner plugin has the following properties:
 
 - `name`: a unique string name
-- `setup`: a function which sets up the run. In nearly every case, this function should write out the mutated source code to a file (unless you're doing something [exotic](https://github.com/nickb1080/intercept-require)), but it can also do all kinds of other stuff, such as working with the `require` cache if the runner is operating in-process. It returns a promise, the result of which will be threaded back into the `cleanup` method.
+- `setup`: a function which sets up the run. In nearly every case, this function should write out the mutated source code to a file (unless you're doing something [exotic](https://github.com/bttmly/intercept-require)), but it can also do all kinds of other stuff, such as working with the `require` cache if the runner is operating in-process. It returns a promise, the result of which will be threaded back into the `cleanup` method.
 - `run`: a function which actually executes the tests over the given mutated source file. It returns a "RunnerResult", which is essentially a Mutant with an optional `error` field.
 - `cleanup`: a function which cleans up whatever side effects the `setup` and `run` functions had. Often this involves rewriting the source file to its original value. It might also operate on the `require` cache or do other sorts of housekeeping.
 
@@ -90,6 +90,3 @@ interface SkipperPlugin {
 ```
 
 A skipper plugin describes a specific type of AST node to skip entirely (including stopping recursing down it's children). Usually are for skipping spurious mutations that artificially inflate the mutation count. An example would be, if we're mutating string literals, not to mutate those which are the argument to `require` (i.e. don't mutate `require("lodash")` to `require("odash")`). In this specific case, the mistake would be caught immediately as tests start (`require()` would fail) and the mutation adds no value.
-
-
-
