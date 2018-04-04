@@ -1,9 +1,11 @@
-import path = require("path");
+import * as path from "path"
+import { GenerativeMatcherPlugin, GenerativeMatcher, PerturbConfig } from "../types"
 
 // input: project/lib/dir/car.js
 // output: project/test/dir/car.js
 
-export = <GenerativeMatcherPlugin>{
+const plugin: GenerativeMatcherPlugin = {
+  name: "generative-matcher-plugin",
   type: "generative",
   makeMatcher: function(c: PerturbConfig): GenerativeMatcher {
     return function(sourceFile: string) {
@@ -13,5 +15,6 @@ export = <GenerativeMatcherPlugin>{
       return sourceFile.replace(perturbSourceDir, perturbTestDir);
     };
   },
-};
+}
 
+export default plugin

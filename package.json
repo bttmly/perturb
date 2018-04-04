@@ -8,6 +8,14 @@
   },
   "repository": "git@github.com:bttmly/perturb.git",
   "dependencies": {
+    "@types/bluebird": "^3.5.20",
+    "@types/escodegen": "^0.0.6",
+    "@types/esprima": "^4.0.1",
+    "@types/estraverse": "^0.0.6",
+    "@types/estree": "^0.0.38",
+    "@types/fs-extra": "^5.0.1",
+    "@types/node": "^9.6.1",
+    "@types/ramda": "^0.25.21",
     "bluebird": "^3.1.5",
     "chalk": "^0.5.1",
     "change-case": "^2.2.0",
@@ -29,7 +37,7 @@
     "growl": "^1.8.1",
     "mocha": "^2.5.3",
     "nyc": "^10.0.0",
-    "typescript": "^2.0.0",
+    "typescript": "2.7.2",
     "watch": "^0.13.0"
   },
   "scripts": {

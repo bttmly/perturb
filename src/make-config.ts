@@ -1,10 +1,10 @@
 import fs = require("fs");
-
-const assign = require("object-assign");
+import { PerturbConfig } from "./types"
 
 const CONFIG_FILE_NAME = ".perturbrc";
 const DEFAULT_RUNNER = "mocha";
 const DEFAULT_MATCHER = "contains-comparative";
+
 
 const defaultConfig: PerturbConfig = {
   testCmd: "npm test",
@@ -35,7 +35,7 @@ function makeConfig (userConfig = {}): PerturbConfig {
     fileConfig = {};
   }
 
-  const cfg = <PerturbConfig>assign({}, defaultConfig, fileConfig, userConfig);
+  const cfg: PerturbConfig = Object.assign({}, defaultConfig, fileConfig, userConfig);
 
   // TODO -- validate shape here?
 

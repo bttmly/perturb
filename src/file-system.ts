@@ -1,6 +1,6 @@
 import path = require("path");
 import fs = require("fs-extra");
-import R = require("ramda");
+import { PerturbConfig } from "./types"
 
 const glob = require("glob");
 
@@ -69,12 +69,10 @@ function getFilePaths (config: PerturbConfig) {
   return {sources, tests}
 }
 
-function createFsHelpers (c: PerturbConfig) {
+export default function createFsHelpers (c: PerturbConfig) {
   return {
     setup: () => setupPerturbDirectory(c),
     teardown: () => teardownPerturbDirectory(c),
     paths: () => getFilePaths(c),
   };
 }
-
-export = createFsHelpers;

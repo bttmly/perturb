@@ -1,13 +1,24 @@
 {
+    "compileOnSave": true,
     "compilerOptions": {
-        "noImplicitAny": false,
-        "sourceMap": true,
-        "module": "commonjs",
-        "target": "ES6",
-        "outDir": "built",
-        "rootDir": "src"
+      "module": "commonjs",
+      "target": "es2017",
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "allowJs": false,
+      "rootDirs": ["src"],
+      "outDir": "lib",
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitReturns": true,
+      "noUnusedLocals": true,
+      "strict": true,
+      "strictNullChecks": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "lib": ["es2017"]
     },
-    "exclude": [
-        "node_modules"
-    ]
-}
+    "include": [
+      "src/**/*",
+    ],
+    "exclude": ["node_modules"]
+  }

@@ -1,4 +1,5 @@
-import path = require("path");
+import * as path from "path"
+import { ComparativeMatcherPlugin, ComparativeMatcher, PerturbConfig } from "../types"
 
 // matches:
 //   source: project/lib/xyz/car.js
@@ -6,11 +7,12 @@ import path = require("path");
 //   test: project/test/xyz/car-start.js
 //   test: project/test/xyz/car-drive.js
 
-function withoutExt (fileName) {
+function withoutExt (fileName: string) {
   return fileName.slice(0, -1 * path.extname(fileName).length);
 }
 
-export = <ComparativeMatcherPlugin>{
+const plugin: ComparativeMatcherPlugin = {
+  name: "contains-comparative-matcher-plugin",
   type: "comparative",
   makeMatcher: function(c: PerturbConfig): ComparativeMatcher {
     return function(sourceFile: string, testFile: string): boolean {
@@ -18,9 +20,12 @@ export = <ComparativeMatcherPlugin>{
       const perturbSourceDir = path.join(perturbRoot, c.sourceDir);
       const perturbTestDir = path.join(perturbRoot, c.testDir);
 
-      const sourceName = withoutExt(sourceFile.split(perturbSourceDir).pop());
-      const testName = withoutExt(testFile.split(perturbTestDir).pop());
+      // TODO: lose the "!"s
+      const sourceName = withoutExt(sourceFile.split(perturbSourceDir).pop()!);
+      const testName = withoutExt(testFile.split(perturbTestDir).pop()!);
       return testName.slice(0, sourceName.length) === sourceName;
     };
   }
 }
+
+export default plugin

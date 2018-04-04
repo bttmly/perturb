@@ -1,10 +1,11 @@
 import path = require("path");
-
-// matches: 
+import { ComparativeMatcherPlugin, ComparativeMatcher, PerturbConfig } from "../types"
+// matches:
 //   source: project/lib/dir/file.js
 //   test: project/test/dir/file.js
 
-export = <ComparativeMatcherPlugin>{
+const plugin: ComparativeMatcherPlugin = {
+  name: "comparative-matcher-plugin",
   type: "comparative",
   makeMatcher: function (c: PerturbConfig): ComparativeMatcher {
     return function (sourceFile: string, testFile: string): boolean {
@@ -15,3 +16,5 @@ export = <ComparativeMatcherPlugin>{
     };
   }
 }
+
+export default plugin;

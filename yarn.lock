@@ -2,6 +2,44 @@
 # yarn lockfile v1
 
 
+"@types/bluebird@^3.5.20":
+  version "3.5.20"
+  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.20.tgz#f6363172add6f4eabb8cada53ca9af2781e8d6a1"
+
+"@types/escodegen@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@types/escodegen/-/escodegen-0.0.6.tgz#5230a9ce796e042cda6f086dbf19f22ea330659c"
+
+"@types/esprima@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@types/esprima/-/esprima-4.0.1.tgz#40f6fb3a3a50ebcaa4dfca17f41e7f10e687df03"
+  dependencies:
+    "@types/estree" "*"
+
+"@types/estraverse@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@types/estraverse/-/estraverse-0.0.6.tgz#669f7cdf72ab797e6125f8d00fed33d4cf30c221"
+  dependencies:
+    "@types/estree" "*"
+
+"@types/estree@*", "@types/estree@^0.0.38":
+  version "0.0.38"
+  resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.38.tgz#c1be40aa933723c608820a99a373a16d215a1ca2"
+
+"@types/fs-extra@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-5.0.1.tgz#cd856fbbdd6af2c11f26f8928fd8644c9e9616c9"
+  dependencies:
+    "@types/node" "*"
+
+"@types/node@*", "@types/node@^9.6.1":
+  version "9.6.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.6.1.tgz#e2d374ef15b315b48e7efc308fa1a7cd51faa06c"
+
+"@types/ramda@^0.25.21":
+  version "0.25.21"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.21.tgz#3399ac49ea99253c7c308916960b65058a1d63c4"
+
 align-text@^0.1.1, align-text@^0.1.3:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/align-text/-/align-text-0.1.4.tgz#0cd90a561093f35d0a99256c22b7069433fad117"
@@ -2086,9 +2124,9 @@ typedarray@~0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^2.0.0:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.0.3.tgz#33dec9eae86b8eee327dd419ca050c853cabd514"
+typescript@2.7.2:
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.2.tgz#2d615a1ef4aee4f574425cdff7026edf81919836"
 
 uglify-js@^2.6:
   version "2.7.3"

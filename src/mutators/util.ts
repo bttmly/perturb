@@ -1,4 +1,4 @@
-import R = require("ramda");
+import * as R from "ramda"
 
 // class Multiple<T> { constructor (public items: T[]) }
 // export const multiple = arr => new Multiple(arr);
@@ -16,7 +16,8 @@ export const lengthAtPropGreaterThan = R.curry(function (prop: string, count: nu
 });
 
 export const dropEachOfProp = R.curry(function <T>(prop: string, obj:T): T[] {
-  return obj[prop].map(function (_, i) {
-    return R.assoc(prop, R.remove(i, 1, obj[prop]), obj);
+  const target: any[] = R.prop(prop, obj)
+  return target.map(function (_: any, i: number) {
+    return R.assoc(prop, R.remove(i, 1, target), obj);
   });
 });

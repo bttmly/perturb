@@ -1,5 +1,6 @@
 import R = require("ramda");
 import S = require("../mutators/_syntax");
+import { MutantLocation } from "../types"
 
 type LocationFilter = (m: MutantLocation) => boolean;
 
@@ -30,7 +31,7 @@ const filters: LocationFilter [] = [
 export = R.allPass(filters);
 
 // TODO -- how to expose this?
-function inject (name) {
+function inject (name: string) {
   let plugin: LocationFilter;
   try {
     plugin = require(`perturb-plugin-skipper-${name}`);

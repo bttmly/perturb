@@ -1,22 +1,27 @@
 import R = require("ramda");
-import estraverse = require("estraverse");
 import CommentManager = require("./comments");
+const estraverse = require("estraverse");
+
+import * as ESTree from "estree";
+import {
+  MutatorPlugin,
+  MutantLocation,
+} from "./types"
 
 // const debug = require("debug")("locate-mutants");f
 
 type PluginService = (n: ESTree.Node) => MutatorPlugin[]
 
-// one nice thing about this is that the plugins that are returned
-// originate with the PluginService argument, which simplifies testing
 function locateMutants (mutatorsForNode: PluginService, ast: ESTree.Node): MutantLocation[] {
   const mutantLocations: MutantLocation[] = [];
   const manager = new CommentManager();
+  const ctl = new estraverse.Controller()
 
-  estraverse.traverse(ast, {
+  ctl.traverse(ast, {
     enter (node: ESTree.Node) {
       // debug("enter", node.type);
       manager.applyLeading(node);
-      const path: string[] = this.path();
+      const path: string[] = ctl.path();
       const locations = mutatorsForNode(node)
         .filter(plugin => {
           return manager.isEnabled(plugin.name);

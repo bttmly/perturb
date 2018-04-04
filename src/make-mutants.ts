@@ -2,6 +2,11 @@ const R = require("ramda");
 
 import escodegen = require("escodegen");
 import updateIn = require("./util/update-in");
+import {
+  ParsedMatch,
+  Mutant,
+  MutantLocation,
+} from "./types"
 
 // (Match -> Location[])
 // (Location -> Node[])
@@ -41,4 +46,4 @@ export = function makeMutants (pm: ParsedMatch): Mutant[] {
   return R.chain(mapper, pm.locations);
 }
 
-const toArray = x => Array.isArray(x) ? x : [x];
+const toArray = (x: any) => Array.isArray(x) ? x : [x];

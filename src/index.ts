@@ -1,7 +1,6 @@
 import R = require("ramda");
 import Bluebird = require("bluebird");
 import { spawn } from "child_process";
-import fs = require("fs");
 import assert = require("assert");
 
 import getRunner = require("./runners");
@@ -10,13 +9,22 @@ import getMatcher = require("./matchers");
 import locationFilter = require("./filters");
 import makeMutants = require("./make-mutants");
 import makeConfig = require("./make-config");
-import fileSystem = require("./file-system");
 import runMutant = require("./util/run-mutant");
 import locateMutants = require("./locate-mutants");
 import mutators = require("./mutators");
 import parseMatch = require("./parse-match");
 
-const mapSeriesP = R.curry(R.flip(Bluebird.mapSeries));
+import fileSystem from "./file-system";
+
+import {
+  PerturbConfig,
+  RunnerPlugin,
+  RunnerResult,
+  Mutant,
+  ReporterPlugin,
+  Match,
+} from "./types"
+
 
 async function perturb (_cfg: PerturbConfig) {
   console.log(
@@ -92,7 +100,7 @@ async function perturb (_cfg: PerturbConfig) {
     }
 
     // run the mutatnts and gather the results
-    const results: RunnerResult[] = await mapSeriesP(handler, mutants);
+    const results: RunnerResult[] = await Bluebird.mapSeries(mutants, handler);
 
     const duration = (Date.now() - start) / 1000;
     console.log("duration:", duration, "rate:", (results.length / duration), "/s");
@@ -145,14 +153,6 @@ function spawnP (fullCommand: string): Promise<void> {
 
 function hasTests (m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
-}
-
-// TODO -- remove this, use Bluebird or something
-Promise.prototype.finally = function (cb) {
-  return this.then(
-    value => this.constructor.resolve(cb()).then(() => value),
-    reason => this.constructor.resolve(cb()).then(() => { throw reason; })
-  );
 }
 
 export = perturb;

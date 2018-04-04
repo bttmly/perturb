@@ -1,6 +1,8 @@
 import R = require("ramda");
 import S = require("./_syntax");
 import util = require("./util");
+import { MutatorPlugin } from "../types"
+import * as ESTree from "estree"
 
 const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
 
@@ -9,12 +11,14 @@ const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
 // `var since = new Date() - start;` => `var since = new Date() + start;`
 // `var dy = rise / run;` => `var dy = rise * run;`
 // `var area = w * h;` => `var area = w / h;`
-export = <MutatorPlugin>{
+const plugin: MutatorPlugin = {
   name: "swap-binary-operators",
   nodeTypes: [S.BinaryExpression],
-  filter: R.pipe(
-    R.prop("operator"),
-    R.flip(R.has)(BINARY_OPERATOR_SWAPS)
-  ),
-  mutator: util.update("operator", op => BINARY_OPERATOR_SWAPS[op])
+  // TODO: ts-any
+  filter (node: any) {
+    const op = node.operator
+    if (op == null) return false
+    return BINARY_OPERATOR_SWAPS.hasOwnProperty(op)
+  },
+  mutator: util.update("operator", (op: string) => BINARY_OPERATOR_SWAPS[op])
 };
