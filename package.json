@@ -24,12 +24,14 @@
     "ramda": "^0.18.0"
   },
   "devDependencies": {
+    "babel-eslint": "^8.2.2",
     "eslint": "^1.1.0",
     "expect": "^1.20.2",
     "growl": "^1.8.1",
     "mocha": "^2.5.3",
     "nyc": "^10.0.0",
     "typescript": "^2.0.0",
+    "typings": "^2.1.1",
     "watch": "^0.13.0"
   },
   "scripts": {
@@ -38,8 +40,7 @@
     "test-example": "make test-example",
     "dogfood": "make dogfood",
     "dogfood-i": "make dogfood-i",
-    "test": "make test",
-    "prepublish": "make compile"
+    "test": "make test"
   },
   "author": "Nick Bottomley (github.com/bttmly)",
   "license": "MIT"

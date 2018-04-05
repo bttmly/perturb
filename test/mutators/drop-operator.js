@@ -1,4 +1,4 @@
-const PLUGIN_NAME = "drop-operator";
+  const PLUGIN_NAME = "drop-operator";
 
 const cases = [
   {

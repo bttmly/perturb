@@ -5,7 +5,7 @@ const expect = require("expect");
 
 const mocks = require("./mocks/mutators");
 
-const invertMutator = require("../built/mutators/invert-conditional-test");
+const invertMutator = require("../built/mutators/conditional-test-invert");
 const locateMutants = require("../built/locate-mutants");
 const makeMutants = require("../built/make-mutants");
 
@@ -37,7 +37,7 @@ describe("makeMutants", function () {
       expect(mutant.testFiles).toEqual([""]);
       expect(mutant.path[0]).toEqual("body");
       // console.log(mutant.path);
-      expect(mutant.mutatorName).toEqual("invert-conditional-test");
+      expect(mutant.mutatorName).toEqual("conditional-test-invert");
       expect(mutant.astAfter).toBeA(Object);
       expect(mutant.astBefore).toBeA(Object);
       expect(mutant.loc).toBeA(Object);

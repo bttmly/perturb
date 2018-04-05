@@ -92,7 +92,7 @@ async function perturb (_cfg: PerturbConfig) {
     }
 
     // run the mutatnts and gather the results
-    const results: RunnerResult[] = await mapSeriesP(handler, mutants);
+    const results: any[] = await mapSeriesP(handler, mutants);
 
     const duration = (Date.now() - start) / 1000;
     console.log("duration:", duration, "rate:", (results.length / duration), "/s");
@@ -117,7 +117,7 @@ async function perturb (_cfg: PerturbConfig) {
 
 function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
   return async function handler (mutant: Mutant): Promise<RunnerResult> {
-    const result = await runMutant(runner, mutant);
+    const result: RunnerResult = await runMutant(runner, mutant);
     reporter.onResult && reporter.onResult(result);
     return result;
   }

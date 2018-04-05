@@ -5,7 +5,7 @@ const expect = require("expect");
 
 
 const mocks = require("./mocks/mutators");
-const invertMutator = require("../built/mutators/invert-conditional-test");
+const invertMutator = require("../built/mutators/conditional-test-invert");
 const parseMatch = require("../built/parse-match");
 const locateMutants = require("../built/locate-mutants");
 
@@ -43,12 +43,11 @@ const source = `
 
   if (x) {}
 
-  // perturb-disable: invert-conditional-test
+  // perturb-disable: conditional-test-invert
   if (y) { if (z) {} }
-  // perturb-enable: invert-conditional-test
+  // perturb-enable: conditional-test-invert
 
   if (z) {}
 `;
 
 const ast = esprima.parse(source, ESPRIMA_SETTINGS);
-

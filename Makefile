@@ -19,4 +19,8 @@ dogfood: compile
 build:
 	./node_modules/.bin/tsc --strictNullChecks
 
+install:
+	npm install
+	./node_modules/.bin/typings install
+
 .PHONY: test example
