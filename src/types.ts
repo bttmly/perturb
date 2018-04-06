@@ -9,8 +9,8 @@ type _AggregateReporter = (
 ) => void;
 
 type _SetupRun = (m: Mutant) => Promise<any>;
-type _Run = (m: Mutant) => Promise<RunnerResult>;
-type _CleanupRun = (m: Mutant, before?: any) => Promise<void>;
+type _Run = (m: Mutant, setupResult?: any) => Promise<RunnerResult>;
+type _CleanupRun = (m: Mutant, setupResult?: any) => Promise<void>;
 
 type _NodeMutator = (n: ESTree.Node) => ESTree.Node | ESTree.Node[];
 type _NodeFilter = (n: ESTree.Node) => boolean;
