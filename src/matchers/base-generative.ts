@@ -1,5 +1,9 @@
-import * as path from "path"
-import { GenerativeMatcherPlugin, GenerativeMatcher, PerturbConfig } from "../types"
+import * as path from "path";
+import {
+  GenerativeMatcherPlugin,
+  GenerativeMatcher,
+  PerturbConfig,
+} from "../types";
 
 // input: project/lib/dir/car.js
 // output: project/test/dir/car.js
@@ -7,14 +11,14 @@ import { GenerativeMatcherPlugin, GenerativeMatcher, PerturbConfig } from "../ty
 const plugin: GenerativeMatcherPlugin = {
   name: "generative-matcher-plugin",
   type: "generative",
-  makeMatcher: function(c: PerturbConfig): GenerativeMatcher {
-    return function(sourceFile: string) {
+  makeMatcher(c: PerturbConfig): GenerativeMatcher {
+    return (sourceFile: string) => {
       const perturbRoot = path.join(c.projectRoot, c.perturbDir);
       const perturbSourceDir = path.join(perturbRoot, c.sourceDir);
       const perturbTestDir = path.join(perturbRoot, c.testDir);
       return sourceFile.replace(perturbSourceDir, perturbTestDir);
     };
   },
-}
+};
 
-export default plugin
+export default plugin;

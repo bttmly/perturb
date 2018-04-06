@@ -1,9 +1,8 @@
 const expect = require("expect");
 
-const dropEachOfProp = require("../../built/util/drop-each-of-prop");
+const dropEachOfProp = require("../../built/util/drop-each-of-prop").default;
 
 describe("dropEachOfProp", () => {
-
   const other = {};
   const example = { prop: [1, 2, 3], other };
 
@@ -16,5 +15,4 @@ describe("dropEachOfProp", () => {
     expect(result[2].prop).toEqual([1, 2]);
     expect(result[2].other).toBe(other);
   });
-
 });

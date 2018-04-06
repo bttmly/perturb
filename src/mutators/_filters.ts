@@ -1,5 +1,3 @@
-import * as ESTree from "estree"
-
-export function hasProp (prop: string) {
-  return (node: ESTree.Node) => node.hasOwnProperty(prop)
+export function hasProp(prop: string) {
+  return (node: any) => node.hasOwnProperty(prop) && node[prop] !== null;
 }

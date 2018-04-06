@@ -1,7 +1,6 @@
-import R = require("ramda");
 import S = require("./_syntax");
 import util = require("./util");
-import { MutatorPlugin } from "../types"
+import { MutatorPlugin } from "../types";
 
 // drops each argument to a function/method call in turn
 // input: `fn(a, b, c)`
@@ -12,7 +11,6 @@ const plugin: MutatorPlugin = {
   nodeTypes: [S.CallExpression],
   filter: util.lengthAtPropGreaterThan("arguments", 0),
   mutator: util.dropEachOfProp("arguments"),
-}
+};
 
-export default plugin
-
+export default plugin;

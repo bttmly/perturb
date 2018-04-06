@@ -1,6 +1,5 @@
-import R = require("ramda");
 import S = require("./_syntax");
-import { MutatorPlugin } from "../types"
+import { MutatorPlugin } from "../types";
 
 // throw new Error(); => new Error();
 // delete obj.x; => obj.x;
@@ -9,12 +8,9 @@ import { MutatorPlugin } from "../types"
 
 const plugin: MutatorPlugin = {
   name: "drop-operator",
-  nodeTypes: [
-    S.ThrowStatement,
-    S.UnaryExpression,
-  ],
+  nodeTypes: [S.ThrowStatement, S.UnaryExpression],
   // TODO: ts-any
-  mutator: (node: any) => node.argument
+  mutator: (node: any) => node.argument,
 };
 
-export default plugin
+export default plugin;

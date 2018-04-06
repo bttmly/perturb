@@ -1,7 +1,6 @@
-import R = require("ramda");
 import S = require("./_syntax");
 import util = require("./util");
-import { MutatorPlugin } from "../types"
+import { MutatorPlugin } from "../types";
 
 const plugin: MutatorPlugin = {
   // drops the first declared element in an array literal
@@ -11,4 +10,4 @@ const plugin: MutatorPlugin = {
   mutator: util.dropEachOfProp("elements"),
 };
 
-export default plugin
+export default plugin;

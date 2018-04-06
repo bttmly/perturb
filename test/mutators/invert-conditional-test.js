@@ -1,4 +1,4 @@
-const PLUGIN_NAME = "invert-conditional-test";
+const PLUGIN_NAME = "conditional-test-invert";
 
 const cases = [
   {

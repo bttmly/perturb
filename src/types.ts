@@ -1,8 +1,12 @@
-import * as ESTree from "estree"
+import * as ESTree from "estree";
 
 // reporter function types
 type _ResultReporter = (r: RunnerResult) => void;
-type _AggregateReporter = (rs: RunnerResult[], cfg?: PerturbConfig, m?: PerturbMetadata) => void
+type _AggregateReporter = (
+  rs: RunnerResult[],
+  cfg: PerturbConfig,
+  m?: PerturbMetadata,
+) => void;
 
 type _SetupRun = (m: Mutant) => Promise<any>;
 type _Run = (m: Mutant) => Promise<RunnerResult>;
@@ -13,7 +17,10 @@ type _NodeFilter = (n: ESTree.Node) => boolean;
 
 export type Skipper = (node: ESTree.Node, path: string[]) => boolean;
 
-export type ComparativeMatcher = (sourceFile: string, testFile: string) => boolean;
+export type ComparativeMatcher = (
+  sourceFile: string,
+  testFile: string,
+) => boolean;
 export type GenerativeMatcher = (sourceFile: string) => string;
 
 export type MutatorFinder = (n: ESTree.Node) => MutatorPlugin[];

@@ -3,12 +3,11 @@ const expect = require("expect");
 
 const { makeConfig } = require("../helpers");
 
-const plugin = require("../../built/matchers/base-comparative");
+const plugin = require("../../built/matchers/base-comparative").default;
 
 let config, matcher, perturbDir;
-describe("base-comparative matcher", function () {
-  
-  beforeEach(function () {
+describe("base-comparative matcher", function() {
+  beforeEach(function() {
     config = makeConfig();
     matcher = plugin.makeMatcher(config);
     perturbDir = path.join(config.projectRoot, config.perturbDir);
@@ -16,20 +15,19 @@ describe("base-comparative matcher", function () {
     pSourceDir = path.join(perturbDir, config.sourceDir);
   });
 
-  it("has type 'comparative'", function () {
+  it("has type 'comparative'", function() {
     expect(plugin.type).toEqual("comparative");
   });
 
-  it("matches same paths relative to source and test directories", function () {
+  it("matches same paths relative to source and test directories", function() {
     const source = path.join(pSourceDir, "some/long/file/path.js");
     const test = path.join(pTestDir, "some/long/file/path.js");
     expect(matcher(source, test)).toEqual(true);
   });
 
-  it("rejects mismatched files", function () {
+  it("rejects mismatched files", function() {
     const source = path.join(pSourceDir, "different/file/path.js");
     const test = path.join(pTestDir, "some/long/file/path.js");
     expect(matcher(source, test)).toEqual(false);
   });
-
 });

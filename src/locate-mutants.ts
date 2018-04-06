@@ -3,22 +3,22 @@ import CommentManager = require("./comments");
 const estraverse = require("estraverse");
 
 import * as ESTree from "estree";
-import {
-  MutatorPlugin,
-  MutantLocation,
-} from "./types"
+import { MutatorPlugin, MutantLocation } from "./types";
 
 // const debug = require("debug")("locate-mutants");f
 
-type PluginService = (n: ESTree.Node) => MutatorPlugin[]
+type PluginService = (n: ESTree.Node) => MutatorPlugin[];
 
-function locateMutants (mutatorsForNode: PluginService, ast: ESTree.Node): MutantLocation[] {
+function locateMutants(
+  mutatorsForNode: PluginService,
+  ast: ESTree.Node,
+): MutantLocation[] {
   const mutantLocations: MutantLocation[] = [];
   const manager = new CommentManager();
-  const ctl = new estraverse.Controller()
+  const ctl = new estraverse.Controller();
 
   ctl.traverse(ast, {
-    enter (node: ESTree.Node) {
+    enter(node: ESTree.Node) {
       // debug("enter", node.type);
       manager.applyLeading(node);
       const path: string[] = ctl.path();
@@ -30,15 +30,15 @@ function locateMutants (mutatorsForNode: PluginService, ast: ESTree.Node): Mutan
           // return status;
         })
         .filter(plugin => plugin.filter == null || plugin.filter(node))
-        .map(plugin => ({node, path, mutator: plugin}));
+        .map(plugin => ({ node, path, mutator: plugin }));
 
       mutantLocations.push(...locations);
     },
-    leave (node: ESTree.Node) {
+    leave(node: ESTree.Node) {
       manager.applyTrailing(node);
-    }
+    },
   });
   return mutantLocations;
 }
 
-export = R.curry(locateMutants);
+export default R.curry(locateMutants);

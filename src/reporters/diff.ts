@@ -1,26 +1,33 @@
 import R = require("ramda");
-import delta = require("./delta");
+import delta from "./delta";
+import {
+  ReporterPlugin,
+  RunnerResult,
+  PerturbConfig,
+  PerturbMetadata,
+} from "../types";
 
 const chalk = require("chalk");
 const { diffLines } = require("diff");
 const changeCase = require("change-case");
 
-export = <ReporterPlugin>{
+const plugin: ReporterPlugin = {
   name: "diff",
-  onResult: function(r: RunnerResult) {
+  onResult(r: RunnerResult) {
     console.log(generateReport(r));
   },
-  onFinish: function(rs: RunnerResult[], cfg: PerturbConfig, m: PerturbMetadata) {
-    const [killed, alive] = R.partition(r => r.error, rs);
+  onFinish(rs: RunnerResult[], cfg: PerturbConfig, m?: PerturbMetadata) {
+    const [killed] = R.partition(r => r.error, rs);
     const total = rs.length;
     const killCount = killed.length;
     const killRate = Number((killCount / total).toFixed(4)) * 100;
     console.log(`Total: ${total}. Killed: ${killCount}. Rate: ${killRate}%`);
-    delta(rs, cfg, m);
+    delta(rs, cfg);
   },
 };
+export default plugin;
 
-function generateReport (r: RunnerResult): string {
+function generateReport(r: RunnerResult): string {
   const plus = "+    ";
   const minus = "-    ";
   const alive = "#ALIVE: ";
@@ -32,28 +39,33 @@ function generateReport (r: RunnerResult): string {
   //   return chalk.gray(id);
   // }
 
-  const title = r.error ?
-    chalk.gray(dead + id) :
-    chalk.red.underline(alive + id);
+  const title = r.error
+    ? chalk.gray(dead + id)
+    : chalk.red.underline(alive + id);
 
   return [
     title,
-    ...generateDiff(r).map(function (entry) {
+    ...generateDiff(r).map((entry: any) => {
       const color = r.error ? "gray" : entry.added ? "green" : "red";
       const sign = entry.added ? plus : minus;
       return chalk[color](
-        entry.value.trim().split("\n").map(l => sign + l).join("\n")
-       );
+        entry.value
+          .trim()
+          .split("\n")
+          .map((l: string) => sign + l)
+          .join("\n"),
+      );
     }),
   ].join("\n");
 }
 
-function generateDiff (r: RunnerResult) {
-  return diffLines(r.originalSourceCode, r.mutatedSourceCode)
-    .filter(node => node.added || node.removed);
+function generateDiff(r: RunnerResult) {
+  return diffLines(r.originalSourceCode, r.mutatedSourceCode).filter(
+    (node: any) => node.added || node.removed,
+  );
 }
 
-function identifier (r: RunnerResult) {
+function identifier(r: RunnerResult) {
   const loc = r.loc.start.line + "," + r.loc.start.column;
 
   // hack :/

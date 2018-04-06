@@ -1,7 +1,6 @@
-import R = require("ramda");
 import S = require("./_syntax");
 import util = require("./util");
-import { MutatorPlugin } from "../types"
+import { MutatorPlugin } from "../types";
 
 const FUNC_NODES = [
   S.FunctionDeclaration,
@@ -16,6 +15,6 @@ const plugin: MutatorPlugin = {
   nodeTypes: FUNC_NODES,
   filter: util.lengthAtPropGreaterThan("params", 1),
   mutator: util.update("params", (ps: any[]) => ps.slice().reverse()),
-}
+};
 
-export default plugin
+export default plugin;
