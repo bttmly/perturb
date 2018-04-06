@@ -1,5 +1,5 @@
-import S = require("./_syntax");
-import util = require("./util");
+import S from "./_syntax";
+import * as util from "./util";
 import { MutatorPlugin } from "../types";
 
 const FUNC_NODES = [

@@ -1,8 +1,7 @@
-import S = require("./_syntax");
-import util = require("./util");
+import S from "./_syntax";
+import * as util from "./util";
 import { MutatorPlugin } from "../types";
-
-const BINARY_OPERATOR_SWAPS = require("../constants/binary-operator-swaps");
+import BINARY_OPERATOR_SWAPS from "../constants/binary-operator-swaps";
 
 // swaps [+, -] and [*, /]
 // `age = age + 1;` => `age = age - 1;`

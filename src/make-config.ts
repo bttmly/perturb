@@ -1,4 +1,4 @@
-import fs = require("fs");
+import * as fs from "fs";
 import { PerturbConfig } from "./types";
 
 const CONFIG_FILE_NAME = ".perturbrc";

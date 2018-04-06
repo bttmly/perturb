@@ -1,11 +1,9 @@
-import R = require("ramda");
-import CommentManager = require("./comments");
 const estraverse = require("estraverse");
 
+import * as R from "ramda";
 import * as ESTree from "estree";
+import CommentManager from "./comments";
 import { MutatorPlugin, MutantLocation } from "./types";
-
-// const debug = require("debug")("locate-mutants");f
 
 type PluginService = (n: ESTree.Node) => MutatorPlugin[];
 
@@ -19,15 +17,11 @@ function locateMutants(
 
   ctl.traverse(ast, {
     enter(node: ESTree.Node) {
-      // debug("enter", node.type);
       manager.applyLeading(node);
       const path: string[] = ctl.path();
       const locations = mutatorsForNode(node)
         .filter(plugin => {
           return manager.isEnabled(plugin.name);
-          // const status = manager.isEnabled(plugin.name);
-          // if (!status) debug("disabled", plugin.name);
-          // return status;
         })
         .filter(plugin => plugin.filter == null || plugin.filter(node))
         .map(plugin => ({ node, path, mutator: plugin }));

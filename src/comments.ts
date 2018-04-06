@@ -1,4 +1,4 @@
-import R = require("ramda");
+import * as R from "ramda";
 import * as ESTree from "estree";
 
 const ENABLING_COMMENT = "perturb-enable:";
@@ -12,36 +12,16 @@ interface Operator {
   name: string;
 }
 
-function extractOperators(c: ESTree.Comment): Operator[] {
-  const value = c.value.trim();
-
-  const type = value.startsWith(ENABLING_COMMENT)
-    ? ENABLE
-    : value.startsWith(DISABLING_COMMENT) ? DISABLE : null;
-
-  if (type == null) return [];
-
-  const [, allNames] = value.split(":");
-
-  if (!allNames) return [];
-
-  return allNames
-    .split(",")
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(name => ({ type, name: String(name) }));
-}
-
 // a little class to encapsulate how mutators get enabled/disabled
-// NOTE: I would like to use BaseNode here but it is not exported. BaseStatement
-// is an empty extends from BaseNode, so we'll use that
-class CommentManager {
+export default class CommentManager {
   _disabled: Set<string>;
 
   constructor(set?: Set<string>) {
     this._disabled = set || new Set<string>();
   }
 
+  // NOTE: I would like to use BaseNode here but it is not exported. BaseStatement
+  // is an empty extends from BaseNode, so we'll use that
   applyLeading = (node: ESTree.BaseStatement) => {
     this._applyComments(node.leadingComments || []);
   };
@@ -78,4 +58,22 @@ class CommentManager {
   }
 }
 
-export = CommentManager;
+function extractOperators(c: ESTree.Comment): Operator[] {
+  const value = c.value.trim();
+
+  const type = value.startsWith(ENABLING_COMMENT)
+    ? ENABLE
+    : value.startsWith(DISABLING_COMMENT) ? DISABLE : null;
+
+  if (type == null) return [];
+
+  const [, allNames] = value.split(":");
+
+  if (!allNames) return [];
+
+  return allNames
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(name => ({ type, name: String(name) }));
+}

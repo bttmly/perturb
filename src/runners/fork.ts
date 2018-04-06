@@ -1,12 +1,13 @@
-const debug = require("debug")("runner:fork");
+import * as _debug from "debug";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import { fork } from "child_process";
 import { RunnerPlugin, Mutant } from "../types";
-
 import runMutant from "../util/run-mutant";
-import runnerUtils = require("./utils");
+import * as runnerUtils from "./utils";
+
+const debug = _debug("runner:fork");
 
 // TODO -- make configurable
 const TIMEOUT = 10000;

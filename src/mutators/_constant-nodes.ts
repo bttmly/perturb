@@ -1,4 +1,4 @@
-import S = require("./_syntax");
+import S from "./_syntax";
 import * as ESTree from "estree";
 
 export const VOID_NODE: ESTree.UnaryExpression = {

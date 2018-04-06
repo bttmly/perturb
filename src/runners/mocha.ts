@@ -1,5 +1,5 @@
 import * as Mocha from "mocha";
-import runnerUtils = require("./utils");
+import * as runnerUtils from "./utils";
 import { RunnerPlugin, Mutant, RunnerResult } from "../types";
 
 const plugin: RunnerPlugin = {

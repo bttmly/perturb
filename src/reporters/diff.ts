@@ -1,4 +1,8 @@
-import R = require("ramda");
+const chalk = require("chalk");
+import * as R from "ramda";
+import { diffLines } from "diff";
+import { sentence } from "change-case";
+
 import delta from "./delta";
 import {
   ReporterPlugin,
@@ -6,10 +10,6 @@ import {
   PerturbConfig,
   PerturbMetadata,
 } from "../types";
-
-const chalk = require("chalk");
-const { diffLines } = require("diff");
-const changeCase = require("change-case");
 
 const plugin: ReporterPlugin = {
   name: "diff",
@@ -71,5 +71,5 @@ function identifier(r: RunnerResult) {
   // hack :/
   const file = r.sourceFile.split(".perturb")[1];
 
-  return changeCase.sentence(r.mutatorName) + " " + file + "@" + loc;
+  return sentence(r.mutatorName) + " " + file + "@" + loc;
 }

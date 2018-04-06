@@ -3,7 +3,7 @@
 // R.assoc/R.assocPath turn arrays into number-indexed objects
 // while this modified version leaves arrays intact.
 
-import R = require("ramda");
+import * as R from "ramda";
 
 type Prop = string | number;
 
@@ -31,4 +31,4 @@ function assocPath(path: Prop[], val: any, target: any): any {
   }
 }
 
-export = R.curry(assocPath);
+export default R.curry(assocPath);

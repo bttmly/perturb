@@ -1,4 +1,4 @@
-import S = require("./_syntax");
+import S from "./_syntax";
 import { MutatorPlugin } from "../types";
 
 // throw new Error(); => new Error();

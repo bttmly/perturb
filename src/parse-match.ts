@@ -1,4 +1,4 @@
-import R = require("ramda");
+import * as R from "ramda";
 import * as esprima from "esprima";
 
 import * as ESTree from "estree";

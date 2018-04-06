@@ -1,4 +1,4 @@
-import S = require("./_syntax");
+import S from "./_syntax";
 import dropEachOfProp from "../util/drop-each-of-prop";
 import { MutatorPlugin } from "../types";
 

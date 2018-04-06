@@ -1,7 +1,7 @@
-import R = require("ramda");
-import Bluebird = require("bluebird");
+import * as R from "ramda";
+import * as Bluebird from "bluebird";
 import { spawn } from "child_process";
-import assert = require("assert");
+import * as assert from "assert";
 
 import getRunner from "./runners";
 import getReporter from "./reporters";
@@ -13,7 +13,6 @@ import runMutant from "./util/run-mutant";
 import locateMutants from "./locate-mutants";
 import * as mutators from "./mutators";
 import parseMatch from "./parse-match";
-
 import fileSystem from "./file-system";
 
 import {
@@ -140,6 +139,11 @@ async function sanityCheckAndSideEffects(ms: Mutant[]): Promise<Mutant[]> {
       m.mutatedSourceCode,
       "",
       "Mutated source code should not be empty.",
+    );
+    assert.notEqual(
+      m.originalSourceCode,
+      m.mutatedSourceCode,
+      "Mutated source code should be different from original.",
     );
   });
   return ms;

@@ -1,6 +1,6 @@
-import R = require("ramda");
-import S = require("./_syntax");
-import util = require("./util");
+import * as R from "ramda";
+import S from "./_syntax";
+import * as util from "./util";
 import { FALSE_NODE } from "./_constant-nodes";
 import { hasProp } from "./_filters";
 import { MutatorPlugin } from "../types";

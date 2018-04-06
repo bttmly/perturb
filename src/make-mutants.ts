@@ -1,7 +1,6 @@
-const R = require("ramda");
-
-import escodegen = require("escodegen");
-import updateIn = require("./util/update-in");
+import * as R from "ramda";
+import * as escodegen from "escodegen";
+import updateIn from "./util/update-in";
 import * as ESTree from "estree";
 import { ParsedMatch, Mutant, MutantLocation } from "./types";
 

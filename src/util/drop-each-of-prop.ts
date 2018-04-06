@@ -1,4 +1,4 @@
-import R = require("ramda");
+import * as R from "ramda";
 
 // given an object with an array property, return an array of
 // copies of that object, each copy having one of the array's

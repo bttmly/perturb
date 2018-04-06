@@ -1,7 +1,7 @@
 import * as ESTree from "estree";
 
-import S = require("./_syntax");
-import util = require("./util");
+import S from "./_syntax";
+import * as util from "./util";
 import { hasProp } from "./_filters";
 import { MutatorPlugin } from "../types";
 

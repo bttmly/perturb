@@ -1,7 +1,7 @@
 import * as ESTree from "estree";
 import { MutatorPlugin } from "../types";
 
-import R = require("ramda");
+import * as R from "ramda";
 
 import conditionalTestAlways from "./conditional-test-always";
 import conditionalTestInvert from "./conditional-test-invert";

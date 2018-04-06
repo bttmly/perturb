@@ -1,5 +1,5 @@
-import path = require("path");
-import fs = require("fs-extra");
+import * as path from "path";
+import * as fs from "fs-extra";
 import { PerturbConfig } from "./types";
 
 const glob = require("glob");

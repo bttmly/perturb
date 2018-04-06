@@ -1,4 +1,4 @@
-export = {
+const ops: { [k: string]: string } = {
   "+": "-",
   "-": "+",
   "*": "/",
@@ -20,3 +20,5 @@ export = {
   ">>": "<<",
   ">>>": "<<<",
 };
+
+export default ops;

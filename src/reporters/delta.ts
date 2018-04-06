@@ -1,7 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const R = require("ramda");
-
+import * as fs from "fs";
+import * as path from "path";
+import * as R from "ramda";
 import { RunnerResult, PerturbConfig } from "../types";
 
 const RECORD_FILE = path.join(__dirname, "../../run-record.json");

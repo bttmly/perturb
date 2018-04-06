@@ -1,5 +1,5 @@
-import R = require("ramda");
-import S = require("./_syntax");
+import * as R from "ramda";
+import S from "./_syntax";
 
 import * as ESTree from "estree";
 import { MutatorPlugin } from "../types";
