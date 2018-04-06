@@ -1,9 +1,11 @@
-import R = require("ramda");
 import S = require("./_syntax");
-import dropEachOfProp = require("../util/drop-each-of-prop");
+import dropEachOfProp from "../util/drop-each-of-prop";
+import { MutatorPlugin } from "../types";
 
-export = <MutatorPlugin>{
+const plugin: MutatorPlugin = {
   name: "tweak-switch",
   nodeTypes: [S.SwitchStatement],
   mutator: dropEachOfProp("cases"),
 };
+
+export default plugin;

@@ -1,28 +1,35 @@
 import R = require("ramda");
 import Bluebird = require("bluebird");
 import { spawn } from "child_process";
-import fs = require("fs");
 import assert = require("assert");
 
-import getRunner = require("./runners");
-import getReporter = require("./reporters");
-import getMatcher = require("./matchers");
-import locationFilter = require("./filters");
-import makeMutants = require("./make-mutants");
-import makeConfig = require("./make-config");
-import fileSystem = require("./file-system");
-import runMutant = require("./util/run-mutant");
-import locateMutants = require("./locate-mutants");
-import mutators = require("./mutators");
-import parseMatch = require("./parse-match");
+import getRunner from "./runners";
+import getReporter from "./reporters";
+import getMatcher from "./matchers";
+import locationFilter from "./filters";
+import makeMutants from "./make-mutants";
+import makeConfig from "./make-config";
+import runMutant from "./util/run-mutant";
+import locateMutants from "./locate-mutants";
+import * as mutators from "./mutators";
+import parseMatch from "./parse-match";
 
-const mapSeriesP = R.curry(R.flip(Bluebird.mapSeries));
+import fileSystem from "./file-system";
 
-async function perturb (_cfg: PerturbConfig) {
+import {
+  PerturbConfig,
+  RunnerPlugin,
+  RunnerResult,
+  Mutant,
+  ReporterPlugin,
+  Match,
+} from "./types";
+
+async function perturb(_cfg: PerturbConfig) {
   console.log(
     "*********************************************************\n",
     " -- THIS IS PRE-ALPHA SOFTWARE - USE AT YOUR OWN RISK -- \n",
-    "*********************************************************\n"
+    "*********************************************************\n",
   );
 
   const cfg = makeConfig(_cfg);
@@ -54,7 +61,7 @@ async function perturb (_cfg: PerturbConfig) {
     // is actually orthogonal (tested/untested, start time, logging)
     const matches = matcher(sources, tests);
 
-    const [ tested, untested ] = R.partition(hasTests, matches);
+    const [tested, untested] = R.partition(hasTests, matches);
 
     // TODO -- surface untested file names somehow
     // console.log("untested files:", untested.map(m => m.source).join("\n"));
@@ -71,9 +78,7 @@ async function perturb (_cfg: PerturbConfig) {
 
     // console.log("matches:", tested.map(t => ({source: t.source, tests: t.tests})));
 
-    const parsedMatches = tested
-    .map(parseMatch(locator))
-    .map(pm => {
+    const parsedMatches = tested.map(parseMatch(locator)).map(pm => {
       pm.locations = pm.locations.filter(locationFilter);
       return pm;
     });
@@ -84,18 +89,24 @@ async function perturb (_cfg: PerturbConfig) {
     let mutants = await R.chain(makeMutants, parsedMatches);
 
     // let's just check if everything is okay...
-    await sanityCheckAndSideEffects(mutants)
+    await sanityCheckAndSideEffects(mutants);
 
     if (process.env.SKIP_RUN) {
-      console.log("SKIP RUN:", mutants.length)
+      console.log("SKIP RUN:", mutants.length);
       mutants = [];
     }
 
     // run the mutatnts and gather the results
-    const results: RunnerResult[] = await mapSeriesP(handler, mutants);
+    const results: RunnerResult[] = await Bluebird.mapSeries(mutants, handler);
 
     const duration = (Date.now() - start) / 1000;
-    console.log("duration:", duration, "rate:", (results.length / duration), "/s");
+    console.log(
+      "duration:",
+      duration,
+      "rate:",
+      results.length / duration,
+      "/s",
+    );
 
     const metadata = { duration };
 
@@ -109,50 +120,47 @@ async function perturb (_cfg: PerturbConfig) {
     // sourceCount: number
 
     return results;
-
   } finally {
     await teardown();
   }
 }
 
-function makeMutantHandler (runner: RunnerPlugin, reporter: ReporterPlugin) {
-  return async function handler (mutant: Mutant): Promise<RunnerResult> {
+function makeMutantHandler(runner: RunnerPlugin, reporter: ReporterPlugin) {
+  return async function handler(mutant: Mutant): Promise<RunnerResult> {
     const result = await runMutant(runner, mutant);
-    reporter.onResult && reporter.onResult(result);
+    if (reporter.onResult) reporter.onResult(result);
     return result;
-  }
+  };
 }
 
 // TODO -- what else? Any reason might want to serialize mutants here?
-function sanityCheckAndSideEffects (ms: Mutant[]): Promise<Mutant[]> {
-  ms.forEach(function (m: Mutant) {
-    assert.notEqual(m.mutatedSourceCode, "", "Mutated source code should not be empty.");
+async function sanityCheckAndSideEffects(ms: Mutant[]): Promise<Mutant[]> {
+  ms.forEach((m: Mutant) => {
+    assert.notEqual(
+      m.mutatedSourceCode,
+      "",
+      "Mutated source code should not be empty.",
+    );
   });
-  return Promise.resolve(ms);
+  return ms;
 }
 
-function spawnP (fullCommand: string): Promise<void> {
-  return new Promise<void>(function (resolve, reject) {
+function spawnP(fullCommand: string): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
     const [cmd, ...rest] = fullCommand.split(/\s+/);
     const child = spawn(cmd, rest);
     // child.stdout.pipe(process.stdout);
     // child.stderr.pipe(process.stderr);
-    child.on("close", function (code) {
-      code === 0 ? resolve() : reject(new Error(`Test command exited with non-zero code: ${code}`));
+    child.on("close", code => {
+      code === 0
+        ? resolve()
+        : reject(new Error(`Test command exited with non-zero code: ${code}`));
     });
   });
 }
 
-function hasTests (m: Match): boolean {
+function hasTests(m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
-}
-
-// TODO -- remove this, use Bluebird or something
-Promise.prototype.finally = function (cb) {
-  return this.then(
-    value => this.constructor.resolve(cb()).then(() => value),
-    reason => this.constructor.resolve(cb()).then(() => { throw reason; })
-  );
 }
 
 export = perturb;

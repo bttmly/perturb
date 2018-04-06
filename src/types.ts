@@ -1,6 +1,12 @@
+import * as ESTree from "estree";
+
 // reporter function types
 type _ResultReporter = (r: RunnerResult) => void;
-type _AggregateReporter = (rs: RunnerResult[], cfg?: PerturbConfig, m?: PerturbMetadata) => void
+type _AggregateReporter = (
+  rs: RunnerResult[],
+  cfg: PerturbConfig,
+  m?: PerturbMetadata,
+) => void;
 
 type _SetupRun = (m: Mutant) => Promise<any>;
 type _Run = (m: Mutant) => Promise<RunnerResult>;
@@ -9,59 +15,62 @@ type _CleanupRun = (m: Mutant, before?: any) => Promise<void>;
 type _NodeMutator = (n: ESTree.Node) => ESTree.Node | ESTree.Node[];
 type _NodeFilter = (n: ESTree.Node) => boolean;
 
-type Skipper = (node: ESTree.Node, path: string[]) => boolean;
+export type Skipper = (node: ESTree.Node, path: string[]) => boolean;
 
-type ComparativeMatcher = (sourceFile: string, testFile: string) => boolean;
-type GenerativeMatcher = (sourceFile: string) => string;
+export type ComparativeMatcher = (
+  sourceFile: string,
+  testFile: string,
+) => boolean;
+export type GenerativeMatcher = (sourceFile: string) => string;
 
-type MutatorFinder = (n: ESTree.Node) => MutatorPlugin[];
+export type MutatorFinder = (n: ESTree.Node) => MutatorPlugin[];
 
-type PluginLocator<T extends _Plugin> = (name: string) => T;
+export type PluginLocator<T extends _Plugin> = (name: string) => T;
 
 // plugin interfaces
 interface _Plugin {
   name: string;
 }
 
-interface ReporterPlugin extends _Plugin {
+export interface ReporterPlugin extends _Plugin {
   onResult: _ResultReporter;
   onFinish: _AggregateReporter;
 }
 
-interface MutatorPlugin extends _Plugin {
+export interface MutatorPlugin extends _Plugin {
   nodeTypes: string[];
   mutator: _NodeMutator;
   filter?: _NodeFilter;
 }
 
-interface RunnerPlugin extends _Plugin {
+export interface RunnerPlugin extends _Plugin {
   setup: _SetupRun;
   run: _Run;
   cleanup: _CleanupRun;
 }
 
-interface SkipperPlugin extends _Plugin {
+export interface SkipperPlugin extends _Plugin {
   skipper: Skipper;
 }
 
-interface MatcherPlugin extends _Plugin {
+export interface MatcherPlugin extends _Plugin {
   type: "generative" | "comparative";
   makeMatcher: (c: PerturbConfig) => GenerativeMatcher | ComparativeMatcher;
 }
 
-interface GenerativeMatcherPlugin extends MatcherPlugin {
+export interface GenerativeMatcherPlugin extends MatcherPlugin {
   type: "generative";
   makeMatcher: (c: PerturbConfig) => GenerativeMatcher;
 }
 
-interface ComparativeMatcherPlugin extends MatcherPlugin {
+export interface ComparativeMatcherPlugin extends MatcherPlugin {
   type: "comparative";
   makeMatcher: (c: PerturbConfig) => ComparativeMatcher;
 }
 
 // structural data types
 
-interface PerturbConfig {
+export interface PerturbConfig {
   testCmd: string;
 
   mutators: string[]; // names of mutator plugins to apply
@@ -80,7 +89,7 @@ interface PerturbConfig {
   testGlob: string;
 }
 
-interface Mutant {
+export interface Mutant {
   mutatorName: string; // name of mutator plugin
   sourceFile: string;
   testFiles: string[];
@@ -92,28 +101,28 @@ interface Mutant {
   mutatedSourceCode: string;
 }
 
-interface RunnerResult extends Mutant {
+export interface RunnerResult extends Mutant {
   error?: any;
 }
 
-interface Match {
+export interface Match {
   source: string;
   tests: string[];
   sourceCode: string;
 }
 
-interface ParsedMatch extends Match {
+export interface ParsedMatch extends Match {
   ast: ESTree.Node;
   code: string; // TODO rename this. This is rengenerated source code from AST.
   locations: MutantLocation[];
 }
 
-interface MutantLocation {
+export interface MutantLocation {
   mutator: MutatorPlugin;
   path: string[];
   node: ESTree.Node;
 }
 
-interface PerturbMetadata {
+export interface PerturbMetadata {
   duration: number;
 }

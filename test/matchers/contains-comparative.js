@@ -3,12 +3,11 @@ const expect = require("expect");
 
 const { makeConfig } = require("../helpers");
 
-const plugin = require("../../built/matchers/contains-comparative");
+const plugin = require("../../built/matchers/contains-comparative").default;
 
 let config, matcher, perturbDir;
-describe("contains-comparative matcher", function () {
-
-  beforeEach(function () {
+describe("contains-comparative matcher", function() {
+  beforeEach(function() {
     config = makeConfig();
     matcher = plugin.makeMatcher(config);
     perturbDir = path.join(config.projectRoot, config.perturbDir);
@@ -16,23 +15,23 @@ describe("contains-comparative matcher", function () {
     pSourceDir = path.join(perturbDir, config.sourceDir);
   });
 
-  it("has type 'comparative'", function () {
+  it("has type 'comparative'", function() {
     expect(plugin.type).toEqual("comparative");
   });
 
-  it("matches same paths relative to source and test directories", function () {
+  it("matches same paths relative to source and test directories", function() {
     const source = path.join(pSourceDir, "some/long/file/path.js");
     const test = path.join(pTestDir, "some/long/file/path.js");
     expect(matcher(source, test)).toEqual(true);
   });
 
-  it("allows trailing extra characters for test files", function () {
+  it("allows trailing extra characters for test files", function() {
     const source = path.join(pSourceDir, "some/long/file/path.js");
     const test = path.join(pTestDir, "some/long/file/path-test.js");
     expect(matcher(source, test)).toEqual(true);
   });
 
-  it("ignores file extensions", function () {
+  it("ignores file extensions", function() {
     const source = path.join(pSourceDir, "some/long/file/path.zxcv");
     const test = path.join(pTestDir, "some/long/file/path-test.asdf");
     expect(matcher(source, test)).toEqual(true);

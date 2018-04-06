@@ -1,5 +1,5 @@
 import R = require("ramda");
-// const debug = require("debug")("comments");
+import * as ESTree from "estree"
 
 const ENABLING_COMMENT = "perturb-enable:";
 const DISABLING_COMMENT = "perturb-disable:";
@@ -12,18 +12,7 @@ interface Operator {
   name: string;
 }
 
-interface Comment {
-  type: string;
-  value: string;
-  range: number[];
-}
-
-interface CommentedNode extends ESTree.Node {
-  leadingComments?: Comment[];
-  trailingComments?: Comment[];
-}
-
-function extractOperators (c: Comment) {
+function extractOperators (c: ESTree.Comment): Array<Operator> {
   const value = c.value.trim();
 
   const type = value.startsWith(ENABLING_COMMENT) ?
@@ -32,17 +21,20 @@ function extractOperators (c: Comment) {
 
   if (type == null) return [];
 
-  return R.pipe(
-    R.split(":"),
-    R.prop("1"),
-    R.split(","),
-    R.map(R.trim),
-    R.filter(Boolean),
-    R.map(name => ({ type, name: String(name) }))
-  )(value);
+  const [, allNames] = value.split(":");
+
+  if (!allNames) return [];
+
+  return allNames
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(name => ({ type, name: String(name) }))
 }
 
 // a little class to encapsulate how mutators get enabled/disabled
+// NOTE: I would like to use BaseNode here but it is not exported. BaseStatement
+// is an empty extends from BaseNode, so we'll use that
 class CommentManager {
   _disabled: Set<string>;
 
@@ -50,11 +42,11 @@ class CommentManager {
     this._disabled = set || new Set<string>();
   }
 
-  applyLeading = (node: CommentedNode) => {
+  applyLeading = (node: ESTree.BaseStatement) => {
     this._applyComments(node.leadingComments || []);
   }
 
-  applyTrailing = (node: CommentedNode) => {
+  applyTrailing = (node: ESTree.BaseStatement) => {
     this._applyComments(node.trailingComments || []);
   }
 
@@ -64,8 +56,9 @@ class CommentManager {
 
   toArray = () => [...this._disabled];
 
-  _applyComments (cs: Comment[]) {
-    R.chain(extractOperators, cs).forEach(op => this._applyOperator(op))
+  _applyComments (cs: Array<ESTree.Comment>) {
+    R.chain(extractOperators, cs).forEach((op: Operator) => this._applyOperator(op))
+    return null
   }
 
   _applyOperator (op: Operator) {

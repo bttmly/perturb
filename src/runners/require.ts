@@ -1,23 +1,24 @@
-import runnerUtils = require("./utils");
+import * as runnerUtils from "./utils";
+import { RunnerPlugin, Mutant } from "../types";
 
-export = <RunnerPlugin>{
+const plugin: RunnerPlugin = {
   name: "require",
-  setup (m: Mutant) {
+  async setup(m: Mutant) {
     runnerUtils.clearRequireCache();
     runnerUtils.writeMutatedCode(m);
-    return Promise.resolve();
   },
-  run (m: Mutant) {
+  async run(m: Mutant) {
     try {
       m.testFiles.forEach(f => require(f));
     } catch (error) {
       console.log(error.message);
-      return Promise.resolve(Object.assign({}, m, { error }));
+      return Object.assign({}, m, { error });
     }
-    return Promise.resolve(Object.assign({}, m, { error: null }));
+    return Object.assign({}, m, { error: null });
   },
-  cleanup (m: Mutant) {
+  async cleanup(m: Mutant) {
     runnerUtils.restoreOriginalCode(m);
-    return Promise.resolve();
   },
-}
+};
+
+export default plugin;

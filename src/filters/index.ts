@@ -1,5 +1,6 @@
 import R = require("ramda");
 import S = require("../mutators/_syntax");
+import { MutantLocation } from "../types";
 
 type LocationFilter = (m: MutantLocation) => boolean;
 
@@ -8,7 +9,7 @@ const isStringRequire = R.allPass([
   R.pathEq(["callee", "name"], "require"),
   R.pathEq(["arguments", "length"], 1),
   R.pathEq(["arguments", "0", "type"], S.Literal),
-  n => typeof R.path(["arguments", "0", "value"], n) === "string"
+  n => typeof R.path(["arguments", "0", "value"], n) === "string",
 ]);
 
 const isUseStrict = R.allPass([
@@ -21,23 +22,25 @@ const isUseStrict = R.allPass([
 //   R.pathEq(["expression", "callee", "name"], name),
 // ]);
 
-const filters: LocationFilter [] = [
+const filters: LocationFilter[] = [
   (m: MutantLocation) => !isUseStrict(m.node),
   (m: MutantLocation) => !isStringRequire(m.node),
   // (m: MutantLocation) => !isCallOfName("debug")(m.node),
 ];
 
-export = R.allPass(filters);
+export default R.allPass(filters);
 
 // TODO -- how to expose this?
-function inject (name) {
+export function inject(name: string) {
   let plugin: LocationFilter;
   try {
     plugin = require(`perturb-plugin-skipper-${name}`);
     filters.push(plugin);
   } catch (err) {
     // any way to recover? other locate strategy?
-    console.log(`unable to locate -FILTER- plugin "${name}" -- fatal error, exiting`);
+    console.log(
+      `unable to locate -FILTER- plugin "${name}" -- fatal error, exiting`,
+    );
     throw err;
   }
 }

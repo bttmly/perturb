@@ -1,41 +1,40 @@
-import fs = require("fs");
+import * as fs from "fs";
+import { Mutant } from "../types";
 
-export = {
-  writeMutatedCode (m: Mutant) {
-    fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
-  },
+export function writeMutatedCode(m: Mutant) {
+  fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
+}
 
-  restoreOriginalCode (m: Mutant) {
-    fs.writeFileSync(m.sourceFile, m.originalSourceCode);
-  },
+export function restoreOriginalCode(m: Mutant) {
+  fs.writeFileSync(m.sourceFile, m.originalSourceCode);
+}
 
-  // TODO: we can optimize this in various ways, if it seems to be a bottleneck.
-  // Obviously it only really matters for in-process runners, but anecdotally a
-  // full cache flush seems to slow down those runners by 20-30%
-  clearRequireCache () {
-    Object.keys(require.cache).forEach(k => delete require.cache[k]);
-  },
+// TODO: we can optimize this in various ways, if it seems to be a bottleneck.
+// Obviously it only really matters for in-process runners, but anecdotally a
+// full cache flush seems to slow down those runners by 20-30%
+export function clearRequireCache() {
+  Object.keys(require.cache).forEach(k => delete require.cache[k]);
+}
 
-  makeErrorSerializable (err?: Error) {
-    if (err == null) {
-      return undefined;
-    }
-
-    Object.defineProperties(err, {
-      stack: {
-        enumerable: true,
-        configurable: true,
-        writable: true,
-        value: err.stack,
-      },
-      message: {
-        enumerable: true,
-        configurable: true,
-        writable: true,
-        value: err.message,
-      }
-    });
-    
-    return err;
+export function makeErrorSerializable(err?: Error) {
+  if (err == null) {
+    return undefined;
   }
+
+  Object.defineProperties(err, {
+    stack: {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: err.stack,
+    },
+    message: {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: err.message,
+    },
+  });
+
+  return err;
 }

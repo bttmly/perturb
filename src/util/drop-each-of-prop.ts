@@ -1,6 +1,6 @@
 import R = require("ramda");
 
-// given an object with an array property, return an array of 
+// given an object with an array property, return an array of
 // copies of that object, each copy having one of the array's
 // elements removed
 
@@ -9,9 +9,8 @@ import R = require("ramda");
 
 // will be helpful in testing removing each item from an object's property
 
-export = R.curry(function dropEachOfProp (key: any, obj) {
-  return obj[key].map(function (_, i) {
+export default R.curry(function dropEachOfProp(key: any, obj: any) {
+  return obj[key].map((_: any, i: number) => {
     return R.assoc(key, R.remove(i, 1, obj[key]), obj);
   });
 });
-

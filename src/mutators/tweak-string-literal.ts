@@ -1,25 +1,25 @@
 import R = require("ramda");
 import S = require("./_syntax");
-
-interface StringLiteral extends ESTree.Node {
-  value: string;
-}
+import * as ESTree from "estree";
+import { MutatorPlugin } from "../types";
 
 const EMPTY_REPLACEMENT = "a";
 
-export = <MutatorPlugin>{
+const plugin: MutatorPlugin = {
   // drops first character of non-empty string; changes
   // empty strings to "a"
   // var s = ""; => var s = "a";
   // var name = "nick"; => var name = "ick";
   name: "tweak-string-literal",
   nodeTypes: [S.Literal],
-  filter: function (node) {
-    return typeof (<ESTree.Literal>node).value === "string";
+  filter(node) {
+    return typeof (node as ESTree.Literal).value === "string";
   },
-  mutator: function (node) {
-    const {value} = <StringLiteral>node;
+  mutator(node) {
+    const value = (node as ESTree.Literal).value as string;
     const replacement = value.length ? value.slice(1) : EMPTY_REPLACEMENT;
     return R.assoc("value", replacement, node);
   },
 };
+
+export default plugin;

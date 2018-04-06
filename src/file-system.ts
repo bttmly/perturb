@@ -1,30 +1,25 @@
 import path = require("path");
 import fs = require("fs-extra");
-import R = require("ramda");
+import { PerturbConfig } from "./types";
 
 const glob = require("glob");
 
-const shouldSymlink = new Set([
-  "node_modules"
-]);
+const shouldSymlink = new Set(["node_modules"]);
 
 // hack...
 // remove this if at all possible
 // otherwise, make configurable
-const shouldSkip = new Set([
-  ".perturb"
-]);
+// const shouldSkip = new Set([".perturb"]);
 
-function setupPerturbDirectory (config: PerturbConfig) {
+function setupPerturbDirectory(config: PerturbConfig) {
+  const { projectRoot, perturbDir } = config;
 
-  const {projectRoot, sourceDir, testDir, perturbDir} = config;
-
-  const sourceAbs = path.join(projectRoot, sourceDir);
-  const testAbs = path.join(projectRoot, testDir);
+  // const sourceAbs = path.join(projectRoot, sourceDir);
+  // const testAbs = path.join(projectRoot, testDir);
 
   const pAbs = path.join(projectRoot, perturbDir);
-  const pSourceAbs = path.join(pAbs, sourceDir);
-  const pTestAbs = path.join(pAbs, testDir);
+  // const pSourceAbs = path.join(pAbs, sourceDir);
+  // const pTestAbs = path.join(pAbs, testDir);
 
   // console.log({ projectRoot, sourceAbs, testAbs, pAbs, pSourceAbs, pTestAbs });
 
@@ -32,12 +27,14 @@ function setupPerturbDirectory (config: PerturbConfig) {
   try {
     fs.removeSync(pAbs);
   } catch (e) {
-    console.log("had to remove .perturb working directory... last run did not cleanup");
+    console.log(
+      "had to remove .perturb working directory... last run did not cleanup",
+    );
   }
 
   fs.mkdirSync(pAbs);
 
-  const dirContents = fs.readdirSync(projectRoot)
+  const dirContents = fs.readdirSync(projectRoot);
 
   dirContents
     .filter(f => f !== config.perturbDir)
@@ -49,32 +46,30 @@ function setupPerturbDirectory (config: PerturbConfig) {
     .filter(f => f !== config.perturbDir)
     .filter(f => shouldSymlink.has(f))
     .map(f => [path.join(projectRoot, f), path.join(pAbs, f)])
-    .forEach(([src, dest]) => fs.symlinkSync(src, dest))
+    .forEach(([src, dest]) => fs.symlinkSync(src, dest));
 }
 
-function teardownPerturbDirectory (config: PerturbConfig) {
-  const {projectRoot, sourceDir, testDir, perturbDir} = config;
+function teardownPerturbDirectory(config: PerturbConfig) {
+  const { projectRoot, perturbDir } = config;
   const pAbs = path.join(projectRoot, perturbDir);
   fs.removeSync(pAbs);
 }
 
-function getFilePaths (config: PerturbConfig) {
-  const {projectRoot, sourceDir, testDir, perturbDir} = config;
+function getFilePaths(config: PerturbConfig) {
+  const { projectRoot, sourceDir, testDir, perturbDir } = config;
   const pAbs = path.join(projectRoot, perturbDir);
   const pSourceAbs = path.join(pAbs, sourceDir);
   const pTestAbs = path.join(pAbs, testDir);
 
   const sources: string[] = glob.sync(pSourceAbs + config.sourceGlob);
   const tests: string[] = glob.sync(pTestAbs + config.testGlob);
-  return {sources, tests}
+  return { sources, tests };
 }
 
-function createFsHelpers (c: PerturbConfig) {
+export default function createFsHelpers(c: PerturbConfig) {
   return {
     setup: () => setupPerturbDirectory(c),
     teardown: () => teardownPerturbDirectory(c),
     paths: () => getFilePaths(c),
   };
 }
-
-export = createFsHelpers;

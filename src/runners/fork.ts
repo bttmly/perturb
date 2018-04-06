@@ -1,23 +1,24 @@
 const debug = require("debug")("runner:fork");
-import fs = require("fs");
-import path = require("path");
-import os = require("os");
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
 import { fork } from "child_process";
+import { RunnerPlugin, Mutant } from "../types";
 
-import runMutant = require("../util/run-mutant");
+import runMutant from "../util/run-mutant";
 import runnerUtils = require("./utils");
 
 // TODO -- make configurable
 const TIMEOUT = 10000;
 
-export = <RunnerPlugin>{
+const plugin: RunnerPlugin = {
   name: "fork",
-  setup () { return Promise.resolve(); },
-  run (m: Mutant) {
+  async setup() {},
+  async run(m: Mutant) {
     // debug("starting", m.mutatorName);
 
     const fileLocation = tempFileLocation();
-    const args = [ fileLocation ];
+    const args = [fileLocation];
     const opts = {
       silent: true,
       env: {
@@ -39,52 +40,57 @@ export = <RunnerPlugin>{
       child.kill("SIGTERM");
     }, TIMEOUT);
 
-    return new Promise(function (resolve, reject) {
-      child.on("error", function (err) {
-        debug("child error", err.stack);
-        reject(err);
-      });
+    try {
+      await new Promise((resolve, reject) => {
+        child.on("error", err => {
+          debug("child error", err.stack);
+          reject(err);
+        });
 
-      child.on("exit", function (code) {
-        debug("child exit", code);
+        child.on("exit", code => {
+          debug("child exit", code);
 
-        // note: code is `null` when child terminated by timeout
-        code === 0 ?
-          resolve() :
-          reject(new Error("Non-zero exit code from child process"));
-      });
+          // note: code is `null` when child terminated by timeout
+          code === 0
+            ? resolve()
+            : reject(new Error("Non-zero exit code from child process"));
+        });
 
-      child.on("message", function (msg) {
-        const data = JSON.parse(msg);
-        data.error ? reject(data.error) : resolve();
+        child.on("message", msg => {
+          const data = JSON.parse(msg);
+          data.error ? reject(data.error) : resolve();
+        });
       });
-    })
-    .finally(() => clearTimeout(timeout))
-    .then(() => Object.assign({}, m))
-    .catch(err => Object.assign({}, m, { error: err }))
+      return Object.assign({}, m);
+    } catch (err) {
+      return Object.assign({}, m, { error: err });
+    } finally {
+      clearTimeout(timeout);
+    }
   },
-  cleanup () { return Promise.resolve(); }
-}
+  async cleanup() {},
+};
 
-async function childRunner (name) {
+async function childRunner(name: string) {
   debug("looking for mutant json file at", process.argv[2], "...");
   debug("getting mutator", name);
 
-  const mutant: Mutant = require(process.argv[2])
+  const mutant: Mutant = require(process.argv[2]);
   const runner: RunnerPlugin = require("./")(name);
   const result = await runMutant(runner, mutant);
   sendError(result.error);
 
   return null;
 }
+export default plugin;
 
 if (process.env.PERTURB_FORK_RUNNER) {
   childRunner(process.env.PERTURB_FORK_RUNNER);
 }
 
-function sendError (err) {
-  const message = err == null ?
-    {} : { error: runnerUtils.makeErrorSerializable(err) }
+function sendError(err: Error) {
+  const message =
+    err == null ? {} : { error: runnerUtils.makeErrorSerializable(err) };
 
   if (process.send == null) {
     throw new Error("Tried to call process.send() not in child!");
@@ -93,7 +99,9 @@ function sendError (err) {
   process.send(JSON.stringify(message));
 }
 
-function tempFileLocation () {
-  const id = Math.random().toString(16).slice(2);
+function tempFileLocation() {
+  const id = Math.random()
+    .toString(16)
+    .slice(2);
   return path.join(os.tmpdir(), `perturb-fork-mutant-${id}.json`);
 }

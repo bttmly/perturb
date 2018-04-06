@@ -6,24 +6,20 @@
 import R = require("ramda");
 
 type Prop = string | number;
-type Target = any[] | Object
 
-function assoc(prop: Prop, val: any, target: Target): Target {
+function assoc(prop: Prop, val: any, target: any): any {
   if (Array.isArray(target)) {
     const arr = target.slice();
-    arr[prop] = val;
+    arr[Number(prop)] = val;
     return arr;
   }
 
-  const obj = {};
-  for (let p in target) {
-    obj[p] = target[p];
-  }
+  const obj = { ...target };
   obj[prop] = val;
   return obj;
 }
 
-function assocPath(path: Prop[], val: any, target: Target): Target {
+function assocPath(path: Prop[], val: any, target: any): any {
   switch (path.length) {
     case 0:
       return target;
@@ -31,11 +27,7 @@ function assocPath(path: Prop[], val: any, target: Target): Target {
       return assoc(path[0], val, target);
     default:
       const [first, ...rest] = path;
-      return assoc(
-        first,
-        assocPath(rest, val, target[first]),
-        target
-      );
+      return assoc(first, assocPath(rest, val, target[first]), target);
   }
 }
 

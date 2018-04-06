@@ -1,6 +1,9 @@
-import R = require("ramda");
+import * as ESTree from "estree";
+
 import S = require("./_syntax");
 import util = require("./util");
+import { hasProp } from "./_filters";
+import { MutatorPlugin } from "../types";
 
 const BANG = "!";
 
@@ -8,15 +11,15 @@ const BANG = "!";
 // `if (isReady) {}` => `if (!(isReady)) {}`
 // `while (arr.length) {} => `while(!(arr.length)) {}`
 // `for (; i < 10; i++) {}` => `for(; (!(i < 10)); i++)`
-export = <MutatorPlugin>{
-  name: "invert-conditional-test",
+const mutator: MutatorPlugin = {
+  name: "conditional-test-invert",
   nodeTypes: S.TEST_NODES,
-  filter: R.prop("test"),
-  mutator: util.update(
-    "test", test => ({
-      type: S.UnaryExpression,
-      operator: BANG,
-      argument: test
-    })
-  ),
+  filter: hasProp("test"),
+  mutator: util.update("test", (test: ESTree.Node) => ({
+    type: S.UnaryExpression,
+    operator: BANG,
+    argument: test,
+  })),
 };
+
+export default mutator;
