@@ -16,9 +16,9 @@ const plugin: RunnerPlugin = {
   async setup() {
     return { fileLocation: tempFileLocation() };
   },
-  async run(m: Mutant, { fileLocation }) {
+  async run(m: Mutant, data?: any) {
     // debug("starting", m.mutatorName);
-    const args = [fileLocation];
+    const args = [data.fileLocation];
     const opts = {
       silent: true,
       env: {
@@ -31,7 +31,7 @@ const plugin: RunnerPlugin = {
     // can't pass the serialzed mutant as a command line argument,
     // it's wayyy too big, so write it to disk and the child will
     // pick it up from there
-    fs.writeFileSync(fileLocation, JSON.stringify(m));
+    fs.writeFileSync(data.fileLocation, JSON.stringify(m));
 
     const child = fork(__filename, args, opts);
 
