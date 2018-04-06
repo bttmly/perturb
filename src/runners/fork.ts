@@ -13,11 +13,11 @@ const TIMEOUT = 10000;
 
 const plugin: RunnerPlugin = {
   name: "fork",
-  async setup() {},
-  async run(m: Mutant) {
+  async setup() {
+    return { fileLocation: tempFileLocation() };
+  },
+  async run(m: Mutant, { fileLocation }) {
     // debug("starting", m.mutatorName);
-
-    const fileLocation = tempFileLocation();
     const args = [fileLocation];
     const opts = {
       silent: true,
@@ -48,7 +48,7 @@ const plugin: RunnerPlugin = {
         });
 
         child.on("exit", code => {
-          debug("child exit", code);
+          debug(`child exit: ${code}`);
 
           // note: code is `null` when child terminated by timeout
           code === 0
@@ -62,29 +62,33 @@ const plugin: RunnerPlugin = {
         });
       });
       return Object.assign({}, m);
-    } catch (err) {
-      return Object.assign({}, m, { error: err });
+    } catch (error) {
+      return Object.assign({}, m, { error });
     } finally {
       clearTimeout(timeout);
     }
   },
-  async cleanup() {},
+  async cleanup(m: Mutant, { fileLocation }) {
+    fs.unlinkSync(fileLocation);
+  },
 };
 
 async function childRunner(name: string) {
   debug("looking for mutant json file at", process.argv[2], "...");
-  debug("getting mutator", name);
-
+  debug("getting mutator", name, typeof require);
   const mutant: Mutant = require(process.argv[2]);
-  const runner: RunnerPlugin = require("./")(name);
+  const runner: RunnerPlugin = require("./").default(name);
   const result = await runMutant(runner, mutant);
   sendError(result.error);
-
   return null;
 }
+
 export default plugin;
 
 if (process.env.PERTURB_FORK_RUNNER) {
+  process.on("unhandledRejection", err => {
+    throw err;
+  });
   childRunner(process.env.PERTURB_FORK_RUNNER);
 }
 
