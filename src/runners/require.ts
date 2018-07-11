@@ -1,24 +1,31 @@
 import * as runnerUtils from "./utils";
 import { RunnerPlugin, Mutant } from "../types";
 
-const plugin: RunnerPlugin = {
-  name: "require",
-  async setup(m: Mutant) {
+export default class RequireRunner implements RunnerPlugin {
+  public name: string;
+  private _mutant: Mutant;
+
+  constructor(m: Mutant) {
+    this.name = "require";
+    this._mutant = m;
+  }
+
+  async setup() {
     runnerUtils.clearRequireCache();
-    runnerUtils.writeMutatedCode(m);
-  },
-  async run(m: Mutant) {
+    runnerUtils.writeMutatedCode(this._mutant);
+  }
+
+  async run() {
     try {
-      m.testFiles.forEach(f => require(f));
+      this._mutant.testFiles.forEach(f => require(f));
     } catch (error) {
       console.log(error.message);
-      return Object.assign({}, m, { error });
+      return Object.assign({}, this._mutant, { error });
     }
-    return Object.assign({}, m, { error: null });
-  },
-  async cleanup(m: Mutant) {
-    runnerUtils.restoreOriginalCode(m);
-  },
-};
+    return Object.assign({}, this._mutant, { error: null });
+  }
 
-export default plugin;
+  async cleanup() {
+    runnerUtils.restoreOriginalCode(this._mutant);
+  }
+}

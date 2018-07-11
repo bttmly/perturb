@@ -9,7 +9,6 @@ import getMatcher from "./matchers";
 import locationFilter from "./filters";
 import makeMutants from "./make-mutants";
 import makeConfig from "./make-config";
-import runMutant from "./util/run-mutant";
 import locateMutants from "./locate-mutants";
 import * as mutators from "./mutators";
 import parseMatch from "./parse-match";
@@ -17,11 +16,11 @@ import fileSystem from "./file-system";
 
 import {
   PerturbConfig,
-  RunnerPlugin,
   RunnerResult,
   Mutant,
   ReporterPlugin,
   Match,
+  RunnerPluginConstructor,
 } from "./types";
 
 async function perturb(_cfg: PerturbConfig) {
@@ -124,9 +123,12 @@ async function perturb(_cfg: PerturbConfig) {
   }
 }
 
-function makeMutantHandler(runner: RunnerPlugin, reporter: ReporterPlugin) {
+function makeMutantHandler(Runner: RunnerPluginConstructor, reporter: ReporterPlugin) {
   return async function handler(mutant: Mutant): Promise<RunnerResult> {
-    const result = await runMutant(runner, mutant);
+    const runner = new Runner(mutant);
+    await runner.setup();
+    const result = await runner.run();
+    await runner.cleanup();
     if (reporter.onResult) reporter.onResult(result);
     return result;
   };

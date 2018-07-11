@@ -8,10 +8,6 @@ type _AggregateReporter = (
   m?: PerturbMetadata,
 ) => void;
 
-type _SetupRun = (m: Mutant) => Promise<any>;
-type _Run = (m: Mutant, setupResult?: any) => Promise<RunnerResult>;
-type _CleanupRun = (m: Mutant, setupResult?: any) => Promise<void>;
-
 type _NodeMutator = (n: ESTree.Node) => ESTree.Node | ESTree.Node[];
 type _NodeFilter = (n: ESTree.Node) => boolean;
 
@@ -43,10 +39,14 @@ export interface MutatorPlugin extends _Plugin {
   filter?: _NodeFilter;
 }
 
+export interface RunnerPluginConstructor {
+  new (m: Mutant): RunnerPlugin;
+}
+
 export interface RunnerPlugin extends _Plugin {
-  setup: _SetupRun;
-  run: _Run;
-  cleanup: _CleanupRun;
+  setup(): Promise<void>;
+  run(): Promise<RunnerResult>;
+  cleanup(): Promise<void>;
 }
 
 export interface SkipperPlugin extends _Plugin {

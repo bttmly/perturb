@@ -2,16 +2,24 @@ import * as Mocha from "mocha";
 import * as runnerUtils from "./utils";
 import { RunnerPlugin, Mutant, RunnerResult } from "../types";
 
-const plugin: RunnerPlugin = {
-  name: "mocha",
-  async setup(m: Mutant) {
-    runnerUtils.clearRequireCache();
-    runnerUtils.writeMutatedCode(m);
-    const listeners = new Set(process.listeners("uncaughtException"));
-    return { listeners };
-  },
+export default class MochaRunner implements RunnerPlugin {
+  public name: string;
+  private _mutant: Mutant;
+  private _listeners: any[];
 
-  async run(m: Mutant): Promise<RunnerResult> {
+  constructor(m: Mutant) {
+    this.name = "mocha";
+    this._mutant = m;
+    this._listeners = [];
+  }
+
+  async setup(): Promise<void> {
+    runnerUtils.clearRequireCache();
+    runnerUtils.writeMutatedCode(this._mutant);
+    this._listeners = process.listeners("uncaughtException");
+  }
+
+  async run(): Promise<RunnerResult> {
     try {
       await new Promise((resolve, reject) => {
         class Reporter {
@@ -24,25 +32,21 @@ const plugin: RunnerPlugin = {
         }
 
         const mocha = new Mocha({ reporter: Reporter, bail: true });
-        m.testFiles.forEach(t => mocha.addFile(t));
+        this._mutant.testFiles.forEach(t => mocha.addFile(t));
         mocha.run(resolve);
       });
-      return Object.assign({}, m, { error: null });
+      return Object.assign({}, this._mutant, { error: null });
     } catch (error) {
-      return Object.assign({}, m, { error });
+      return Object.assign({}, this._mutant, { error });
     }
-  },
+  }
 
-  async cleanup(m: Mutant, b: any) {
-    // edge case: multiple of same handler somehow attached. this will
-    // only unbind one copy ... hmmm
+  async cleanup(): Promise<void> {
     process
       .listeners("uncaughtException")
-      .filter(f => b.listeners.has(f))
+      .filter(f => !this._listeners.includes(f))
       .forEach(f => process.removeListener("uncaughtException", f));
 
-    runnerUtils.restoreOriginalCode(m);
-  },
-};
-
-export default plugin;
+    runnerUtils.restoreOriginalCode(this._mutant);
+  }
+}
