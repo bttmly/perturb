@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import * as R from "ramda";
 import { RunnerResult, PerturbConfig } from "../types";
 
 const RECORD_FILE = path.join(__dirname, "../../run-record.json");
@@ -12,16 +11,18 @@ interface Stats {
 }
 
 function calcStats(rs: RunnerResult[]): Stats {
-  const [killed] = R.partition((r: RunnerResult) => r.error, rs);
+  const killed = rs.filter(r => r.error);
   const total = rs.length;
-  const killCount: number = killed.length;
+  const killCount = killed.length;
   const killRate = Number((killCount / total).toFixed(4)) * 100;
   return { killRate, killCount, total };
 }
 
 function writeResult(last: any, s: Stats, root: string) {
   last[root] = s;
-  fs.writeFileSync(RECORD_FILE, JSON.stringify(last));
+  try {
+    fs.writeFileSync(RECORD_FILE, JSON.stringify(last));
+  } catch (e) { }
 }
 
 export default function compare(rs: RunnerResult[], cfg: PerturbConfig) {
@@ -39,6 +40,9 @@ export default function compare(rs: RunnerResult[], cfg: PerturbConfig) {
         stats.killCount - record[cfg.projectRoot].killCount,
       );
     }
+  }
+  catch (e) {
+    // file doesn't exist
   } finally {
     writeResult(record, stats, cfg.projectRoot);
   }

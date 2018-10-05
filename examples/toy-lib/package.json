@@ -1,8 +1,10 @@
 {
-  "dependencies": {
-    "lodash": "^2.4.1"
-  },
+  "dependencies": {},
   "scripts": {
     "test": "mocha ./test/**/*.js"
-  }
+  },
+  "name": "perturb-example-toy-lib",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
 }
