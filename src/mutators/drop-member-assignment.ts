@@ -7,6 +7,7 @@ import { MutatorPlugin } from "../types";
 // drops a member assignment
 // `obj.prop = 'value';` => `obj.prop;`
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "drop-member-assignment",
   nodeTypes: [S.AssignmentExpression],
   filter(node: ESTree.Node) {

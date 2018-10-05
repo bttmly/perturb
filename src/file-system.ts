@@ -63,6 +63,7 @@ function getFilePaths(config: PerturbConfig) {
 
   const sources: string[] = glob.sync(pSourceAbs + config.sourceGlob);
   const tests: string[] = glob.sync(pTestAbs + config.testGlob);
+
   return { sources, tests };
 }
 

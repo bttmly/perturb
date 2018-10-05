@@ -9,8 +9,9 @@ import {
 // output: project/test/dir/car.js
 
 const plugin: GenerativeMatcherPlugin = {
+  type: "matcher",
   name: "generative-matcher-plugin",
-  type: "generative",
+  matchType: "generative",
   makeMatcher(c: PerturbConfig): GenerativeMatcher {
     return (sourceFile: string) => {
       const perturbRoot = path.join(c.projectRoot, c.perturbDir);

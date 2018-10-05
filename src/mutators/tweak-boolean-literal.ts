@@ -4,7 +4,9 @@ import * as util from "./util";
 import { MutatorPlugin } from "../types";
 
 // `var isOk = true` => `var isOk = false`
+
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "tweak-boolean-literal",
   nodeTypes: [S.Literal],
   filter(node: any) {

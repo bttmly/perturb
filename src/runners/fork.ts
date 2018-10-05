@@ -3,8 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import { fork } from "child_process";
-import { RunnerPlugin, Mutant } from "../types";
-import runMutant from "../util/run-mutant";
+import { RunnerPlugin, Mutant, RunnerResult, RunnerPluginConstructor } from "../types";
 import * as runnerUtils from "./utils";
 
 const debug = _debug("runner:fork");
@@ -12,14 +11,27 @@ const debug = _debug("runner:fork");
 // TODO -- make configurable
 const TIMEOUT = 10000;
 
-const plugin: RunnerPlugin = {
-  name: "fork",
-  async setup() {
-    return { fileLocation: tempFileLocation() };
-  },
-  async run(m: Mutant, data?: any) {
-    // debug("starting", m.mutatorName);
-    const args = [data.fileLocation];
+export default class ForkRunner implements RunnerPlugin {
+  public name: string;
+  public type: "runner";
+  private _fileLocation: string;
+  private _mutant: Mutant;
+
+  constructor(m: Mutant) {
+    this.name = "fork";
+    this.type = "runner";
+    this._mutant = m;
+    this._fileLocation = tempFileLocation();
+  }
+
+  async setup(): Promise<void> { }
+
+  async run(): Promise<RunnerResult> {
+    if (this._fileLocation == null) {
+      throw new Error("Setup did not run!");
+    }
+
+    const args = [this._fileLocation];
     const opts = {
       silent: true,
       env: {
@@ -32,7 +44,7 @@ const plugin: RunnerPlugin = {
     // can't pass the serialzed mutant as a command line argument,
     // it's wayyy too big, so write it to disk and the child will
     // pick it up from there
-    fs.writeFileSync(data.fileLocation, JSON.stringify(m));
+    fs.writeFileSync(this._fileLocation, JSON.stringify(this._mutant));
 
     const child = fork(__filename, args, opts);
 
@@ -62,34 +74,34 @@ const plugin: RunnerPlugin = {
           data.error ? reject(data.error) : resolve();
         });
       });
-      return Object.assign({}, m);
+      return Object.assign({}, this._mutant);
     } catch (error) {
-      return Object.assign({}, m, { error });
+      return Object.assign({}, this._mutant, { error });
     } finally {
       clearTimeout(timeout);
     }
-  },
-  async cleanup(m: Mutant, { fileLocation }) {
-    fs.unlinkSync(fileLocation);
-  },
-};
+  }
+
+  async cleanup() {
+    fs.unlinkSync(this._fileLocation);
+  }
+}
 
 async function childRunner(name: string) {
   debug("looking for mutant json file at", process.argv[2], "...");
   debug("getting mutator", name, typeof require);
   const mutant: Mutant = require(process.argv[2]);
-  const runner: RunnerPlugin = require("./").default(name);
-  const result = await runMutant(runner, mutant);
+  const Runner: RunnerPluginConstructor = require("./").default(name);
+  const runner = new Runner(mutant);
+  await runner.setup();
+  const result = await runner.run();
+  await runner.cleanup();
   sendError(result.error);
   return null;
 }
 
-export default plugin;
-
 if (process.env.PERTURB_FORK_RUNNER) {
-  process.on("unhandledRejection", err => {
-    throw err;
-  });
+  process.on("unhandledRejection", err => { throw err; });
   childRunner(process.env.PERTURB_FORK_RUNNER);
 }
 

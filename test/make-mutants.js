@@ -5,10 +5,10 @@ const expect = require("expect");
 
 const mocks = require("./mocks/mutators");
 
-const invertMutator = require("../built/mutators/conditional-test-invert")
+const invertMutator = require("../lib/mutators/conditional-test-invert")
   .default;
-const locateMutants = require("../built/locate-mutants").default;
-const makeMutants = require("../built/make-mutants").default;
+const locateMutants = require("../lib/locate-mutants").default;
+const makeMutants = require("../lib/make-mutants").default;
 
 describe("makeMutants", function() {
   it("generates mutant objects from a parsed match", function() {

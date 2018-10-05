@@ -12,6 +12,7 @@ const BANG = "!";
 // `while (arr.length) {} => `while(!(arr.length)) {}`
 // `for (; i < 10; i++) {}` => `for(; (!(i < 10)); i++)`
 const mutator: MutatorPlugin = {
+  type: "mutator",
   name: "conditional-test-invert",
   nodeTypes: S.TEST_NODES,
   filter: hasProp("test"),

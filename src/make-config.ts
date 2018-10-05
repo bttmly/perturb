@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { PerturbConfig } from "./types";
+import { PerturbConfig, OptionalPerturbConfig } from "./types";
 
 const CONFIG_FILE_NAME = ".perturbrc";
 const DEFAULT_RUNNER = "mocha";
@@ -23,8 +23,11 @@ const defaultConfig: PerturbConfig = {
   runner: DEFAULT_RUNNER,
 };
 
-export default function makeConfig(userConfig = {}): PerturbConfig {
+export default function makeConfig(userConfig: OptionalPerturbConfig = {}): PerturbConfig {
   let fileConfig;
+
+  // TODO: implicit config cascading from the file system could be really confusing.
+  // perhaps remove it? or push it further up the stack so its exposed as a CLI argument
 
   try {
     const str = fs
@@ -43,7 +46,9 @@ export default function makeConfig(userConfig = {}): PerturbConfig {
     userConfig,
   );
 
-  // TODO -- validate shape here?
+  // TODO -- we need to validate shape here because we're reading potentially busted
+  // stuff from the CLI or the file system and downstream everything assumes this is
+  // well-formed
 
   return cfg;
 }

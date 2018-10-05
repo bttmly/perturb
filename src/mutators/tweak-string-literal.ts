@@ -5,11 +5,13 @@ import { MutatorPlugin } from "../types";
 
 const EMPTY_REPLACEMENT = "a";
 
+// drops first character of non-empty string; changes
+// empty strings to "a"
+// var s = ""; => var s = "a";
+// var name = "nick"; => var name = "ick";
+
 const plugin: MutatorPlugin = {
-  // drops first character of non-empty string; changes
-  // empty strings to "a"
-  // var s = ""; => var s = "a";
-  // var name = "nick"; => var name = "ick";
+  type: "mutator",
   name: "tweak-string-literal",
   nodeTypes: [S.Literal],
   filter(node) {

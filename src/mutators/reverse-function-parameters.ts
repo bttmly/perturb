@@ -11,6 +11,7 @@ const FUNC_NODES = [
 // reverse the perameter order for a function expression or declaration
 // `function fn (a, b) {}` => `function fn (b, a) {}`
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "reverse-function-parameters",
   nodeTypes: FUNC_NODES,
   filter: util.lengthAtPropGreaterThan("params", 1),

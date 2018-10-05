@@ -9,29 +9,28 @@ import getMatcher from "./matchers";
 import locationFilter from "./filters";
 import makeMutants from "./make-mutants";
 import makeConfig from "./make-config";
-import runMutant from "./util/run-mutant";
 import locateMutants from "./locate-mutants";
 import * as mutators from "./mutators";
 import parseMatch from "./parse-match";
 import fileSystem from "./file-system";
 
 import {
-  PerturbConfig,
-  RunnerPlugin,
+  OptionalPerturbConfig,
   RunnerResult,
   Mutant,
   ReporterPlugin,
   Match,
+  RunnerPluginConstructor,
 } from "./types";
 
-async function perturb(_cfg: PerturbConfig) {
+export default async function perturb(inputCfg: OptionalPerturbConfig) {
   console.log(
     "*********************************************************\n",
     " -- THIS IS PRE-ALPHA SOFTWARE - USE AT YOUR OWN RISK -- \n",
     "*********************************************************\n",
   );
 
-  const cfg = makeConfig(_cfg);
+  const cfg = makeConfig(inputCfg);
 
   console.log("init with config\n", cfg);
 
@@ -124,10 +123,13 @@ async function perturb(_cfg: PerturbConfig) {
   }
 }
 
-function makeMutantHandler(runner: RunnerPlugin, reporter: ReporterPlugin) {
+function makeMutantHandler(Runner: RunnerPluginConstructor, reporter: ReporterPlugin) {
   return async function handler(mutant: Mutant): Promise<RunnerResult> {
-    const result = await runMutant(runner, mutant);
-    if (reporter.onResult) reporter.onResult(result);
+    const runner = new Runner(mutant);
+    await runner.setup();
+    const result = await runner.run();
+    await runner.cleanup();
+    reporter.onResult(result);
     return result;
   };
 }
@@ -166,5 +168,3 @@ function spawnP(fullCommand: string): Promise<void> {
 function hasTests(m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
 }
-
-export = perturb;

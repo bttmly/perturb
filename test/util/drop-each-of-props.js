@@ -1,6 +1,6 @@
 const expect = require("expect");
 
-const dropEachOfProp = require("../../built/util/drop-each-of-prop").default;
+const dropEachOfProp = require("../../lib/util/drop-each-of-prop").default;
 
 describe("dropEachOfProp", () => {
   const other = {};

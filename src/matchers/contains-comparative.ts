@@ -16,8 +16,9 @@ function withoutExt(fileName: string) {
 }
 
 const plugin: ComparativeMatcherPlugin = {
+  type: "matcher",
   name: "contains-comparative-matcher-plugin",
-  type: "comparative",
+  matchType: "comparative",
   makeMatcher(c: PerturbConfig): ComparativeMatcher {
     return (sourceFile: string, testFile: string): boolean => {
       const perturbRoot = path.join(c.projectRoot, c.perturbDir);

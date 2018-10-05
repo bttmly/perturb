@@ -13,6 +13,7 @@ import {
 
 const plugin: ReporterPlugin = {
   name: "diff",
+  type: "reporter",
   onResult(r: RunnerResult) {
     console.log(generateReport(r));
   },

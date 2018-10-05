@@ -2,6 +2,7 @@ import { ReporterPlugin, RunnerResult } from "../types";
 
 const plugin: ReporterPlugin = {
   name: "names",
+  type: "reporter",
   onResult(r: RunnerResult) {
     console.log(identifier(r));
   },

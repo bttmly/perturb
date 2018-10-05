@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import S from "../mutators/_syntax"
+import S from "../mutators/_syntax";
 import { MutantLocation } from "../types";
 
 type LocationFilter = (m: MutantLocation) => boolean;

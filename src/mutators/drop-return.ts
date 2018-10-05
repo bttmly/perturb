@@ -9,6 +9,7 @@ import { MutatorPlugin } from "../types";
 // `return;` => `void 0;`
 
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "drop-return",
   nodeTypes: [S.ReturnStatement],
   mutator: R.ifElse(

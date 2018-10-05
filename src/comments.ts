@@ -4,11 +4,13 @@ import * as ESTree from "estree";
 const ENABLING_COMMENT = "perturb-enable:";
 const DISABLING_COMMENT = "perturb-disable:";
 
-const ENABLE = Symbol("ENABLE");
-const DISABLE = Symbol("DISABLE");
+export enum CommentType {
+  ENABLE = "ENABLE",
+  DISABLE = "DISABLE",
+}
 
-interface Operator {
-  type: symbol;
+export interface Operator {
+  type: CommentType;
   name: string;
 }
 
@@ -24,11 +26,11 @@ export default class CommentManager {
   // is an empty extends from BaseNode, so we'll use that
   applyLeading = (node: ESTree.BaseStatement) => {
     this._applyComments(node.leadingComments || []);
-  };
+  }
 
   applyTrailing = (node: ESTree.BaseStatement) => {
     this._applyComments(node.trailingComments || []);
-  };
+  }
 
   isDisabled = (name: string) => this._disabled.has(name);
 
@@ -45,16 +47,14 @@ export default class CommentManager {
 
   _applyOperator(op: Operator) {
     switch (op.type) {
-      case ENABLE: {
-        // debug("enabling", op.name);
-        this._disabled.delete(op.name);
-        break;
+      case CommentType.ENABLE: {
+        return void this._disabled.delete(op.name);
       }
-      case DISABLE: {
-        // debug("disabling", op.name);
-        this._disabled.add(op.name);
+      case CommentType.DISABLE: {
+        return void this._disabled.add(op.name);
       }
     }
+    return assertUnreachable(op.type);
   }
 }
 
@@ -62,12 +62,12 @@ function extractOperators(c: ESTree.Comment): Operator[] {
   const value = c.value.trim();
 
   const type = value.startsWith(ENABLING_COMMENT)
-    ? ENABLE
-    : value.startsWith(DISABLING_COMMENT) ? DISABLE : null;
+    ? CommentType.ENABLE
+    : value.startsWith(DISABLING_COMMENT) ? CommentType.DISABLE : null;
 
   if (type == null) return [];
 
-  const [, allNames] = value.split(":");
+  const [, allNames] = value.split(":").filter(Boolean);
 
   if (!allNames) return [];
 
@@ -75,5 +75,9 @@ function extractOperators(c: ESTree.Comment): Operator[] {
     .split(",")
     .map(s => s.trim())
     .filter(Boolean)
-    .map(name => ({ type, name: String(name) }));
+    .map(name => ({ type, name }));
+}
+
+function assertUnreachable(x: never): never {
+  throw new Error("Didn't expect to get here");
 }

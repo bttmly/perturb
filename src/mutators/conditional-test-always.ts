@@ -6,6 +6,7 @@ import { MutatorPlugin } from "../types";
 import { hasProp } from "./_filters";
 
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "conditional-test-always",
   nodeTypes: S.TEST_NODES,
   filter: hasProp("test"),

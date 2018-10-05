@@ -8,6 +8,7 @@ import { MutatorPlugin } from "../types";
 // (will this cause lots of test timeouts due to uncalled callbacks?)
 
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "drop-void-call",
   nodeTypes: [S.ExpressionStatement],
   filter: R.both(

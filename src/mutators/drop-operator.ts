@@ -7,6 +7,7 @@ import { MutatorPlugin } from "../types";
 // +new Date(); => new Date();
 
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "drop-operator",
   nodeTypes: [S.ThrowStatement, S.UnaryExpression],
   // TODO: ts-any

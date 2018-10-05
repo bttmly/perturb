@@ -1,6 +1,6 @@
 const expect = require("expect");
 
-const updateIn = require("../../built/util/update-in").default;
+const updateIn = require("../../lib/util/update-in").default;
 
 describe("updateIn", () => {
   const other = {};

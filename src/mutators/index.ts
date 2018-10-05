@@ -43,7 +43,9 @@ const coreMutators: MutatorPlugin[] = [
   tweakSwitch,
 ];
 
-type MutatorIndex = { [key: string]: MutatorPlugin[] };
+interface MutatorIndex {
+  [key: string]: MutatorPlugin[];
+}
 
 let index: MutatorIndex = {};
 let activeMutators: MutatorPlugin[] = [];
