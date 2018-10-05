@@ -9,6 +9,7 @@ import BINARY_OPERATOR_SWAPS from "../constants/binary-operator-swaps";
 // `var dy = rise / run;` => `var dy = rise * run;`
 // `var area = w * h;` => `var area = w / h;`
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "swap-binary-operators",
   nodeTypes: [S.BinaryExpression],
   // TODO: ts-any

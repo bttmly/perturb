@@ -2,10 +2,12 @@ import * as runnerUtils from "./utils";
 import { RunnerPlugin, Mutant } from "../types";
 
 export default class RequireRunner implements RunnerPlugin {
+  public type: "runner";
   public name: string;
   private _mutant: Mutant;
 
   constructor(m: Mutant) {
+    this.type = "runner";
     this.name = "require";
     this._mutant = m;
   }

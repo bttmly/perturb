@@ -6,15 +6,23 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "allowJs": false,
-    "rootDirs": ["src"],
-    "outDir": "built",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "strict": true,
     "strictNullChecks": true,
-    "lib": ["es2017"]
+    "lib": [
+      "es2017"
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

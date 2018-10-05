@@ -7,6 +7,7 @@ import { MutatorPlugin } from "../types";
 // output: [`fn(b, c)`, `fn(a, c)`, `fn(a, b)`]
 
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "tweak-arguments",
   nodeTypes: [S.CallExpression],
   filter: util.lengthAtPropGreaterThan("arguments", 0),

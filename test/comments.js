@@ -1,6 +1,6 @@
 const expect = require("expect");
 const esprima = require("esprima");
-const CommentManager = require("../built/comments").default;
+const CommentManager = require("../lib/comments").default;
 
 const helpers = require("./helpers");
 
@@ -11,7 +11,7 @@ const ESPRIMA_OPTIONS = {
 };
 
 function createTest(obj) {
-  it(obj.title, function() {
+  it(obj.title, function () {
     const manager = new CommentManager(obj.set);
     const node = helpers.nodeFromCode(obj.code);
     manager.applyLeading(node);
@@ -20,7 +20,7 @@ function createTest(obj) {
   });
 }
 
-describe("CommentManager", function() {
+describe("CommentManager", function () {
   createTest({
     title: "disable: works for leading line comments",
     expected: "abc".split(""),
@@ -72,4 +72,13 @@ describe("CommentManager", function() {
       // perturb-enable: a
     `,
   });
+
+  createTest({
+    title: "with no disabled mutations listed",
+    expected: [],
+    code: `
+    // perturb-disable
+    const x = 1;
+    `,
+  })
 });

@@ -12,17 +12,19 @@ const debug = _debug("runner:fork");
 const TIMEOUT = 10000;
 
 export default class ForkRunner implements RunnerPlugin {
-  name: string;
+  public name: string;
+  public type: "runner";
   private _fileLocation: string;
   private _mutant: Mutant;
 
   constructor(m: Mutant) {
     this.name = "fork";
+    this.type = "runner";
     this._mutant = m;
     this._fileLocation = tempFileLocation();
   }
 
-  async setup(): Promise<void> {}
+  async setup(): Promise<void> { }
 
   async run(): Promise<RunnerResult> {
     if (this._fileLocation == null) {

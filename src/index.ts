@@ -15,7 +15,7 @@ import parseMatch from "./parse-match";
 import fileSystem from "./file-system";
 
 import {
-  PerturbConfig,
+  OptionalPerturbConfig,
   RunnerResult,
   Mutant,
   ReporterPlugin,
@@ -23,14 +23,14 @@ import {
   RunnerPluginConstructor,
 } from "./types";
 
-async function perturb(_cfg: PerturbConfig) {
+export default async function perturb(inputCfg: OptionalPerturbConfig) {
   console.log(
     "*********************************************************\n",
     " -- THIS IS PRE-ALPHA SOFTWARE - USE AT YOUR OWN RISK -- \n",
     "*********************************************************\n",
   );
 
-  const cfg = makeConfig(_cfg);
+  const cfg = makeConfig(inputCfg);
 
   console.log("init with config\n", cfg);
 
@@ -129,7 +129,7 @@ function makeMutantHandler(Runner: RunnerPluginConstructor, reporter: ReporterPl
     await runner.setup();
     const result = await runner.run();
     await runner.cleanup();
-    if (reporter.onResult) reporter.onResult(result);
+    reporter.onResult(result);
     return result;
   };
 }
@@ -168,5 +168,3 @@ function spawnP(fullCommand: string): Promise<void> {
 function hasTests(m: Match): boolean {
   return Boolean(R.path(["tests", "length"], m));
 }
-
-export = perturb;

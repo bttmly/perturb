@@ -4,10 +4,10 @@ const escodegen = require("escodegen");
 const expect = require("expect");
 
 const mocks = require("./mocks/mutators");
-const invertMutator = require("../built/mutators/conditional-test-invert")
+const invertMutator = require("../lib/mutators/conditional-test-invert")
   .default;
-const parseMatch = require("../built/parse-match").default;
-const locateMutants = require("../built/locate-mutants").default;
+const parseMatch = require("../lib/parse-match").default;
+const locateMutants = require("../lib/locate-mutants").default;
 
 describe("parseMatch", function() {
   it("generates a parsed match from a basic match", function() {

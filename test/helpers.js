@@ -3,7 +3,7 @@ const escodegen = require("escodegen");
 const R = require("ramda");
 const expect = require("expect");
 const estraverse = require("estraverse");
-const updateIn = require("../built/util/update-in").default;
+const updateIn = require("../lib/util/update-in").default;
 
 const ESPRIMA_OPTIONS = {
   attachComment: true,
@@ -11,7 +11,7 @@ const ESPRIMA_OPTIONS = {
   loc: true,
 };
 
-const { getMutatorByName } = require("../built/mutators");
+const { getMutatorByName } = require("../lib/mutators");
 const { Syntax } = require("estraverse");
 
 function nodeFromCode(code) {

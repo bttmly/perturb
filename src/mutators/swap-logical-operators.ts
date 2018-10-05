@@ -11,6 +11,7 @@ type LogicalOperator = "&&" | "||";
 // `if (x && y)` => `if (x || y)`
 // `while (f() || g())` => `while(f() && g())`
 const plugin: MutatorPlugin = {
+  type: "mutator",
   name: "swap-logical-operators",
   nodeTypes: [S.LogicalExpression],
   mutator: util.update(

@@ -4,9 +4,9 @@ import ForkRunner from "./fork";
 import { RunnerPluginConstructor } from "../types";
 
 const plugins = new Map<string, RunnerPluginConstructor>([
-  [ "mocha", MochaRunner ],
-  [ "require", RequireRunner ],
-  [ "fork", ForkRunner ],
+  ["mocha", MochaRunner],
+  ["require", RequireRunner],
+  ["fork", ForkRunner],
 ]);
 
 // since we only accept a single runner plugin, there's no compelling reason to provide

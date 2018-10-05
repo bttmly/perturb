@@ -5,8 +5,8 @@ test-bail: compile
 	NODE_ENV=testing ./node_modules/.bin/_mocha ./test/setup ./test --recursive --bail
 
 compile:
-	rm -rf ./built
-	./node_modules/.bin/tsc --strictNullChecks
+	rm -rf ./lib
+	./node_modules/.bin/tsc --strictNullChecks --declaration
 
 example-events: compile
 	rm -rf ./.perturb
@@ -14,9 +14,6 @@ example-events: compile
 
 dogfood: compile
 	rm -rf ./.perturb
-	node ./bin/perturb -s built
-
-build:
-	./node_modules/.bin/tsc --strictNullChecks
+	node ./lib/cli -s lib
 
 .PHONY: test example

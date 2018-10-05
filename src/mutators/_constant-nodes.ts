@@ -5,10 +5,10 @@ export const VOID_NODE: ESTree.UnaryExpression = {
   type: S.UnaryExpression,
   operator: "void",
   prefix: true,
-  argument: <ESTree.Literal>{
+  argument: {
     type: S.Literal,
     value: 0,
-  }
+  },
 };
 
 export const FALSE_NODE: ESTree.Literal = {

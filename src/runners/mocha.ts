@@ -3,11 +3,13 @@ import * as runnerUtils from "./utils";
 import { RunnerPlugin, Mutant, RunnerResult } from "../types";
 
 export default class MochaRunner implements RunnerPlugin {
+  public type: "runner";
   public name: string;
   private _mutant: Mutant;
   private _listeners: any[];
 
   constructor(m: Mutant) {
+    this.type = "runner";
     this.name = "mocha";
     this._mutant = m;
     this._listeners = [];

@@ -1,4 +1,4 @@
-const BINARY_OPERATOR_SWAPS = require("../../built/constants/binary-operator-swaps.js")
+const BINARY_OPERATOR_SWAPS = require("../../lib/constants/binary-operator-swaps.js")
   .default;
 
 const PLUGIN_NAME = "swap-binary-operators";

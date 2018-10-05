@@ -9,8 +9,9 @@ import {
 //   test: project/test/dir/file.js
 
 const plugin: ComparativeMatcherPlugin = {
+  type: "matcher",
   name: "comparative-matcher-plugin",
-  type: "comparative",
+  matchType: "comparative",
   makeMatcher(c: PerturbConfig): ComparativeMatcher {
     return (sourceFile: string, testFile: string): boolean => {
       const perturbRoot = path.join(c.projectRoot, c.perturbDir);

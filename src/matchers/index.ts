@@ -38,12 +38,11 @@ const builtIns = new Map<string, MatcherPlugin>([
 
 export default function getMatcher(c: PerturbConfig) {
   const matcherPlugin = getMatcherPlugin(c.matcher);
-  const { type } = matcherPlugin;
+  const { matchType } = matcherPlugin;
   const matcher = matcherPlugin.makeMatcher(c);
-
   return function findMatches(sources: string[], tests: string[]): Match[] {
     const runMatch: any =
-      type === "generative" ? runGenerative : runComparative;
+      matchType === "generative" ? runGenerative : runComparative;
     return sources.map(source => ({
       source,
       tests: runMatch(matcher, source, tests),

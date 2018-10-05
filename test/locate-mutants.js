@@ -4,10 +4,10 @@ const expect = require("expect");
 
 const mocks = require("./mocks/mutators");
 
-const locateMutants = require("../built/locate-mutants").default;
+const locateMutants = require("../lib/locate-mutants").default;
 
-describe("locateMutants", function() {
-  it("locates correctly in the simple case", function() {
+describe("locateMutants", function () {
+  it("locates correctly in the simple case", function () {
     const mutator = mocks.createNoopMutator([S.IfStatement]);
     const locator = mocks.createMutatorLocator([mutator]);
     const locations = locateMutants(locator, simple);
@@ -16,7 +16,7 @@ describe("locateMutants", function() {
     locations.every(l => expect(l.mutator).toBeA(Object));
   });
 
-  it("applies the filter if present", function() {
+  it("applies the filter if present", function () {
     const filter = node => node.test.name !== "z";
     const mutator = mocks.createNoopMutator([S.IfStatement], filter);
     const locator = mocks.createMutatorLocator([mutator]);
@@ -26,7 +26,7 @@ describe("locateMutants", function() {
     locations.every(l => expect(l.mutator).toBeA(Object));
   });
 
-  it("honors enable/disable comments", function() {
+  it("honors enable/disable comments", function () {
     const mutator = mocks.createNoopMutator([S.IfStatement]);
     const locator = mocks.createMutatorLocator([mutator]);
     const locations = locateMutants(locator, withComments);

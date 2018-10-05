@@ -1,15 +1,22 @@
 #!/usr/bin/env node
 
-var path = require("path");
-var program = require("commander");
-var makeConfig = require("../built/make-config");
+import * as path from "path";
+import * as program from "commander";
+import * as fs from "fs";
+import * as R from "ramda";
 
-var pkg = require("../package.json");
-var perturb = require("../");
+import perturb from "./";
+import { OptionalPerturbConfig } from "./types";
+
+interface PackageJSON {
+  version: string;
+}
+
+const pkg: PackageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, "../package.json"), "utf8"));
 
 program
   .version(pkg.version)
-  .option("-r, --projectRoot <rootDir>", "root directory of the project")
+  .option("-r, --rootDir <rootDir>", "root directory of the project")
   .option("-t, --testDir <testDir>", "test directory relative to root directory")
   .option("-s, --sourceDir <sourceDir>", "source directory relative to root directory")
   .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
@@ -23,7 +30,9 @@ if (program.rootDir && program.rootDir[0] !== "/") {
   program.rootDir = path.join(process.cwd(), program.rootDir);
 }
 
-var userConfig = omitNil({
+// we need to remove the undefined/null properties entirely, because of the way Object.assign works which
+// is the mechanism by which config is combined later.
+const args: OptionalPerturbConfig = R.pickBy(R.complement(R.isNil), {
   rootDir: program.rootDir,
   testDir: program.testDir,
   sourceDir: program.sourceDir,
@@ -34,25 +43,18 @@ var userConfig = omitNil({
 });
 
 // sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
-process.on("uncaughtException", function (err) {
+process.on("uncaughtException", (err) => {
   console.log("uncaught error in perturb process", err);
   throw err;
 });
 
 // sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
-process.on("unhandledRejection", function (err) {
+process.on("unhandledRejection", (err) => {
   throw err;
 });
 
 // start!
-perturb(userConfig).then(function (results) {
+(async function main() {
+  const results = await perturb(args);
   console.log("DONE -- COUNT:", results.length);
-});
-
-function omitNil (obj) {
-  const ret = {};
-  for (key in obj) {
-    if (obj[key] != null) ret[key] = obj[key]
-  }
-  return ret;
-}
+})();

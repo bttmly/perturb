@@ -1,13 +1,13 @@
 const path = require("path");
 
-function run (perturb, which, runner) {
+function run(perturb, which, runner) {
   let config;
 
   switch (which.trim()) {
     case "dogfood":
       config = {
         projectRoot: path.join(__dirname, "../"),
-        sourceDir: "built",
+        sourceDir: "lib",
         runner: runner || "mocha",
         reporter: "diff",
         testCmd: "make test",
@@ -41,7 +41,7 @@ function run (perturb, which, runner) {
 }
 
 if (!module.parent) {
-  run(require("../built"), process.argv[2], process.argv[3]);
+  run(require("../lib"), process.argv[2], process.argv[3]);
 }
 
 // rethrowing it or exiting immediately seems to close the process before
