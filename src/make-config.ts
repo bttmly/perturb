@@ -21,6 +21,8 @@ const defaultConfig: PerturbConfig = {
   reporter: "diff",
   matcher: DEFAULT_MATCHER,
   runner: DEFAULT_RUNNER,
+
+  killRateMin: 0,
 };
 
 export default function makeConfig(userConfig: OptionalPerturbConfig = {}): PerturbConfig {

@@ -22,7 +22,7 @@ program
   .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
   .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
   .option("-c, --testCmd <testCmd>", "test command")
-  .option("-k, --killRate", "minimum kill rate to exit with code 0")
+  .option("-k, --killRateMin <i>", "minimum kill rate to exit with code 0", parseInt)
   .option("-u, --runner <runner>", "name of runner or runner plugin")
   .parse(process.argv);
 
@@ -40,6 +40,7 @@ const args: OptionalPerturbConfig = R.pickBy(R.complement(R.isNil), {
   sourceGlob: program.sourceGlob,
   testCmd: program.testCmd,
   runner: program.runner,
+  killRateMin: program.killRateMin,
 });
 
 // sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
@@ -55,6 +56,16 @@ process.on("unhandledRejection", (err) => {
 
 // start!
 (async function main() {
-  const results = await perturb(args);
+  const { results, config } = await perturb(args);
   console.log("DONE -- COUNT:", results.length);
+
+  const killed = results.filter(r => r.error);
+  const killRate = Number((killed.length / results.length).toFixed(4)) * 100;
+
+  if (killRate < config.killRateMin) {
+    console.error(`❌ Mutant kill rate was ${killRate} which is below minimum acceptable value ${config.killRateMin}`)
+    process.exitCode = 1;
+  } else {
+    console.log(`✅ Mutant kill rate was ${killRate} which is above minimum acceptable value ${config.killRateMin}`)
+  }
 })();

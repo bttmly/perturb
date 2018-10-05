@@ -1,4 +1,4 @@
-function likeEs5Map (arr, cb) {
+function likeEs5Map(arr, cb) {
   var len = arr.length;
   var result = Array(len);
   for (var i = 0; i < len; i++) {
@@ -9,7 +9,7 @@ function likeEs5Map (arr, cb) {
   return result;
 }
 
-function likeLodashMap (arr, cb) {
+function likeLodashMap(arr, cb) {
   var len = arr.length;
   var result = Array(len);
   for (var i = 0; i < len; i++) {

@@ -91,6 +91,8 @@ export interface PerturbConfig {
 
   sourceGlob: string;
   testGlob: string;
+
+  killRateMin: number;
 }
 
 export type OptionalPerturbConfig = Partial<PerturbConfig>;

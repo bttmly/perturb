@@ -16,4 +16,7 @@ dogfood: compile
 	rm -rf ./.perturb
 	node ./lib/cli -s lib
 
+ci: compile
+	node ./lib/cli -s lib -k 85
+
 .PHONY: test example
