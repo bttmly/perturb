@@ -30,22 +30,22 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
     "*********************************************************\n",
   );
 
-  const cfg = makeConfig(inputCfg);
+  const config = makeConfig(inputCfg);
 
-  console.log("init with config\n", cfg);
+  console.log("init with config\n", config);
 
-  const { setup, teardown, paths } = fileSystem(cfg);
+  const { setup, teardown, paths } = fileSystem(config);
 
-  const matcher = getMatcher(cfg);
-  const runner = getRunner(cfg.runner);
-  const reporter = getReporter(cfg.reporter);
+  const matcher = getMatcher(config);
+  const runner = getRunner(config.runner);
+  const reporter = getReporter(config.reporter);
   const handler = makeMutantHandler(runner, reporter);
   const locator = locateMutants(mutators.getMutatorsForNode);
 
-  // const testRun: Promise<void> = process.env.SKIP_TEST ? Promise.resolve() : runTest(cfg);
+  // const testRun: Promise<void> = process.env.SKIP_TEST ? Promise.resolve() : runTest(config);
 
   // first run the tests, otherwise why bother at all?
-  await spawnP(cfg.testCmd);
+  await spawnP(config.testCmd);
 
   try {
     // then, set up the "shadow" file system that we'll work against
@@ -109,7 +109,7 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
     const metadata = { duration };
 
     if (reporter.onFinish) {
-      reporter.onFinish(results, cfg, metadata);
+      reporter.onFinish(results, config, metadata);
     }
 
     // TODO -- provide some run metadata here:
@@ -117,7 +117,7 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
     // runner: string
     // sourceCount: number
 
-    return results;
+    return { results, config };
   } finally {
     await teardown();
   }
