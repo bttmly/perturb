@@ -1,4 +1,4 @@
-# perturb [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+# perturb [![Build Status](https://travis-ci.com/bttmly/perturb.svg?branch=master)](https://travis-ci.com/bttmly/perturb) [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
 #### [pərˈtərb](https://www.google.com/#safe=on&q=define+perturb)
 
