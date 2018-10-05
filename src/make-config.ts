@@ -10,7 +10,7 @@ const defaultConfig: PerturbConfig = {
 
   projectRoot: process.cwd(),
   testDir: "test",
-  sourceDir: "src",
+  sourceDir: "lib",
   perturbDir: ".perturb",
 
   sourceGlob: "/**/*.js",
@@ -33,8 +33,7 @@ export default function makeConfig(userConfig: OptionalPerturbConfig = {}): Pert
 
   try {
     const str = fs
-      .readFileSync(`${process.cwd()}/${CONFIG_FILE_NAME}`)
-      .toString();
+      .readFileSync(`${process.cwd()}/${CONFIG_FILE_NAME}`, "utf8");
     fileConfig = JSON.parse(str);
   } catch (err) {
     console.log("No config file present");

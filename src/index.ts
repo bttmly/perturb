@@ -102,7 +102,7 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
       "duration:",
       duration,
       "rate:",
-      results.length / duration,
+      (results.length / duration).toFixed(2),
       "/s",
     );
 
@@ -155,7 +155,7 @@ function spawnP(fullCommand: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const [cmd, ...rest] = fullCommand.split(/\s+/);
     const child = spawn(cmd, rest);
-    // child.stdout.pipe(process.stdout);
+    // TODO: print errors from child process
     // child.stderr.pipe(process.stderr);
     child.on("close", code => {
       code === 0

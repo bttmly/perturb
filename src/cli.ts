@@ -62,6 +62,8 @@ process.on("unhandledRejection", (err) => {
   const killed = results.filter(r => r.error);
   const killRate = Number((killed.length / results.length).toFixed(4)) * 100;
 
+  if (config.killRateMin === 0) return;
+
   if (killRate < config.killRateMin) {
     console.error(`❌ Mutant kill rate was ${killRate} which is below minimum acceptable value ${config.killRateMin}`)
     process.exitCode = 1;
