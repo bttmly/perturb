@@ -28,12 +28,23 @@ function run(perturb, which, runner) {
       }
       break;
 
+    case "toy":
+      config = {
+        projectRoot: path.join(__dirname, "../examples/toy-lib"),
+        sourceDir: "lib",
+        testDir: "test",
+        runner: "mocha",
+        testCmd: "npm t",
+        matcher: "contains-comparative",
+      }
+      break;
+
     default:
       throw new Error("Unknown config " + which);
   }
 
   return perturb(config)
-    .then(function (results) {
+    .then(function ({ results }) {
       console.log("DONE!");
       console.log("kill count", results.filter(r => r.error).length, "/", results.length)
       return results;
@@ -41,7 +52,7 @@ function run(perturb, which, runner) {
 }
 
 if (!module.parent) {
-  run(require("../lib"), process.argv[2], process.argv[3]);
+  run(require("../lib").default, process.argv[2], process.argv[3]);
 }
 
 // rethrowing it or exiting immediately seems to close the process before

@@ -1,16 +1,16 @@
 "use strict";
 
 class Vehicle {
-  constructor () {
+  constructor() {
     this.position = 0;
     this.occupants = [];
   }
 
-  move () {
+  move() {
     this.position += this.speed;
   }
 
-  board () {
+  board(occupant) {
     if (this.occupants.length < this.maxOccupants) {
       this.occupants.push(occupant);
       return true;
@@ -18,7 +18,7 @@ class Vehicle {
     return false;
   }
 
-  disembark (occupant) {
+  disembark(occupant) {
     var idx = this.occupants.indexOf(occupant);
     if (idx !== -1) {
       this.occupants.splice(idx, 1);

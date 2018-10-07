@@ -43,6 +43,7 @@ export default function getMatcher(c: PerturbConfig) {
   return function findMatches(sources: string[], tests: string[]): Match[] {
     const runMatch: any =
       matchType === "generative" ? runGenerative : runComparative;
+    // TODO: handle empty sources!
     return sources.map(source => ({
       source,
       tests: runMatch(matcher, source, tests),

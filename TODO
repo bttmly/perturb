@@ -1,4 +1,1 @@
-- get CLI e2e test working
-- `--strict` mode with stuff to ensure no mutation happens in plugins (mutators in particular)
-- bizarre "live ones" in dogfooding that look like
-#ALIVE: reverse function parameters /built/mutators/tweak-switch.js@7,13
+- should encourage running with the fork runner, it needs to be faster. probably need to implement worker pooling

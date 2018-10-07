@@ -12,6 +12,10 @@ example-events: compile
 	rm -rf ./.perturb
 	node ./script/run.js events
 
+example-toy: compile
+	rm -rf ./.perturb
+	node ./script/run.js toy
+
 dogfood: compile
 	rm -rf ./.perturb
 	node ./lib/cli -s lib

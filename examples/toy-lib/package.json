@@ -1,10 +1,13 @@
 {
   "dependencies": {},
   "scripts": {
-    "test": "mocha ./test/**/*.js"
+    "test": "yarn run mocha ./test/**/*.js"
   },
   "name": "perturb-example-toy-lib",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
 }

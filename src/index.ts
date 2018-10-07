@@ -21,6 +21,7 @@ import {
   ReporterPlugin,
   Match,
   RunnerPluginConstructor,
+  PerturbConfig,
 } from "./types";
 
 export default async function perturb(inputCfg: OptionalPerturbConfig) {
@@ -45,7 +46,7 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
   // const testRun: Promise<void> = process.env.SKIP_TEST ? Promise.resolve() : runTest(config);
 
   // first run the tests, otherwise why bother at all?
-  await spawnP(config.testCmd);
+  await runProjectTests(config);
 
   try {
     // then, set up the "shadow" file system that we'll work against
@@ -151,18 +152,30 @@ async function sanityCheckAndSideEffects(ms: Mutant[]): Promise<Mutant[]> {
   return ms;
 }
 
-function spawnP(fullCommand: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    const [cmd, ...rest] = fullCommand.split(/\s+/);
-    const child = spawn(cmd, rest);
-    // TODO: print errors from child process
-    // child.stderr.pipe(process.stderr);
-    child.on("close", code => {
-      code === 0
-        ? resolve()
-        : reject(new Error(`Test command exited with non-zero code: ${code}`));
+async function runProjectTests(config: PerturbConfig): Promise<void> {
+  const dir = process.cwd();
+  process.chdir(config.projectRoot);
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const [cmd, ...rest] = config.testCmd.split(/\s+/);
+      console.log("DOING A TEST:", process.cwd(), cmd, rest);
+      const child = spawn(cmd, rest);
+      // TODO: print errors from child process
+      // child.stderr.pipe(process.stderr);
+      const out: Buffer[] = [];
+      child.stdout.on("data", buf => {
+        if (typeof buf === "string") buf = Buffer.from(buf);
+        out.push(buf);
+      });
+      child.on("close", code => {
+        if (code === 0) return resolve();
+        console.error(Buffer.concat(out).toString());
+        reject(new Error(`Test command exited with non-zero code: ${code}`));
+      });
     });
-  });
+  } finally {
+    process.chdir(dir);
+  }
 }
 
 function hasTests(m: Match): boolean {

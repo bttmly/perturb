@@ -1,6 +1,6 @@
 function likeEs5Map(arr, cb) {
   var len = arr.length;
-  var result = Array(len);
+  var result = Array();
   for (var i = 0; i < len; i++) {
     if (i in arr) {
       result[i] = cb(arr[i], i, arr);
@@ -11,7 +11,7 @@ function likeEs5Map(arr, cb) {
 
 function likeLodashMap(arr, cb) {
   var len = arr.length;
-  var result = Array(len);
+  var result = Array();
   for (var i = 0; i < len; i++) {
     result[i] = cb(arr[i], i, arr);
   }
