@@ -1,14 +1,7 @@
 const expect = require("expect");
-const esprima = require("esprima");
 const CommentManager = require("../lib/comments").default;
 
 const helpers = require("./helpers");
-
-const ESPRIMA_OPTIONS = {
-  attachComment: true,
-  comments: true,
-  loc: true,
-};
 
 function createTest(obj) {
   it(obj.title, function () {
