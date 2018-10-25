@@ -57,6 +57,7 @@ export type AggregateReporter = (
 
 export type NodeMutator = (n: ESTree.Node) => ESTree.Node | ESTree.Node[];
 export type NodeFilter = (n: ESTree.Node) => boolean;
+export type LocationFilter = (l: MutantLocation) => boolean;
 
 export type Skipper = (node: ESTree.Node, path: string[]) => boolean;
 
