@@ -1,8 +1,8 @@
 import * as R from "ramda";
 import * as escodegen from "escodegen";
-
 import S from "../mutators/_syntax";
-import { MutantLocation } from "../types";
+import { LocationFilter } from "../types";
+
 export const isStringRequire = R.allPass([
   R.propEq("type", S.CallExpression),
   R.pathEq(["callee", "name"], "require"),
@@ -16,24 +16,47 @@ export const isUseStrict = R.allPass([
   R.pathEq(["expression", "value"], "use strict"),
 ]);
 
-export const isCallOfName = (name: string) =>
-  R.allPass([
-    R.pathEq(["expression", "callee", "type"], "Identifier"),
-    R.pathEq(["expression", "callee", "name"], name),
-  ]);
+export const isCallOfName = (name: string): LocationFilter => {
+  return ({ node }) => {
+    if (!R.propEq("type", S.CallExpression, node)) return false;
+    if (!R.pathEq(["callee", "type"], S.Identifier, node)) return false;
+    if (!R.pathEq(["callee", "name"], name, node)) return false;
+    return true;
+  };
+};
 
-export function nodeSourceIncludesText(text: string) {
-  return (m: MutantLocation): boolean => {
-    return escodegen.generate(m.node).includes(text);
+export function nodeSourceIncludes(text: string): LocationFilter {
+  return ({ node }) => {
+    return escodegen.generate(node).includes(text);
   };
 }
 
-export function nodeSourceMatches(re: RegExp) {
-  return (m: MutantLocation): boolean => {
-    return re.test(escodegen.generate(m.node));
+export function sourceNodeIncludesAny(texts: string[]): LocationFilter {
+  return ({ node }) => {
+    const code = escodegen.generate(node);
+    return texts.some(t => code.includes(t));
   };
 }
 
-export const isESModuleInterop = nodeSourceIncludesText(
+export function nodeSourceMatches(re: RegExp): LocationFilter {
+  return ({ node }) => {
+    return re.test(escodegen.generate(node));
+  };
+}
+
+export function sourceNodeMatchesAny(res: RegExp[]): LocationFilter {
+  return ({ node }) => {
+    const code = escodegen.generate(node);
+    return res.some(re => re.test(code));
+  };
+}
+
+export function sourceNodeIs(text: string): LocationFilter {
+  return ({ node }) => {
+    return escodegen.generate(node).trim() === text;
+  };
+}
+
+export const isESModuleInterop = nodeSourceIncludes(
   "Object.defineProperty(exports, '__esModule', { value: true });",
 );
