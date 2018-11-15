@@ -100,6 +100,7 @@ function locateMutatorPlugins(
       );
       if (strict) throw err;
     }
+    return;
   });
 
   return removeNils<MutatorPlugin>(plugins);
