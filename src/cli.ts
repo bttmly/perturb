@@ -12,17 +12,35 @@ interface PackageJSON {
   version: string;
 }
 
-const pkg: PackageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, "../package.json"), "utf8"));
+const pkg: PackageJSON = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../package.json"), "utf8"),
+);
 
 program
   .version(pkg.version)
   .option("-r, --rootDir <rootDir>", "root directory of the project")
-  .option("-t, --testDir <testDir>", "test directory relative to root directory")
-  .option("-s, --sourceDir <sourceDir>", "source directory relative to root directory")
-  .option("-x, --testGlob <testGlob>", "glob for selecting files in test directory")
-  .option("-y, --sourceGlob <sourceGlob>", "glob for selecting files in source directory")
+  .option(
+    "-t, --testDir <testDir>",
+    "test directory relative to root directory",
+  )
+  .option(
+    "-s, --sourceDir <sourceDir>",
+    "source directory relative to root directory",
+  )
+  .option(
+    "-x, --testGlob <testGlob>",
+    "glob for selecting files in test directory",
+  )
+  .option(
+    "-y, --sourceGlob <sourceGlob>",
+    "glob for selecting files in source directory",
+  )
   .option("-c, --testCmd <testCmd>", "test command")
-  .option("-k, --killRateMin <i>", "minimum kill rate to exit with code 0", parseInt)
+  .option(
+    "-k, --killRateMin <i>",
+    "minimum kill rate to exit with code 0",
+    parseInt,
+  )
   .option("-u, --runner <runner>", "name of runner or runner plugin")
   .parse(process.argv);
 
@@ -44,13 +62,13 @@ const args: OptionalPerturbConfig = R.pickBy(R.complement(R.isNil), {
 });
 
 // sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
-process.on("uncaughtException", (err) => {
+process.on("uncaughtException", err => {
   console.log("uncaught error in perturb process", err);
   throw err;
 });
 
 // sync errors inside perturb don't seem to properly cause a non-zero exit w/o this
-process.on("unhandledRejection", (err) => {
+process.on("unhandledRejection", err => {
   throw err;
 });
 
@@ -65,9 +83,17 @@ process.on("unhandledRejection", (err) => {
   if (config.killRateMin === 0) return;
 
   if (killRate < config.killRateMin) {
-    console.error(`❌ Mutant kill rate was ${killRate} which is below minimum acceptable value ${config.killRateMin}`)
+    console.error(
+      `❌ Mutant kill rate was ${killRate} which is below minimum acceptable value ${
+        config.killRateMin
+      }`,
+    );
     process.exitCode = 1;
   } else {
-    console.log(`✅ Mutant kill rate was ${killRate} which is above minimum acceptable value ${config.killRateMin}`)
+    console.log(
+      `✅ Mutant kill rate was ${killRate} which is above minimum acceptable value ${
+        config.killRateMin
+      }`,
+    );
   }
 })();

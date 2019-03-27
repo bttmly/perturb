@@ -4,25 +4,16 @@
     "module": "commonjs",
     "target": "es2017",
     "moduleResolution": "node",
-    "sourceMap": true,
     "allowJs": false,
-    "rootDirs": [
-      "src"
-    ],
+    "rootDirs": ["src"],
     "outDir": "lib",
+    "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "strict": true,
     "strictNullChecks": true,
-    "lib": [
-      "es2017"
-    ]
+    "lib": ["es2017"]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

@@ -11,7 +11,9 @@ const plugins = new Map<string, RunnerPluginConstructor>([
 
 // since we only accept a single runner plugin, there's no compelling reason to provide
 // a hook for injecting them at runtime. If you want to use a custom one, pass it directly.
-export default function get(input: string | RunnerPluginConstructor): RunnerPluginConstructor {
+export default function get(
+  input: string | RunnerPluginConstructor,
+): RunnerPluginConstructor {
   if (typeof input !== "string") {
     return input;
   }

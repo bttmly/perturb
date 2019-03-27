@@ -20,6 +20,10 @@ dogfood: compile
 	rm -rf ./.perturb
 	node ./lib/cli -s lib
 
+dogfood-fork: compile
+	rm -rf ./.perturb
+	node ./lib/cli -s lib -u fork
+
 ci: compile
 	node ./lib/cli -s lib -k 85
 

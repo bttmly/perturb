@@ -3,7 +3,12 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import { fork } from "child_process";
-import { RunnerPlugin, Mutant, RunnerResult, RunnerPluginConstructor } from "../types";
+import {
+  RunnerPlugin,
+  Mutant,
+  RunnerResult,
+  RunnerPluginConstructor,
+} from "../types";
 import * as runnerUtils from "./utils";
 
 const debug = _debug("runner:fork");
@@ -24,7 +29,7 @@ export default class ForkRunner implements RunnerPlugin {
     this._fileLocation = tempFileLocation();
   }
 
-  async setup(): Promise<void> { }
+  async setup(): Promise<void> {}
 
   async run(): Promise<RunnerResult> {
     if (this._fileLocation == null) {
@@ -33,10 +38,10 @@ export default class ForkRunner implements RunnerPlugin {
 
     const args = [this._fileLocation];
     const opts = {
-      silent: true,
+      silent: false,
       env: {
         // TODO -- configurable!
-        PERTURB_FORK_RUNNER: "require",
+        PERTURB_FORK_RUNNER: "mocha",
         DEBUG: process.env.DEBUG,
       },
     };
@@ -101,7 +106,9 @@ async function childRunner(name: string) {
 }
 
 if (process.env.PERTURB_FORK_RUNNER) {
-  process.on("unhandledRejection", err => { throw err; });
+  process.on("unhandledRejection", err => {
+    throw err;
+  });
   childRunner(process.env.PERTURB_FORK_RUNNER);
 }
 

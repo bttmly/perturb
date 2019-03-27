@@ -8,7 +8,6 @@
     "curly": 0,
     "new-cap": 0,
     "no-underscore-dangle": 0,
-    // because we use function declarations everywhere
     "no-use-before-define": 0,
     "comma-dangle": [2, "always-multiline"]
   },

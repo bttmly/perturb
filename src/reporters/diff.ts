@@ -1,9 +1,8 @@
-const chalk = require("chalk");
-import * as R from "ramda";
+import chalk from "chalk";
 import { diffLines } from "diff";
-import { sentence } from "change-case";
 
-import delta from "./delta";
+import { stats, delta, identifier } from "./helpers";
+
 import {
   ReporterPlugin,
   RunnerResult,
@@ -15,37 +14,29 @@ const plugin: ReporterPlugin = {
   name: "diff",
   type: "reporter",
   onResult(r: RunnerResult) {
-    console.log(generateReport(r));
+    console.log(resultDiff(r));
   },
   onFinish(rs: RunnerResult[], cfg: PerturbConfig, m?: PerturbMetadata) {
-    const [killed] = R.partition(r => r.error, rs);
-    const total = rs.length;
-    const killCount = killed.length;
-    const killRate = Number((killCount / total).toFixed(4)) * 100;
-    console.log(`Total: ${total}. Killed: ${killCount}. Rate: ${killRate}%`);
+    const { total, killed, rate } = stats(rs);
+    console.log(`Total: ${total}. Killed: ${killed}. Rate: ${rate}%`);
     delta(rs, cfg);
   },
 };
 export default plugin;
 
-function generateReport(r: RunnerResult): string {
+function resultDiff(r: RunnerResult): string {
   const plus = "+    ";
   const minus = "-    ";
-  const alive = "#ALIVE: ";
-  const dead = "#DEAD: ";
-
   const id = identifier(r);
+
+  // TODO: shorter output format for killed?
 
   // if (r.error) {
   //   return chalk.gray(id);
   // }
 
-  const title = r.error
-    ? chalk.gray(dead + id)
-    : chalk.red.underline(alive + id);
-
   return [
-    title,
+    r.error ? chalk.gray(id) : chalk.red.underline(id),
     ...generateDiff(r).map((entry: any) => {
       const color = r.error ? "gray" : entry.added ? "green" : "red";
       const sign = entry.added ? plus : minus;
@@ -64,13 +55,4 @@ function generateDiff(r: RunnerResult) {
   return diffLines(r.originalSourceCode, r.mutatedSourceCode).filter(
     (node: any) => node.added || node.removed,
   );
-}
-
-function identifier(r: RunnerResult) {
-  const loc = r.loc.start.line + "," + r.loc.start.column;
-
-  // hack :/
-  const file = r.sourceFile.split(".perturb")[1];
-
-  return sentence(r.mutatorName) + " " + file + "@" + loc;
 }

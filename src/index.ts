@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import * as Bluebird from "bluebird";
+import pMapSeries from "p-map-series";
 import { spawn } from "child_process";
 import * as assert from "assert";
 
@@ -96,7 +96,7 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
     }
 
     // run the mutatnts and gather the results
-    const results: RunnerResult[] = await Bluebird.mapSeries(mutants, handler);
+    const results: RunnerResult[] = await pMapSeries(mutants, handler);
 
     const duration = (Date.now() - start) / 1000;
     console.log(
@@ -124,7 +124,10 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
   }
 }
 
-function makeMutantHandler(Runner: RunnerPluginConstructor, reporter: ReporterPlugin) {
+function makeMutantHandler(
+  Runner: RunnerPluginConstructor,
+  reporter: ReporterPlugin,
+) {
   return async function handler(mutant: Mutant): Promise<RunnerResult> {
     const runner = new Runner(mutant);
     await runner.setup();

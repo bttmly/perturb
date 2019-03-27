@@ -1,4 +1,5 @@
 import { ReporterPlugin, RunnerResult } from "../types";
+import { identifier } from "./helpers";
 
 const plugin: ReporterPlugin = {
   name: "names",
@@ -14,14 +15,3 @@ const plugin: ReporterPlugin = {
 };
 
 export default plugin;
-
-function identifier(r: RunnerResult) {
-  const loc = r.loc.start.line + "," + r.loc.start.column;
-  return [
-    r.error ? "DEAD: " : "ALIVE:",
-    r.mutatorName,
-    r.sourceFile.split(".perturb")[1],
-    `@${loc}`,
-    (r.error && r.error.message) || "",
-  ].join(" ");
-}

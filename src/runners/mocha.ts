@@ -1,7 +1,6 @@
 import * as Mocha from "mocha";
 import * as runnerUtils from "./utils";
 import { RunnerPlugin, Mutant, RunnerResult } from "../types";
-
 export default class MochaRunner implements RunnerPlugin {
   public type: "runner";
   public name: string;
@@ -26,8 +25,8 @@ export default class MochaRunner implements RunnerPlugin {
       await new Promise((resolve, reject) => {
         class Reporter {
           constructor(runner: Mocha.IRunner, options: any) {
-            const r = runner as any;
-            r.on("fail", (test: any, err: Error) => {
+            // Mocha exposes only partial interface of the concrete Runner class
+            (runner as any).on("fail", (test: any, err: Error) => {
               reject(err);
             });
           }
