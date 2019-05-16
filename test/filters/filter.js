@@ -42,4 +42,3 @@ function offsetLocation (loc, path) {
   loc.node = R.path(path, loc.node);
   return loc;
 }
-
