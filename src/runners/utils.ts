@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { Mutant } from "../types";
+import { Mutant, RunnerResult } from "../types";
 
 export function writeMutatedCode(m: Mutant) {
   fs.writeFileSync(m.sourceFile, m.mutatedSourceCode);
@@ -37,4 +37,8 @@ export function makeErrorSerializable(err?: Error) {
   });
 
   return err;
+}
+
+export function resultFromMutant(m: Mutant, err?: Error): RunnerResult {
+  return Object.assign({}, m, { error: err ? err : null });
 }

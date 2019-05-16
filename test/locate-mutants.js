@@ -2,33 +2,33 @@ const S = require("estraverse").Syntax;
 const esprima = require("esprima");
 const expect = require("expect");
 
-const mocks = require("./mocks/mutators");
+const { createNoopMutator, createMutatorLocator } = require("./mocks/mutators");
 
 const locateMutants = require("../lib/locate-mutants").default;
 
-describe("locateMutants", function () {
-  it("locates correctly in the simple case", function () {
-    const mutator = mocks.createNoopMutator([S.IfStatement]);
-    const locator = mocks.createMutatorLocator([mutator]);
+describe("locateMutants", () => {
+  it("locates correctly in the simple case", () => {
+    const mutator = createNoopMutator([S.IfStatement]);
+    const locator = createMutatorLocator([mutator]);
     const locations = locateMutants(locator, simple);
     expect(locations.length).toBe(4);
     locations.every(l => expect(l.node.type).toBe(S.IfStatement));
     locations.every(l => expect(l.mutator).toBeA(Object));
   });
 
-  it("applies the filter if present", function () {
+  it("applies the filter if present", () => {
     const filter = node => node.test.name !== "z";
-    const mutator = mocks.createNoopMutator([S.IfStatement], filter);
-    const locator = mocks.createMutatorLocator([mutator]);
+    const mutator = createNoopMutator([S.IfStatement], filter);
+    const locator = createMutatorLocator([mutator]);
     const locations = locateMutants(locator, simple);
     expect(locations.length).toBe(2); // two `if (z)` nodes filtered out
     locations.every(l => expect(l.node.type).toBe(S.IfStatement));
     locations.every(l => expect(l.mutator).toBeA(Object));
   });
 
-  it("honors enable/disable comments", function () {
-    const mutator = mocks.createNoopMutator([S.IfStatement]);
-    const locator = mocks.createMutatorLocator([mutator]);
+  it("honors enable/disable comments", () => {
+    const mutator = createNoopMutator([S.IfStatement]);
+    const locator = createMutatorLocator([mutator]);
     const locations = locateMutants(locator, withComments);
     expect(locations.length).toBe(2); // two `if`s are in the disabled block
     locations.every(l => expect(l.node.type).toBe(S.IfStatement));

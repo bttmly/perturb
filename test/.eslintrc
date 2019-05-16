@@ -1,0 +1,27 @@
+{
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "env": {
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+  "rules": {
+    "curly": 0,
+    "new-cap": 0,
+    "no-underscore-dangle": 0,
+    "no-use-before-define": 0,
+    "comma-dangle": [2, "always-multiline"],
+    "no-undef": "error",
+    "no-console": "off"
+  },
+  "globals": {
+    "it": true,
+    "xit": true,
+    "describe": true,
+    "xdescribe": true,
+    "testMutator": true
+  }
+}

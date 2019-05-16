@@ -1,4 +1,3 @@
-const S = require("estraverse").Syntax;
 const esprima = require("esprima");
 const escodegen = require("escodegen");
 const expect = require("expect");

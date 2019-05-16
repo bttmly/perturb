@@ -1,6 +1,3 @@
-const S = require("estraverse").Syntax;
-const esprima = require("esprima");
-const escodegen = require("escodegen");
 const expect = require("expect");
 
 const mocks = require("./mocks/mutators");
@@ -31,11 +28,6 @@ describe("parseMatch", function() {
   });
 });
 
-const ESPRIMA_SETTINGS = {
-  loc: true,
-  attachComment: true,
-};
-
 const source = `
   var x, y, z;
 
@@ -47,5 +39,3 @@ const source = `
 
   if (z) f()
 `;
-
-const ast = esprima.parse(source, ESPRIMA_SETTINGS);

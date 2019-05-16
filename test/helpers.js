@@ -12,7 +12,6 @@ const ESPRIMA_OPTIONS = {
 };
 
 const { getMutatorByName } = require("../lib/mutators");
-const { Syntax } = require("estraverse");
 
 function nodeFromCode(code) {
   const ast = esprima.parse(code, ESPRIMA_OPTIONS);

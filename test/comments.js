@@ -1,26 +1,19 @@
 const expect = require("expect");
-const esprima = require("esprima");
 const CommentManager = require("../lib/comments").default;
 
-const helpers = require("./helpers");
+const { nodeFromCode } = require("./helpers");
 
-const ESPRIMA_OPTIONS = {
-  attachComment: true,
-  comments: true,
-  loc: true,
-};
-
-function createTest(obj) {
-  it(obj.title, function () {
-    const manager = new CommentManager(obj.set);
-    const node = helpers.nodeFromCode(obj.code);
+function createTest({ title, expected, code, set }) {
+  it(title, () => {
+    const manager = new CommentManager(set);
+    const node = nodeFromCode(code);
     manager.applyLeading(node);
     manager.applyTrailing(node);
-    expect(manager.toArray()).toEqual(obj.expected);
+    expect(manager.toArray()).toEqual(expected);
   });
 }
 
-describe("CommentManager", function () {
+describe("CommentManager", () => {
   createTest({
     title: "disable: works for leading line comments",
     expected: "abc".split(""),
@@ -80,5 +73,5 @@ describe("CommentManager", function () {
     // perturb-disable
     const x = 1;
     `,
-  })
+  });
 });
