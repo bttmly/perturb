@@ -28,7 +28,7 @@ const plugin: ComparativeMatcherPlugin = {
       // TODO: lose the "!"s
       const sourceName = withoutExt(sourceFile.split(perturbSourceDir).pop()!);
       const testName = withoutExt(testFile.split(perturbTestDir).pop()!);
-      return testName.slice(0, sourceName.length) === sourceName;
+      return testName.startsWith(sourceName);
     };
   },
 };

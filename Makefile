@@ -25,6 +25,6 @@ dogfood-fork: compile
 	node ./lib/cli -s lib -u fork
 
 ci: compile
-	node ./lib/cli -s lib -k 85
+	node ./lib/cli -s lib -k 70
 
 .PHONY: test example

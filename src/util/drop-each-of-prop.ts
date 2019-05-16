@@ -7,7 +7,6 @@ import * as R from "ramda";
 // dropEachOfProp("key", {key: [1, 2, 3]})
 // => [ {key: [2, 3]}, {key: [1, 3]}, {key: [1, 2]} ]
 
-// will be helpful in testing removing each item from an object's property
 
 export default R.curry(function dropEachOfProp(key: any, obj: any) {
   return obj[key].map((_: any, i: number) => {

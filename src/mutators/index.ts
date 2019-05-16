@@ -85,8 +85,11 @@ function makeMutatorIndex(names: string[]): MutatorIndex {
   return index;
 }
 
-function locateMutatorPlugins(names: string[]): MutatorPlugin[] {
-  return names.map((name: string): MutatorPlugin => {
+function locateMutatorPlugins(
+  names: string[],
+  strict = false,
+): MutatorPlugin[] {
+  const plugins = names.map((name: string) => {
     try {
       const plugin: MutatorPlugin = require(`perturb-plugin-mutator-${name}`);
       return plugin;
@@ -95,9 +98,20 @@ function locateMutatorPlugins(names: string[]): MutatorPlugin[] {
       console.log(
         `unable to locate -MUTATOR- plugin "${name}" -- fatal error, exiting`,
       );
-      throw err;
+      if (strict) throw err;
     }
+    return;
   });
+
+  return removeNils<MutatorPlugin>(plugins);
+}
+
+function removeNils<T>(arr: Array<T | null | void>): T[] {
+  const xs: T[] = [];
+  for (const item of arr) {
+    if (item != null) xs.push(item);
+  }
+  return xs;
 }
 
 // exports.injectPlugins = function (names: string[]) {

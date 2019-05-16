@@ -1,50 +1,25 @@
 import * as ESTree from "estree";
 
-// reporter function types
-export type ResultReporter = (r: RunnerResult) => void;
-
-export type AggregateReporter = (
-  rs: RunnerResult[],
-  cfg: PerturbConfig,
-  m?: PerturbMetadata,
-) => void;
-
-export type NodeMutator = (n: ESTree.Node) => ESTree.Node | ESTree.Node[];
-export type NodeFilter = (n: ESTree.Node) => boolean;
-
-export type Skipper = (node: ESTree.Node, path: string[]) => boolean;
-
-export type ComparativeMatcher = (
-  sourceFile: string,
-  testFile: string,
-) => boolean;
-export type GenerativeMatcher = (sourceFile: string) => string;
-
-export type MutatorFinder = (n: ESTree.Node) => MutatorPlugin[];
-
-export type PluginLocator<T extends BasePlugin> = (name: string) => T;
-
 export type PluginType = "reporter" | "runner" | "matcher" | "mutator";
 
-// plugin interfaces
 export interface BasePlugin {
-  name: string;
-  type: PluginType;
+  readonly name: string;
+  readonly type: PluginType;
 }
 
 export interface ReporterPlugin extends BasePlugin {
-  onResult: ResultReporter;
-  onFinish: AggregateReporter;
+  readonly onResult: ResultReporter;
+  readonly onFinish: AggregateReporter;
 }
 
 export interface MutatorPlugin extends BasePlugin {
-  nodeTypes: string[];
-  mutator: NodeMutator;
-  filter?: NodeFilter;
+  readonly nodeTypes: string[];
+  readonly mutator: NodeMutator;
+  readonly filter?: NodeFilter;
 }
 
 export interface RunnerPluginConstructor {
-  new(m: Mutant): RunnerPlugin;
+  new (m: Mutant): RunnerPlugin;
 }
 
 export interface RunnerPlugin extends BasePlugin {
@@ -58,21 +33,44 @@ export interface SkipperPlugin extends BasePlugin {
 }
 
 export interface MatcherPlugin extends BasePlugin {
-  matchType: "generative" | "comparative";
+  readonly matchType: "generative" | "comparative";
   makeMatcher: (c: PerturbConfig) => GenerativeMatcher | ComparativeMatcher;
 }
 
 export interface GenerativeMatcherPlugin extends MatcherPlugin {
-  matchType: "generative";
+  readonly matchType: "generative";
   makeMatcher: (c: PerturbConfig) => GenerativeMatcher;
 }
 
 export interface ComparativeMatcherPlugin extends MatcherPlugin {
-  matchType: "comparative";
+  readonly matchType: "comparative";
   makeMatcher: (c: PerturbConfig) => ComparativeMatcher;
 }
 
-// structural data types
+export type ResultReporter = (r: RunnerResult) => void;
+
+export type AggregateReporter = (
+  rs: RunnerResult[],
+  cfg: PerturbConfig,
+  m?: PerturbMetadata,
+) => void;
+
+export type NodeMutator = (n: ESTree.Node) => ESTree.Node | ESTree.Node[];
+export type NodeFilter = (n: ESTree.Node) => boolean;
+export type LocationFilter = (l: MutantLocation) => boolean;
+
+export type Skipper = (node: ESTree.Node, path: string[]) => boolean;
+
+export type ComparativeMatcher = (
+  sourceFile: string,
+  testFile: string,
+) => boolean;
+
+export type GenerativeMatcher = (sourceFile: string) => string;
+
+export type MutatorFinder = (n: ESTree.Node) => MutatorPlugin[];
+
+export type PluginLocator<T extends BasePlugin> = (name: string) => T;
 
 export interface PerturbConfig {
   testCmd: string;
@@ -98,15 +96,15 @@ export interface PerturbConfig {
 export type OptionalPerturbConfig = Partial<PerturbConfig>;
 
 export interface Mutant {
-  mutatorName: string; // name of mutator plugin
-  sourceFile: string;
-  testFiles: string[];
-  path: string[]; // path to AST node under mutation
-  astBefore: ESTree.Node;
-  astAfter: ESTree.Node;
-  loc: ESTree.SourceLocation; // line of code where mutation occurred
-  originalSourceCode: string;
-  mutatedSourceCode: string;
+  readonly mutatorName: string; // name of mutator plugin
+  readonly sourceFile: string;
+  readonly testFiles: string[];
+  readonly path: string[]; // path to AST node under mutation
+  readonly astBefore: ESTree.Node;
+  readonly astAfter: ESTree.Node;
+  readonly loc: ESTree.SourceLocation; // line of code where mutation occurred
+  readonly originalSourceCode: string;
+  readonly mutatedSourceCode: string;
 }
 
 export interface RunnerResult extends Mutant {
