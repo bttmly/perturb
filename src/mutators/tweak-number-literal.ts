@@ -1,6 +1,7 @@
 import * as R from "ramda";
 import S from "./_syntax";
 import { MutatorPlugin } from "../types";
+import * as ESTree from "estree";
 
 const prop = (prop: string, obj: any) => {
   if (obj.hasOwnProperty(prop)) {
@@ -13,6 +14,29 @@ const prop = (prop: string, obj: any) => {
 // `var num = 735;` => `var num = 736;`
 // `var num = 1;` => `var num = 0;`
 
+function negativeNumberNode(n: number): ESTree.Node {
+  if (n >= 0) throw new Error("pass a positive number");
+  n = n * -1;
+  return {
+    type: "UnaryExpression",
+    operator: "-",
+    argument: {
+      type: "Literal",
+      value: n,
+      raw: String(n),
+    },
+    prefix: true,
+  };
+}
+
+function nonNegativeNumberNode(n: number): ESTree.Node {
+  return {
+    type: "Literal",
+    value: n,
+    raw: String(n),
+  };
+}
+
 const plugin: MutatorPlugin = {
   type: "mutator",
   name: "tweak-number-literal",
@@ -20,12 +44,9 @@ const plugin: MutatorPlugin = {
   filter: node => R.is(Number, prop("value", node)),
   mutator(node) {
     const value: number = prop("value", node);
-
-    if (value === 1) {
-      return [R.assoc("value", 0, node), R.assoc("value", 2, node)];
-    }
-
-    return R.assoc("value", value + 1, node);
+    return R.uniq([value + 1, value - 1, -1, 0, 1])
+      .filter(v => v !== value)
+      .map(v => (v > -1 ? nonNegativeNumberNode(v) : negativeNumberNode(v)));
   },
 };
 

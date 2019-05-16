@@ -1,5 +1,4 @@
 import * as R from "ramda";
-import pMapSeries from "p-map-series";
 import { spawn } from "child_process";
 import * as assert from "assert";
 
@@ -96,7 +95,10 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
     }
 
     // run the mutatnts and gather the results
-    const results: RunnerResult[] = await pMapSeries(mutants, handler);
+    const results: RunnerResult[] = [];
+    for (const mutant of mutants) {
+      results.push(await handler(mutant));
+    }
 
     const duration = (Date.now() - start) / 1000;
     console.log(
