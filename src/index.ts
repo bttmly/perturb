@@ -1,5 +1,4 @@
 import * as R from "ramda";
-import pMapSeries from "p-map-series";
 import { spawn } from "child_process";
 import * as assert from "assert";
 
@@ -89,7 +88,7 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
     const start = Date.now();
 
     // create the mutant objects from the matched files
-    let mutants = await parsedMatches.flatMap(makeMutants);
+    let mutants = parsedMatches.flatMap(makeMutants);
 
     // let's just check if everything is okay...
     await sanityCheckAndSideEffects(mutants);
@@ -99,8 +98,11 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
       mutants = [];
     }
 
-    // run the mutatnts and gather the results
-    const results: RunnerResult[] = await pMapSeries(mutants, handler);
+    // run the mutants and gather the results
+    const results: RunnerResult[] = [];
+    for (const mutant of mutants) {
+      results.push(await handler(mutant));
+    }
 
     const duration = (Date.now() - start) / 1000;
     console.log(
