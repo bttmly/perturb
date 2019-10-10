@@ -142,7 +142,6 @@ function makeMutantHandler(
     try {
       reporter.onResult(result);
     } catch (err) {
-      console.log(reporter);
       throw err;
     }
     return result;

@@ -1,3 +1,4 @@
 - should encourage running with the fork runner, it needs to be faster. probably need to implement worker pooling
 - ~run-record should keep a history with a time log~
 - reporters should be able to display progress, which means they need to hold state
+- runtime typecheck the config, since it can come from CLI input via commander which is untyped
