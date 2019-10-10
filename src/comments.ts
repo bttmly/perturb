@@ -1,4 +1,3 @@
-import * as R from "ramda";
 import * as ESTree from "estree";
 
 const ENABLING_COMMENT = "perturb-enable:";
@@ -39,9 +38,9 @@ export default class CommentManager {
   toArray = () => [...this._disabled];
 
   _applyComments(cs: ESTree.Comment[]) {
-    R.chain(extractOperators, cs).forEach((op: Operator) =>
-      this._applyOperator(op),
-    );
+    for (const op of cs.flatMap(extractOperators)) {
+      this._applyOperator(op);
+    }
     return null;
   }
 

@@ -1,4 +1,4 @@
-import S from "./_syntax";
+import { FUNC_NODES } from "./_syntax";
 import * as util from "./util";
 import { MutatorPlugin } from "../types";
 
@@ -7,7 +7,7 @@ import { MutatorPlugin } from "../types";
 const plugin: MutatorPlugin = {
   type: "mutator",
   name: "reverse-function-parameters",
-  nodeTypes: S.FUNC_NODES,
+  nodeTypes: FUNC_NODES,
   filter: util.lengthAtPropGreaterThan("params", 1),
   mutator: util.update("params", (ps: any[]) => ps.slice().reverse()),
 };

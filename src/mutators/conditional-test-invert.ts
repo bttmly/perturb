@@ -1,6 +1,6 @@
 import * as ESTree from "estree";
 
-import S from "./_syntax";
+import S, { TEST_NODES } from "./_syntax";
 import * as util from "./util";
 import { hasProp } from "./_filters";
 import { MutatorPlugin } from "../types";
@@ -14,7 +14,7 @@ const BANG = "!";
 const mutator: MutatorPlugin = {
   type: "mutator",
   name: "conditional-test-invert",
-  nodeTypes: S.TEST_NODES,
+  nodeTypes: TEST_NODES,
   filter: hasProp("test"),
   mutator: util.update("test", (test: ESTree.Node) => ({
     type: S.UnaryExpression,

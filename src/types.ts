@@ -1,6 +1,14 @@
 import * as ESTree from "estree";
 
+// todo enium
 export type PluginType = "reporter" | "runner" | "matcher" | "mutator";
+
+// export enum PluginTypeEnum {
+//   Reporter = "reporter",
+//   Runner = "runner",
+//   Matcher = "matcher",
+//   Mutator = "mutator",
+// }
 
 export interface BasePlugin {
   readonly name: string;
@@ -8,21 +16,28 @@ export interface BasePlugin {
 }
 
 export interface ReporterPlugin extends BasePlugin {
+  type: "reporter";
   readonly onResult: ResultReporter;
   readonly onFinish: AggregateReporter;
 }
 
+export interface ReporterPluginConstructor {
+  new(ms: Mutant[]): ReporterPlugin;
+}
+
 export interface MutatorPlugin extends BasePlugin {
+  readonly type: "mutator";
   readonly nodeTypes: string[];
   readonly mutator: NodeMutator;
   readonly filter?: NodeFilter;
 }
 
 export interface RunnerPluginConstructor {
-  new (m: Mutant): RunnerPlugin;
+  new(m: Mutant): RunnerPlugin;
 }
 
 export interface RunnerPlugin extends BasePlugin {
+  readonly type: "runner";
   setup(): Promise<void>;
   run(): Promise<RunnerResult>;
   cleanup(): Promise<void>;
@@ -33,6 +48,7 @@ export interface SkipperPlugin extends BasePlugin {
 }
 
 export interface MatcherPlugin extends BasePlugin {
+  readonly type: "matcher";
   readonly matchType: "generative" | "comparative";
   makeMatcher: (c: PerturbConfig) => GenerativeMatcher | ComparativeMatcher;
 }

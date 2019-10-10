@@ -18,7 +18,7 @@ example-toy: compile
 
 dogfood: compile
 	rm -rf ./.perturb
-	node ./lib/cli -s lib
+	node ./lib/cli -s lib --reporter quiet
 
 dogfood-fork: compile
 	rm -rf ./.perturb

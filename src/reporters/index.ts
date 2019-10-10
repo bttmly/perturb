@@ -1,11 +1,13 @@
 import diffReporter from "./diff";
 import nameReporter from "./name";
+import quietReporter from "./quiet";
 
 import { ReporterPlugin } from "../types";
 
 const plugins = new Map<string, ReporterPlugin>([
   [diffReporter.name, diffReporter],
   [nameReporter.name, nameReporter],
+  [quietReporter.name, quietReporter],
 ]);
 
 export default function get(input: string | ReporterPlugin): ReporterPlugin {

@@ -1,4 +1,3 @@
-import * as R from "ramda";
 import * as escodegen from "escodegen";
 import updateIn from "./util/update-in";
 import * as ESTree from "estree";
@@ -14,8 +13,7 @@ export default function makeMutants(pm: ParsedMatch): Mutant[] {
   const ast = pm.ast;
   const sourceCode = pm.code;
 
-  function mapper(location: MutantLocation): Mutant[] {
-    const { node, mutator, path } = location;
+  function mapper({ node, mutator, path }: MutantLocation): Mutant[] {
     const newNodes = toArray(mutator.mutator(node));
 
     // should rename "mutator" to "mutate" maybe? verb is probably better as function name
@@ -26,7 +24,7 @@ export default function makeMutants(pm: ParsedMatch): Mutant[] {
       // to avoid unnecessary extra code generation in mutator prep/teardown,
       // and also in reporters
 
-      const m: Mutant = {
+      return {
         sourceFile,
         testFiles,
         path,
@@ -37,11 +35,9 @@ export default function makeMutants(pm: ParsedMatch): Mutant[] {
         originalSourceCode: sourceCode,
         mutatedSourceCode: escodegen.generate(updatedAst),
       };
-      return m;
     });
   }
-
-  return R.chain(mapper, pm.locations);
+  return pm.locations.flatMap(mapper)
 }
 
 const toArray = (x: any) => (Array.isArray(x) ? x : [x]);

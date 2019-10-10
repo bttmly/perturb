@@ -42,6 +42,7 @@ program
     parseInt,
   )
   .option("-u, --runner <runner>", "name of runner or runner plugin")
+  .option("--reporter <reporter>", "which reporter to use")
   .parse(process.argv);
 
 if (program.rootDir && program.rootDir[0] !== "/") {
@@ -58,6 +59,7 @@ const args: OptionalPerturbConfig = R.pickBy(R.complement(R.isNil), {
   sourceGlob: program.sourceGlob,
   testCmd: program.testCmd,
   runner: program.runner,
+  reporter: program.reporter,
   killRateMin: program.killRateMin,
 });
 
@@ -85,14 +87,14 @@ process.on("unhandledRejection", err => {
   if (killRate < config.killRateMin) {
     console.error(
       `❌ Mutant kill rate was ${killRate} which is below minimum acceptable value ${
-        config.killRateMin
+      config.killRateMin
       }`,
     );
     process.exitCode = 1;
   } else {
     console.log(
       `✅ Mutant kill rate was ${killRate} which is above minimum acceptable value ${
-        config.killRateMin
+      config.killRateMin
       }`,
     );
   }

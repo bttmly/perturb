@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import S from "./_syntax";
+import S, { FUNC_NODES } from "./_syntax";
 import { VOID_NODE } from "./_constant-nodes";
 import { MutatorPlugin } from "../types";
 
@@ -10,7 +10,7 @@ import { MutatorPlugin } from "../types";
 const plugin: MutatorPlugin = {
   type: "mutator",
   name: "drop-return",
-  nodeTypes: S.FUNC_NODES,
+  nodeTypes: FUNC_NODES,
   mutator: R.ifElse(
     node => node.argument == null,
     R.always(VOID_NODE),

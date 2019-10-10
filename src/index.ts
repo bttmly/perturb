@@ -75,17 +75,21 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
       console.log("*******************************************");
     }
 
-    // console.log("matches:", tested.map(t => ({source: t.source, tests: t.tests})));
+    // let diff = 0;
 
     const parsedMatches = tested.map(parseMatch(locator)).map(pm => {
-      pm.locations = pm.locations.filter(locationFilter);
+      const remaining = pm.locations.filter(locationFilter);
+      // diff += pm.locations.length - remaining.length;
+      pm.locations = remaining;
       return pm;
     });
+
+    // console.log(`NODE FILTERS REMOVED ${diff} LOCATIONS`)
 
     const start = Date.now();
 
     // create the mutant objects from the matched files
-    let mutants = await R.chain(makeMutants, parsedMatches);
+    let mutants = await parsedMatches.flatMap(makeMutants);
 
     // let's just check if everything is okay...
     await sanityCheckAndSideEffects(mutants);
@@ -133,7 +137,12 @@ function makeMutantHandler(
     await runner.setup();
     const result = await runner.run();
     await runner.cleanup();
-    reporter.onResult(result);
+    try {
+      reporter.onResult(result);
+    } catch (err) {
+      console.log(reporter);
+      throw err;
+    }
     return result;
   };
 }
