@@ -71,5 +71,5 @@ export function sourceNodeIs(text: string) {
 }
 
 export const isESModuleInterop = nodeSourceIncludes(
-  "Object.defineProperty(exports, '__esModule', { value: true });",
+  "Object.defineProperty(exports, '__esModule'",
 );

@@ -3,12 +3,12 @@ import { MutantLocation } from "../types";
 
 type LocationFilter = (m: MutantLocation) => boolean;
 
-import { isUseStrict, isStringRequire } from "./filter";
+import { isUseStrict, isStringRequire, isESModuleInterop } from "./filter";
 
 const filters: LocationFilter[] = [
   (m: MutantLocation) => !isUseStrict(m.node),
   (m: MutantLocation) => !isStringRequire(m.node),
-  // (m: MutantLocation) => !isCallOfName("debug")(m.node),
+  (m: MutantLocation) => !isESModuleInterop(m.node),
 ];
 
 export default R.allPass(filters);
