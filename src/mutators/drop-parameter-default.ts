@@ -1,14 +1,13 @@
 import * as R from "ramda";
 import S, { FUNC_NODES } from "./_syntax";
 import { VOID_NODE } from "./_constant-nodes";
-import { MutatorPlugin } from "../types";
+import createMutatorPlugin from "../make-mutator-plugin";
 
 // a default parameter
 // input: `function fn (x = 1) {}`
 // output: `function fn (x) {}`
 
-const plugin: MutatorPlugin = {
-  type: "mutator",
+export default createMutatorPlugin({
   name: "drop-return",
   nodeTypes: FUNC_NODES,
   mutator: R.ifElse(
@@ -19,6 +18,4 @@ const plugin: MutatorPlugin = {
       expression: node.argument,
     }),
   ),
-};
-
-export default plugin;
+});

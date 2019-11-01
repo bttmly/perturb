@@ -1,13 +1,11 @@
 import * as R from "ramda";
 import S from "./_syntax";
-
 import * as ESTree from "estree";
-import { MutatorPlugin } from "../types";
+import createMutatorPlugin from "../make-mutator-plugin";
 
 // drops a member assignment
 // `obj.prop = 'value';` => `obj.prop;`
-const plugin: MutatorPlugin = {
-  type: "mutator",
+export default createMutatorPlugin({
   name: "drop-member-assignment",
   nodeTypes: [S.AssignmentExpression],
   filter(node: ESTree.Node) {
@@ -18,6 +16,4 @@ const plugin: MutatorPlugin = {
   mutator(node: any): ESTree.Node {
     return node.left;
   },
-};
-
-export default plugin;
+});

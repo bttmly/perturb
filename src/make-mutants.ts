@@ -40,4 +40,4 @@ export default function makeMutants(pm: ParsedMatch): Mutant[] {
   return pm.locations.flatMap(mapper)
 }
 
-const toArray = (x: any) => (Array.isArray(x) ? x : [x]);
+const toArray = <T>(x: T | T[]) => (Array.isArray(x) ? x : [x]);

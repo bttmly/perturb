@@ -1,9 +1,8 @@
 import * as ESTree from "estree";
-
 import S, { TEST_NODES } from "./_syntax";
 import * as util from "./util";
 import { hasProp } from "./_filters";
-import { MutatorPlugin } from "../types";
+import createMutatorPlugin from "../make-mutator-plugin";
 
 const BANG = "!";
 
@@ -11,8 +10,7 @@ const BANG = "!";
 // `if (isReady) {}` => `if (!(isReady)) {}`
 // `while (arr.length) {} => `while(!(arr.length)) {}`
 // `for (; i < 10; i++) {}` => `for(; (!(i < 10)); i++)`
-const mutator: MutatorPlugin = {
-  type: "mutator",
+export default createMutatorPlugin({
   name: "conditional-test-invert",
   nodeTypes: TEST_NODES,
   filter: hasProp("test"),
@@ -21,6 +19,4 @@ const mutator: MutatorPlugin = {
     operator: BANG,
     argument: test,
   })),
-};
-
-export default mutator;
+});

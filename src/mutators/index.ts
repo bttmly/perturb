@@ -22,7 +22,11 @@ import tweakObjectLiteral from "./tweak-object-literal";
 // import tweakStringLiteral from "./tweak-string-literal";
 import tweakSwitch from "./tweak-switch";
 
-const coreMutators: MutatorPlugin[] = [
+interface MutatorPluginCtor {
+  new(): MutatorPlugin;
+}
+
+const coreMutators: MutatorPluginCtor[] = [
   conditionalTestAlways,
   conditionalTestInvert,
   conditionalTestNever,
@@ -44,14 +48,14 @@ const coreMutators: MutatorPlugin[] = [
 ];
 
 interface MutatorIndex {
-  [key: string]: MutatorPlugin[];
+  [key: string]: MutatorPluginCtor[];
 }
 
 let index: MutatorIndex = {};
-let activeMutators: MutatorPlugin[] = [];
+let activeMutators: MutatorPluginCtor[] = [];
 
 // temporary stub -- this function will return false for disabled mutators (based on config)
-function isMutatorEnabled(m: MutatorPlugin): boolean {
+function isMutatorEnabled(m: MutatorPluginCtor): boolean {
   return true;
 }
 
@@ -67,7 +71,7 @@ function makeMutatorIndex(names: string[]): MutatorIndex {
     .filter(isMutatorEnabled);
 
   const index: MutatorIndex = {};
-  activeMutators.forEach((m: MutatorPlugin) => {
+  activeMutators.forEach((m) => {
     // if (process.env.ENFORCE_INVARIANTS) {
     //   let original = m.mutator;
     //   m.mutator = function (node: ESTree.Node) {
@@ -88,10 +92,10 @@ function makeMutatorIndex(names: string[]): MutatorIndex {
 function locateMutatorPlugins(
   names: string[],
   strict = false,
-): MutatorPlugin[] {
+): MutatorPluginCtor[] {
   const plugins = names.map((name: string) => {
     try {
-      const plugin: MutatorPlugin = require(`perturb-plugin-mutator-${name}`);
+      const plugin: MutatorPluginCtor = require(`perturb-plugin-mutator-${name}`);
       return plugin;
     } catch (err) {
       // any way to recover? other locate strategy? something with local path resolution?
@@ -103,7 +107,7 @@ function locateMutatorPlugins(
     return;
   });
 
-  return removeNils<MutatorPlugin>(plugins);
+  return removeNils<MutatorPluginCtor>(plugins);
 }
 
 function removeNils<T>(arr: Array<T | null | void>): T[] {

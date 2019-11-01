@@ -1,13 +1,10 @@
 import * as R from "ramda";
 import S from "./_syntax";
 import { VOID_NODE } from "./_constant-nodes";
-import { MutatorPlugin } from "../types";
+import createMutatorPlugin from "../make-mutator-plugin";
 
-const plugin: MutatorPlugin = {
-  type: "mutator",
+export default createMutatorPlugin({
   name: "drop-node",
   nodeTypes: [S.ContinueStatement, S.BreakStatement],
   mutator: R.always(VOID_NODE),
-};
-
-export default plugin;
+});

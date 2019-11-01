@@ -1,15 +1,14 @@
 import * as R from "ramda";
 import S from "./_syntax";
 import { VOID_NODE } from "./_constant-nodes";
-import { MutatorPlugin } from "../types";
+import createMutatorPlugin from "../make-mutator-plugin";
 
 // drop return w/o affecting the rest of the expression/statement
 // if return statement has no argument, instead transform it into `void 0;`
 // `return something;` => `something;`
 // `return;` => `void 0;`
 
-const plugin: MutatorPlugin = {
-  type: "mutator",
+export default createMutatorPlugin({
   name: "drop-return",
   nodeTypes: [S.ReturnStatement],
   mutator: R.ifElse(
@@ -20,6 +19,4 @@ const plugin: MutatorPlugin = {
       expression: node.argument,
     }),
   ),
-};
-
-export default plugin;
+});
