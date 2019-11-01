@@ -12,7 +12,7 @@
     "change-case": "^2.2.0",
     "commander": "^2.19.0",
     "debug": "^2.2.0",
-    "diff": "^1.4.0",
+    "diff": "^3.5.0",
     "escodegen": "^1.8.0",
     "eslint-utils": "^1.4.1",
     "esprima": "^4.0.0",
