@@ -1,4 +1,5 @@
 import * as ESTree from "estree";
+import flatMap from "./util/flatMap";
 
 const ENABLING_COMMENT = "perturb-enable:";
 const DISABLING_COMMENT = "perturb-disable:";
@@ -38,7 +39,7 @@ export default class CommentManager {
   toArray = () => [...this._disabled];
 
   _applyComments(cs: ESTree.Comment[]) {
-    for (const op of cs.flatMap(extractOperators)) {
+    for (const op of flatMap(cs, extractOperators)) {
       this._applyOperator(op);
     }
     return null;

@@ -1,5 +1,6 @@
 import * as escodegen from "escodegen";
 import updateIn from "./util/update-in";
+import flatMap from "./util/flatMap";
 import * as ESTree from "estree";
 import { ParsedMatch, Mutant, MutantLocation } from "./types";
 
@@ -37,7 +38,7 @@ export default function makeMutants(pm: ParsedMatch): Mutant[] {
       };
     });
   }
-  return pm.locations.flatMap(mapper)
+  return flatMap(pm.locations, mapper)
 }
 
 const toArray = (x: any) => (Array.isArray(x) ? x : [x]);

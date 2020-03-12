@@ -23,6 +23,8 @@ import {
   PerturbConfig,
 } from "./types";
 
+import flatMap from "./util/flatMap";
+
 export default async function perturb(inputCfg: OptionalPerturbConfig) {
   console.log(
     "*********************************************************\n",
@@ -88,7 +90,7 @@ export default async function perturb(inputCfg: OptionalPerturbConfig) {
     const start = Date.now();
 
     // create the mutant objects from the matched files
-    let mutants = parsedMatches.flatMap(makeMutants);
+    let mutants = flatMap(parsedMatches, makeMutants);
 
     // let's just check if everything is okay...
     await sanityCheckAndSideEffects(mutants);
